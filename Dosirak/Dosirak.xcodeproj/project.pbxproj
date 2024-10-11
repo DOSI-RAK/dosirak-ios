@@ -3,8 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
+
+/* Begin PBXBuildFile section */
+		99AD3AC0CF75AD9C69DC7219 /* Pods_DosirakTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 459C536E6F5AC5CB6E141C11 /* Pods_DosirakTests.framework */; };
+		E5FD899BEA313A4CED86F18B /* Pods_Dosirak_DosirakUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FEF768F5EC7B8AB8B08AD8D0 /* Pods_Dosirak_DosirakUITests.framework */; };
+		F67E9B497E73CB27782F7610 /* Pods_Dosirak.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 849494AAA7E332C5E265483B /* Pods_Dosirak.framework */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		B50446162CB95C2100AF5D2C /* PBXContainerItemProxy */ = {
@@ -24,47 +30,26 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		459C536E6F5AC5CB6E141C11 /* Pods_DosirakTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DosirakTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		516A31F4C44BE67DEA56377F /* Pods-DosirakTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DosirakTests.release.xcconfig"; path = "Target Support Files/Pods-DosirakTests/Pods-DosirakTests.release.xcconfig"; sourceTree = "<group>"; };
+		520DAE2B5803A9B01EF9DA43 /* Pods-Dosirak.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dosirak.debug.xcconfig"; path = "Target Support Files/Pods-Dosirak/Pods-Dosirak.debug.xcconfig"; sourceTree = "<group>"; };
+		5F853EDA0C7C5E7F015C2704 /* Pods-Dosirak-DosirakUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dosirak-DosirakUITests.release.xcconfig"; path = "Target Support Files/Pods-Dosirak-DosirakUITests/Pods-Dosirak-DosirakUITests.release.xcconfig"; sourceTree = "<group>"; };
+		849494AAA7E332C5E265483B /* Pods_Dosirak.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dosirak.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A9219F1313E3EA901AD42144 /* Pods-DosirakTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DosirakTests.debug.xcconfig"; path = "Target Support Files/Pods-DosirakTests/Pods-DosirakTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B0F40886EB7F52A061C5A9B4 /* Pods-Dosirak.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dosirak.release.xcconfig"; path = "Target Support Files/Pods-Dosirak/Pods-Dosirak.release.xcconfig"; sourceTree = "<group>"; };
 		B50445FC2CB95C2000AF5D2C /* Dosirak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dosirak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B50446152CB95C2100AF5D2C /* DosirakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DosirakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B504461F2CB95C2100AF5D2C /* DosirakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DosirakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF8D8EEE824616EE7F7F19AB /* Pods-Dosirak-DosirakUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dosirak-DosirakUITests.debug.xcconfig"; path = "Target Support Files/Pods-Dosirak-DosirakUITests/Pods-Dosirak-DosirakUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		FEF768F5EC7B8AB8B08AD8D0 /* Pods_Dosirak_DosirakUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dosirak_DosirakUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B50446272CB95C2100AF5D2C /* Exceptions for "Dosirak" folder in "Dosirak" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = B50445FB2CB95C2000AF5D2C /* Dosirak */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		B50445FE2CB95C2000AF5D2C /* Dosirak */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				B50446272CB95C2100AF5D2C /* Exceptions for "Dosirak" folder in "Dosirak" target */,
-			);
-			path = Dosirak;
-			sourceTree = "<group>";
-		};
-		B50446182CB95C2100AF5D2C /* DosirakTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DosirakTests;
-			sourceTree = "<group>";
-		};
-		B50446222CB95C2100AF5D2C /* DosirakUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = DosirakUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		B50445F92CB95C2000AF5D2C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F67E9B497E73CB27782F7610 /* Pods_Dosirak.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				99AD3AC0CF75AD9C69DC7219 /* Pods_DosirakTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,12 +65,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5FD899BEA313A4CED86F18B /* Pods_Dosirak_DosirakUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		31556D1F50892DC88D5C868C /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				520DAE2B5803A9B01EF9DA43 /* Pods-Dosirak.debug.xcconfig */,
+				B0F40886EB7F52A061C5A9B4 /* Pods-Dosirak.release.xcconfig */,
+				BF8D8EEE824616EE7F7F19AB /* Pods-Dosirak-DosirakUITests.debug.xcconfig */,
+				5F853EDA0C7C5E7F015C2704 /* Pods-Dosirak-DosirakUITests.release.xcconfig */,
+				A9219F1313E3EA901AD42144 /* Pods-DosirakTests.debug.xcconfig */,
+				516A31F4C44BE67DEA56377F /* Pods-DosirakTests.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		3C37071CCEA1064808AF25C5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				849494AAA7E332C5E265483B /* Pods_Dosirak.framework */,
+				FEF768F5EC7B8AB8B08AD8D0 /* Pods_Dosirak_DosirakUITests.framework */,
+				459C536E6F5AC5CB6E141C11 /* Pods_DosirakTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B50445F32CB95C2000AF5D2C = {
 			isa = PBXGroup;
 			children = (
@@ -92,8 +103,11 @@
 				B50446182CB95C2100AF5D2C /* DosirakTests */,
 				B50446222CB95C2100AF5D2C /* DosirakUITests */,
 				B50445FD2CB95C2000AF5D2C /* Products */,
+				31556D1F50892DC88D5C868C /* Pods */,
+				3C37071CCEA1064808AF25C5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		B50445FD2CB95C2000AF5D2C /* Products */ = {
 			isa = PBXGroup;
@@ -105,6 +119,27 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B50445FE2CB95C2000AF5D2C /* Dosirak */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Dosirak;
+			sourceTree = "<group>";
+		};
+		B50446182CB95C2100AF5D2C /* DosirakTests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DosirakTests;
+			sourceTree = "<group>";
+		};
+		B50446222CB95C2100AF5D2C /* DosirakUITests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DosirakUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -112,6 +147,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B50446282CB95C2100AF5D2C /* Build configuration list for PBXNativeTarget "Dosirak" */;
 			buildPhases = (
+				E2A222F6D1B82A51107A4D89 /* [CP] Check Pods Manifest.lock */,
 				B50445F82CB95C2000AF5D2C /* Sources */,
 				B50445F92CB95C2000AF5D2C /* Frameworks */,
 				B50445FA2CB95C2000AF5D2C /* Resources */,
@@ -120,12 +156,7 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				B50445FE2CB95C2000AF5D2C /* Dosirak */,
-			);
 			name = Dosirak;
-			packageProductDependencies = (
-			);
 			productName = Dosirak;
 			productReference = B50445FC2CB95C2000AF5D2C /* Dosirak.app */;
 			productType = "com.apple.product-type.application";
@@ -134,21 +165,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B504462D2CB95C2100AF5D2C /* Build configuration list for PBXNativeTarget "DosirakTests" */;
 			buildPhases = (
+				F97ABEF93010572E8ADAF100 /* [CP] Check Pods Manifest.lock */,
 				B50446112CB95C2100AF5D2C /* Sources */,
 				B50446122CB95C2100AF5D2C /* Frameworks */,
 				B50446132CB95C2100AF5D2C /* Resources */,
+				1E18D76B3F766B6130769616 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				B50446172CB95C2100AF5D2C /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				B50446182CB95C2100AF5D2C /* DosirakTests */,
-			);
 			name = DosirakTests;
-			packageProductDependencies = (
-			);
 			productName = DosirakTests;
 			productReference = B50446152CB95C2100AF5D2C /* DosirakTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -157,6 +185,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B50446302CB95C2100AF5D2C /* Build configuration list for PBXNativeTarget "DosirakUITests" */;
 			buildPhases = (
+				A6AF3D1CD15CDBACF6ED8AAF /* [CP] Check Pods Manifest.lock */,
 				B504461B2CB95C2100AF5D2C /* Sources */,
 				B504461C2CB95C2100AF5D2C /* Frameworks */,
 				B504461D2CB95C2100AF5D2C /* Resources */,
@@ -166,12 +195,7 @@
 			dependencies = (
 				B50446212CB95C2100AF5D2C /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				B50446222CB95C2100AF5D2C /* DosirakUITests */,
-			);
 			name = DosirakUITests;
-			packageProductDependencies = (
-			);
 			productName = DosirakUITests;
 			productReference = B504461F2CB95C2100AF5D2C /* DosirakUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
@@ -200,6 +224,7 @@
 				};
 			};
 			buildConfigurationList = B50445F72CB95C2000AF5D2C /* Build configuration list for PBXProject "Dosirak" */;
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -208,7 +233,6 @@
 			);
 			mainGroup = B50445F32CB95C2000AF5D2C;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = B50445FD2CB95C2000AF5D2C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -243,6 +267,92 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1E18D76B3F766B6130769616 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DosirakTests/Pods-DosirakTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DosirakTests/Pods-DosirakTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DosirakTests/Pods-DosirakTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A6AF3D1CD15CDBACF6ED8AAF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Dosirak-DosirakUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E2A222F6D1B82A51107A4D89 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Dosirak-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F97ABEF93010572E8ADAF100 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DosirakTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B50445F82CB95C2000AF5D2C /* Sources */ = {
@@ -284,6 +394,7 @@
 /* Begin XCBuildConfiguration section */
 		B50446292CB95C2100AF5D2C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 520DAE2B5803A9B01EF9DA43 /* Pods-Dosirak.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -297,6 +408,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -312,6 +424,7 @@
 		};
 		B504462A2CB95C2100AF5D2C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B0F40886EB7F52A061C5A9B4 /* Pods-Dosirak.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -325,6 +438,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -459,6 +573,7 @@
 		};
 		B504462E2CB95C2100AF5D2C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A9219F1313E3EA901AD42144 /* Pods-DosirakTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -478,6 +593,7 @@
 		};
 		B504462F2CB95C2100AF5D2C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 516A31F4C44BE67DEA56377F /* Pods-DosirakTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -497,6 +613,7 @@
 		};
 		B50446312CB95C2100AF5D2C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BF8D8EEE824616EE7F7F19AB /* Pods-Dosirak-DosirakUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -514,6 +631,7 @@
 		};
 		B50446322CB95C2100AF5D2C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5F853EDA0C7C5E7F015C2704 /* Pods-Dosirak-DosirakUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
