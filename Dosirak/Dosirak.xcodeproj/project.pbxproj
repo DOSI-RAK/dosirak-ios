@@ -82,7 +82,6 @@
 				A9219F1313E3EA901AD42144 /* Pods-DosirakTests.debug.xcconfig */,
 				516A31F4C44BE67DEA56377F /* Pods-DosirakTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -224,7 +223,7 @@
 				};
 			};
 			buildConfigurationList = B50445F72CB95C2000AF5D2C /* Build configuration list for PBXProject "Dosirak" */;
-			compatibilityVersion = "Xcode 13.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
