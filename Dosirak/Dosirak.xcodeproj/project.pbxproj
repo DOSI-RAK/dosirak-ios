@@ -15,6 +15,7 @@
 		B541AE422CC12F7B00271910 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE412CC12F7B00271910 /* RxRelay */; };
 		B541AE442CC12F7B00271910 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE432CC12F7B00271910 /* RxSwift */; };
 		B541AE492CC1307400271910 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE482CC1307400271910 /* ReactorKit */; };
+		B541AE772CC1694F00271910 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE762CC1694F00271910 /* SocketIO */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 				B541AE152CC12B6200271910 /* FSCalendar in Frameworks */,
 				B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */,
 				B541AE442CC12F7B00271910 /* RxSwift in Frameworks */,
+				B541AE772CC1694F00271910 /* SocketIO in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +100,7 @@
 				B541AE412CC12F7B00271910 /* RxRelay */,
 				B541AE432CC12F7B00271910 /* RxSwift */,
 				B541AE482CC1307400271910 /* ReactorKit */,
+				B541AE762CC1694F00271910 /* SocketIO */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -134,6 +137,7 @@
 				B541AE132CC12B6200271910 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */,
+				B541AE752CC1694F00271910 /* XCRemoteSwiftPackageReference "socket" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -402,6 +406,14 @@
 				minimumVersion = 3.2.0;
 			};
 		};
+		B541AE752CC1694F00271910 /* XCRemoteSwiftPackageReference "socket" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/socketio/socket.io-client-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -444,6 +456,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */;
 			productName = ReactorKit;
+		};
+		B541AE762CC1694F00271910 /* SocketIO */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE752CC1694F00271910 /* XCRemoteSwiftPackageReference "socket" */;
+			productName = SocketIO;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
