@@ -6,6 +6,17 @@
 	objectVersion = 70;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B541AE042CC12B0D00271910 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE032CC12B0D00271910 /* SnapKit */; };
+		B541AE072CC12B2D00271910 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE062CC12B2D00271910 /* RxBlocking */; };
+		B541AE092CC12B2D00271910 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE082CC12B2D00271910 /* RxCocoa */; };
+		B541AE0B2CC12B2D00271910 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE0A2CC12B2D00271910 /* RxRelay */; };
+		B541AE0D2CC12B2D00271910 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE0C2CC12B2D00271910 /* RxSwift */; };
+		B541AE0F2CC12B2D00271910 /* RxTest in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE0E2CC12B2D00271910 /* RxTest */; };
+		B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */; };
+		B541AE152CC12B6200271910 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE142CC12B6200271910 /* FSCalendar */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B515F5152CC0FA4300AC64E9 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -50,6 +61,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B541AE092CC12B2D00271910 /* RxCocoa in Frameworks */,
+				B541AE042CC12B0D00271910 /* SnapKit in Frameworks */,
+				B541AE0D2CC12B2D00271910 /* RxSwift in Frameworks */,
+				B541AE0B2CC12B2D00271910 /* RxRelay in Frameworks */,
+				B541AE0F2CC12B2D00271910 /* RxTest in Frameworks */,
+				B541AE152CC12B6200271910 /* FSCalendar in Frameworks */,
+				B541AE072CC12B2D00271910 /* RxBlocking in Frameworks */,
+				B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,6 +129,14 @@
 			);
 			name = Dosirak;
 			packageProductDependencies = (
+				B541AE032CC12B0D00271910 /* SnapKit */,
+				B541AE062CC12B2D00271910 /* RxBlocking */,
+				B541AE082CC12B2D00271910 /* RxCocoa */,
+				B541AE0A2CC12B2D00271910 /* RxRelay */,
+				B541AE0C2CC12B2D00271910 /* RxSwift */,
+				B541AE0E2CC12B2D00271910 /* RxTest */,
+				B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */,
+				B541AE142CC12B6200271910 /* FSCalendar */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -194,6 +221,12 @@
 			);
 			mainGroup = B515F4F22CC0FA4200AC64E9;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B541AE022CC12B0D00271910 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				B541AE102CC12B4100271910 /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */,
+				B541AE132CC12B6200271910 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -554,6 +587,84 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B541AE022CC12B0D00271910 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.7.1;
+			};
+		};
+		B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
+		B541AE102CC12B4100271910 /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kakao-mapsSDK/KakaoMapsSDK-SPM.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.12.0;
+			};
+		};
+		B541AE132CC12B6200271910 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B541AE032CC12B0D00271910 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE022CC12B0D00271910 /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		B541AE062CC12B2D00271910 /* RxBlocking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxBlocking;
+		};
+		B541AE082CC12B2D00271910 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		B541AE0A2CC12B2D00271910 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		B541AE0C2CC12B2D00271910 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		B541AE0E2CC12B2D00271910 /* RxTest */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxTest;
+		};
+		B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE102CC12B4100271910 /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */;
+			productName = "KakaoMapsSDK-SPM";
+		};
+		B541AE142CC12B6200271910 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE132CC12B6200271910 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B515F4F32CC0FA4200AC64E9 /* Project object */;
 }
