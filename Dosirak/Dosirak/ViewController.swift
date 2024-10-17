@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Dosirak
 //
-//  Created by 권민재 on 10/11/24.
+//  Created by 권민재 on 10/17/24.
 //
 
 import UIKit
