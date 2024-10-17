@@ -1,5 +1,5 @@
 //
-//  LoginViewController.swift
+//  OnboardingViewController.swift
 //  Dosirak
 //
 //  Created by 권민재 on 10/17/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class LoginViewController: UIViewController {
+class OnboardingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

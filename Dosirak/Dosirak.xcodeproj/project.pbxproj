@@ -8,36 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		B541AE042CC12B0D00271910 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE032CC12B0D00271910 /* SnapKit */; };
-		B541AE072CC12B2D00271910 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE062CC12B2D00271910 /* RxBlocking */; };
-		B541AE092CC12B2D00271910 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE082CC12B2D00271910 /* RxCocoa */; };
-		B541AE0B2CC12B2D00271910 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE0A2CC12B2D00271910 /* RxRelay */; };
-		B541AE0D2CC12B2D00271910 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE0C2CC12B2D00271910 /* RxSwift */; };
-		B541AE0F2CC12B2D00271910 /* RxTest in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE0E2CC12B2D00271910 /* RxTest */; };
 		B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */; };
 		B541AE152CC12B6200271910 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE142CC12B6200271910 /* FSCalendar */; };
+		B541AE3E2CC12F7B00271910 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE3D2CC12F7B00271910 /* RxBlocking */; };
+		B541AE402CC12F7B00271910 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE3F2CC12F7B00271910 /* RxCocoa */; };
+		B541AE422CC12F7B00271910 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE412CC12F7B00271910 /* RxRelay */; };
+		B541AE442CC12F7B00271910 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE432CC12F7B00271910 /* RxSwift */; };
+		B541AE492CC1307400271910 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE482CC1307400271910 /* ReactorKit */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		B515F5152CC0FA4300AC64E9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B515F4F32CC0FA4200AC64E9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B515F4FA2CC0FA4200AC64E9;
-			remoteInfo = Dosirak;
-		};
-		B515F51F2CC0FA4300AC64E9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B515F4F32CC0FA4200AC64E9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B515F4FA2CC0FA4200AC64E9;
-			remoteInfo = Dosirak;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dosirak.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		B515F5142CC0FA4300AC64E9 /* DosirakTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DosirakTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B515F51E2CC0FA4300AC64E9 /* DosirakUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DosirakUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -52,8 +33,6 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B515F4FD2CC0FA4200AC64E9 /* Dosirak */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (B515F5262CC0FA4300AC64E9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Dosirak; sourceTree = "<group>"; };
-		B515F5172CC0FA4300AC64E9 /* DosirakTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DosirakTests; sourceTree = "<group>"; };
-		B515F5212CC0FA4300AC64E9 /* DosirakUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = DosirakUITests; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,28 +40,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B541AE092CC12B2D00271910 /* RxCocoa in Frameworks */,
+				B541AE422CC12F7B00271910 /* RxRelay in Frameworks */,
 				B541AE042CC12B0D00271910 /* SnapKit in Frameworks */,
-				B541AE0D2CC12B2D00271910 /* RxSwift in Frameworks */,
-				B541AE0B2CC12B2D00271910 /* RxRelay in Frameworks */,
-				B541AE0F2CC12B2D00271910 /* RxTest in Frameworks */,
+				B541AE492CC1307400271910 /* ReactorKit in Frameworks */,
+				B541AE3E2CC12F7B00271910 /* RxBlocking in Frameworks */,
+				B541AE402CC12F7B00271910 /* RxCocoa in Frameworks */,
 				B541AE152CC12B6200271910 /* FSCalendar in Frameworks */,
-				B541AE072CC12B2D00271910 /* RxBlocking in Frameworks */,
 				B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B515F5112CC0FA4300AC64E9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B515F51B2CC0FA4300AC64E9 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				B541AE442CC12F7B00271910 /* RxSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,8 +58,6 @@
 			isa = PBXGroup;
 			children = (
 				B515F4FD2CC0FA4200AC64E9 /* Dosirak */,
-				B515F5172CC0FA4300AC64E9 /* DosirakTests */,
-				B515F5212CC0FA4300AC64E9 /* DosirakUITests */,
 				B515F4FC2CC0FA4200AC64E9 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -103,8 +66,6 @@
 			isa = PBXGroup;
 			children = (
 				B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */,
-				B515F5142CC0FA4300AC64E9 /* DosirakTests.xctest */,
-				B515F51E2CC0FA4300AC64E9 /* DosirakUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -130,63 +91,17 @@
 			name = Dosirak;
 			packageProductDependencies = (
 				B541AE032CC12B0D00271910 /* SnapKit */,
-				B541AE062CC12B2D00271910 /* RxBlocking */,
-				B541AE082CC12B2D00271910 /* RxCocoa */,
-				B541AE0A2CC12B2D00271910 /* RxRelay */,
-				B541AE0C2CC12B2D00271910 /* RxSwift */,
-				B541AE0E2CC12B2D00271910 /* RxTest */,
 				B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */,
 				B541AE142CC12B6200271910 /* FSCalendar */,
+				B541AE3D2CC12F7B00271910 /* RxBlocking */,
+				B541AE3F2CC12F7B00271910 /* RxCocoa */,
+				B541AE412CC12F7B00271910 /* RxRelay */,
+				B541AE432CC12F7B00271910 /* RxSwift */,
+				B541AE482CC1307400271910 /* ReactorKit */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
 			productType = "com.apple.product-type.application";
-		};
-		B515F5132CC0FA4300AC64E9 /* DosirakTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B515F52C2CC0FA4300AC64E9 /* Build configuration list for PBXNativeTarget "DosirakTests" */;
-			buildPhases = (
-				B515F5102CC0FA4300AC64E9 /* Sources */,
-				B515F5112CC0FA4300AC64E9 /* Frameworks */,
-				B515F5122CC0FA4300AC64E9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B515F5162CC0FA4300AC64E9 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				B515F5172CC0FA4300AC64E9 /* DosirakTests */,
-			);
-			name = DosirakTests;
-			packageProductDependencies = (
-			);
-			productName = DosirakTests;
-			productReference = B515F5142CC0FA4300AC64E9 /* DosirakTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		B515F51D2CC0FA4300AC64E9 /* DosirakUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B515F52F2CC0FA4300AC64E9 /* Build configuration list for PBXNativeTarget "DosirakUITests" */;
-			buildPhases = (
-				B515F51A2CC0FA4300AC64E9 /* Sources */,
-				B515F51B2CC0FA4300AC64E9 /* Frameworks */,
-				B515F51C2CC0FA4300AC64E9 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B515F5202CC0FA4300AC64E9 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				B515F5212CC0FA4300AC64E9 /* DosirakUITests */,
-			);
-			name = DosirakUITests;
-			packageProductDependencies = (
-			);
-			productName = DosirakUITests;
-			productReference = B515F51E2CC0FA4300AC64E9 /* DosirakUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -201,18 +116,10 @@
 					B515F4FA2CC0FA4200AC64E9 = {
 						CreatedOnToolsVersion = 16.0;
 					};
-					B515F5132CC0FA4300AC64E9 = {
-						CreatedOnToolsVersion = 16.0;
-						TestTargetID = B515F4FA2CC0FA4200AC64E9;
-					};
-					B515F51D2CC0FA4300AC64E9 = {
-						CreatedOnToolsVersion = 16.0;
-						TestTargetID = B515F4FA2CC0FA4200AC64E9;
-					};
 				};
 			};
 			buildConfigurationList = B515F4F62CC0FA4200AC64E9 /* Build configuration list for PBXProject "Dosirak" */;
-			compatibilityVersion = "Xcode 15.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -223,37 +130,22 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				B541AE022CC12B0D00271910 /* XCRemoteSwiftPackageReference "SnapKit" */,
-				B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				B541AE102CC12B4100271910 /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */,
 				B541AE132CC12B6200271910 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B515F4FA2CC0FA4200AC64E9 /* Dosirak */,
-				B515F5132CC0FA4300AC64E9 /* DosirakTests */,
-				B515F51D2CC0FA4300AC64E9 /* DosirakUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B515F4F92CC0FA4200AC64E9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B515F5122CC0FA4300AC64E9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B515F51C2CC0FA4300AC64E9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -270,34 +162,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B515F5102CC0FA4300AC64E9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B515F51A2CC0FA4300AC64E9 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		B515F5162CC0FA4300AC64E9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B515F4FA2CC0FA4200AC64E9 /* Dosirak */;
-			targetProxy = B515F5152CC0FA4300AC64E9 /* PBXContainerItemProxy */;
-		};
-		B515F5202CC0FA4300AC64E9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B515F4FA2CC0FA4200AC64E9 /* Dosirak */;
-			targetProxy = B515F51F2CC0FA4300AC64E9 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B515F5282CC0FA4300AC64E9 /* Debug */ = {
@@ -475,78 +340,6 @@
 			};
 			name = Release;
 		};
-		B515F52D2CC0FA4300AC64E9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AU24ZRJ649;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.minjae.DosirakTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dosirak.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dosirak";
-			};
-			name = Debug;
-		};
-		B515F52E2CC0FA4300AC64E9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AU24ZRJ649;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.minjae.DosirakTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Dosirak.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Dosirak";
-			};
-			name = Release;
-		};
-		B515F5302CC0FA4300AC64E9 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AU24ZRJ649;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.minjae.DosirakUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Dosirak;
-			};
-			name = Debug;
-		};
-		B515F5312CC0FA4300AC64E9 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = AU24ZRJ649;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.minjae.DosirakUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Dosirak;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -568,24 +361,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B515F52C2CC0FA4300AC64E9 /* Build configuration list for PBXNativeTarget "DosirakTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B515F52D2CC0FA4300AC64E9 /* Debug */,
-				B515F52E2CC0FA4300AC64E9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B515F52F2CC0FA4300AC64E9 /* Build configuration list for PBXNativeTarget "DosirakUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B515F5302CC0FA4300AC64E9 /* Debug */,
-				B515F5312CC0FA4300AC64E9 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -595,14 +370,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 5.7.1;
-			};
-		};
-		B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ReactiveX/RxSwift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.8.0;
 			};
 		};
 		B541AE102CC12B4100271910 /* XCRemoteSwiftPackageReference "KakaoMapsSDK-SPM" */ = {
@@ -621,6 +388,22 @@
 				minimumVersion = 2.8.4;
 			};
 		};
+		B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
+		B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactorKit/ReactorKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -628,31 +411,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AE022CC12B0D00271910 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
-		};
-		B541AE062CC12B2D00271910 /* RxBlocking */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxBlocking;
-		};
-		B541AE082CC12B2D00271910 /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
-		};
-		B541AE0A2CC12B2D00271910 /* RxRelay */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxRelay;
-		};
-		B541AE0C2CC12B2D00271910 /* RxSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxSwift;
-		};
-		B541AE0E2CC12B2D00271910 /* RxTest */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B541AE052CC12B2D00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxTest;
 		};
 		B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -663,6 +421,31 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AE132CC12B6200271910 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
+		};
+		B541AE3D2CC12F7B00271910 /* RxBlocking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxBlocking;
+		};
+		B541AE3F2CC12F7B00271910 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		B541AE412CC12F7B00271910 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		B541AE432CC12F7B00271910 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		B541AE482CC1307400271910 /* ReactorKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */;
+			productName = ReactorKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
