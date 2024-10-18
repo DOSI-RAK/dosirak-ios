@@ -13,6 +13,12 @@ protocol Coordinator {
     
     func start()
 }
+protocol AppCoordinatorBindable {
+    func moveOnboarding()
+    func moveLogin()
+    
+    
+}
 
 class AppCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
