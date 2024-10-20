@@ -8,6 +8,13 @@
 import UIKit
 import CoreData
 
+import NaverThirdPartyLogin
+
+
+import KakaoSDKAuth
+import KakaoSDKCommon
+
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -18,6 +25,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let naverLoginInstnace = NaverThirdPartyLoginConnection.getSharedInstance()
+        naverLoginInstnace?.isNaverAppOauthEnable = true
+        naverLoginInstnace?.isInAppOauthEnable = true
+        naverLoginInstnace?.setOnlyPortraitSupportInIphone(true)
+        
+        
         return true
     }
 

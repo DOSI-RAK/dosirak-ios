@@ -19,6 +19,7 @@
 		B541AF042CC51A2700271910 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF032CC51A2700271910 /* Moya */; };
 		B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF052CC51A2700271910 /* ReactiveMoya */; };
 		B541AF082CC51A2700271910 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF072CC51A2700271910 /* RxMoya */; };
+		B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF0A2CC53C7800271910 /* NaverThirdPartyLogin */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 			files = (
 				B541AE422CC12F7B00271910 /* RxRelay in Frameworks */,
 				B541AE042CC12B0D00271910 /* SnapKit in Frameworks */,
+				B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */,
 				B541AE492CC1307400271910 /* ReactorKit in Frameworks */,
 				B541AE3E2CC12F7B00271910 /* RxBlocking in Frameworks */,
 				B541AE402CC12F7B00271910 /* RxCocoa in Frameworks */,
@@ -110,6 +112,7 @@
 				B541AF032CC51A2700271910 /* Moya */,
 				B541AF052CC51A2700271910 /* ReactiveMoya */,
 				B541AF072CC51A2700271910 /* RxMoya */,
+				B541AF0A2CC53C7800271910 /* NaverThirdPartyLogin */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -148,6 +151,7 @@
 				B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */,
 				B541AE752CC1694F00271910 /* XCRemoteSwiftPackageReference "socket" */,
 				B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */,
+				B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -432,6 +436,14 @@
 				minimumVersion = 15.0.3;
 			};
 		};
+		B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/naver/naveridlogin-sdk-ios";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -494,6 +506,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */;
 			productName = RxMoya;
+		};
+		B541AF0A2CC53C7800271910 /* NaverThirdPartyLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */;
+			productName = NaverThirdPartyLogin;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
