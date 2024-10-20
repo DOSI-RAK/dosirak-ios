@@ -31,9 +31,9 @@ class AppCoordinator: Coordinator {
     
     func start() {
         if isFirstLaunch() {
-            moveOnboarding()
-        } else {
             moveLogin()
+        } else {
+            //moveLogin()
         }
     }
     

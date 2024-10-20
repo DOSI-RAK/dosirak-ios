@@ -16,6 +16,9 @@
 		B541AE442CC12F7B00271910 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE432CC12F7B00271910 /* RxSwift */; };
 		B541AE492CC1307400271910 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE482CC1307400271910 /* ReactorKit */; };
 		B541AE772CC1694F00271910 /* SocketIO in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE762CC1694F00271910 /* SocketIO */; };
+		B541AF042CC51A2700271910 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF032CC51A2700271910 /* Moya */; };
+		B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF052CC51A2700271910 /* ReactiveMoya */; };
+		B541AF082CC51A2700271910 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF072CC51A2700271910 /* RxMoya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,9 +50,12 @@
 				B541AE3E2CC12F7B00271910 /* RxBlocking in Frameworks */,
 				B541AE402CC12F7B00271910 /* RxCocoa in Frameworks */,
 				B541AE152CC12B6200271910 /* FSCalendar in Frameworks */,
+				B541AF082CC51A2700271910 /* RxMoya in Frameworks */,
 				B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */,
 				B541AE442CC12F7B00271910 /* RxSwift in Frameworks */,
+				B541AF042CC51A2700271910 /* Moya in Frameworks */,
 				B541AE772CC1694F00271910 /* SocketIO in Frameworks */,
+				B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -101,6 +107,9 @@
 				B541AE432CC12F7B00271910 /* RxSwift */,
 				B541AE482CC1307400271910 /* ReactorKit */,
 				B541AE762CC1694F00271910 /* SocketIO */,
+				B541AF032CC51A2700271910 /* Moya */,
+				B541AF052CC51A2700271910 /* ReactiveMoya */,
+				B541AF072CC51A2700271910 /* RxMoya */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -138,6 +147,7 @@
 				B541AE3C2CC12F7B00271910 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				B541AE472CC1307400271910 /* XCRemoteSwiftPackageReference "ReactorKit" */,
 				B541AE752CC1694F00271910 /* XCRemoteSwiftPackageReference "socket" */,
+				B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -414,6 +424,14 @@
 				kind = branch;
 			};
 		};
+		B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -461,6 +479,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AE752CC1694F00271910 /* XCRemoteSwiftPackageReference "socket" */;
 			productName = SocketIO;
+		};
+		B541AF032CC51A2700271910 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		B541AF052CC51A2700271910 /* ReactiveMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = ReactiveMoya;
+		};
+		B541AF072CC51A2700271910 /* RxMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B541AF022CC51A2700271910 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = RxMoya;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
