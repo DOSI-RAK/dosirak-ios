@@ -19,20 +19,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
-        let navigationController = UINavigationController()
         
-        let appCoordinator = AppCoordinator(nav: navigationController)
+        let appCoordinator = AppCoordinator()
         self.appCoordinator = appCoordinator
-        
-        window.rootViewController = navigationController
+
         self.window = window
-        appCoordinator.start()
+        appCoordinator.start(window: window)
+        
         window.makeKeyAndVisible()
     }
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-    
-    }
-
     
 
     func sceneDidDisconnect(_ scene: UIScene) {

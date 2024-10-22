@@ -15,6 +15,7 @@ class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        title = "Home"
 
     }
     
@@ -24,6 +25,8 @@ class LoginViewController: BaseViewController {
         view.addSubview(subtitleLabel)
         view.addSubview(signUpImageView)
         view.addSubview(buttonStackView)
+        
+
         
     }
     

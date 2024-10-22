@@ -7,14 +7,11 @@
 import UIKit
 
 class OnboardingCoordinator: Coordinator {
-    var nav: UINavigationController
+    var nav = UINavigationController()
     var childCoordinators: [Coordinator] = []
     
     var onboardingDidFinish: (() -> Void)?
-    
-    init(nav: UINavigationController) {
-        self.nav = nav
-    }
+
     
     
     func start() {

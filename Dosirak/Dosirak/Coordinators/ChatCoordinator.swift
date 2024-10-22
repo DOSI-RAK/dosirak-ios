@@ -9,12 +9,13 @@ class ChatCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var nav: UINavigationController
     
-    init(nav: UINavigationController) {
-        self.nav = nav
+    init() {
+        self.nav = UINavigationController()
     }
     
     func start() {
         let chatVC = ChatViewController()
-        nav.pushViewController(chatVC, animated: true)
+        nav.pushViewController(chatVC, animated: false)
     }
 }
+ 

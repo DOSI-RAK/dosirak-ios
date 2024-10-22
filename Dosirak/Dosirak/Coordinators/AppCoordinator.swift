@@ -6,34 +6,30 @@
 //
 import UIKit
 
-
 protocol Coordinator {
     var childCoordinators: [Coordinator] { get set }
-    var nav: UINavigationController { get set }
-    
     func start()
 }
+
 protocol AppCoordinatorBindable {
     func moveOnboarding()
     func moveLogin()
-    
-    
+    func moveHome(window: UIWindow)
 }
 
-class AppCoordinator: Coordinator {
-    var childCoordinators: [Coordinator] = []
-    var nav: UINavigationController
-    
-    init(nav: UINavigationController) {
-        self.nav = nav
+class AppCoordinator: Coordinator, AppCoordinatorBindable {
+    func start() {
+        print("Hello")
     }
     
     
-    func start() {
+    var childCoordinators: [Coordinator] = []
+    
+    func start(window: UIWindow) {
         if isFirstLaunch() {
-            moveLogin()
+            moveHome(window: window)
         } else {
-            //moveLogin()
+            // moveLogin()
         }
     }
     
@@ -44,13 +40,13 @@ class AppCoordinator: Coordinator {
     }
     
     private func setupOnboardingComplete() {
-        let userDeafults = UserDefaults.standard
-        userDeafults.set(true, forKey: "isOnboardingShown")
-        userDeafults.synchronize()
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(true, forKey: "isOnboardingShown")
+        userDefaults.synchronize()
     }
     
-    private func moveOnboarding() {
-        let onboardingCoordinator = OnboardingCoordinator(nav: nav)
+    func moveOnboarding() {
+        let onboardingCoordinator = OnboardingCoordinator()
         childCoordinators.append(onboardingCoordinator)
         onboardingCoordinator.start()
         
@@ -59,15 +55,47 @@ class AppCoordinator: Coordinator {
             self?.childCoordinators.removeAll()
             self?.moveLogin()
         }
-        
     }
     
-    private func moveLogin() {
-        let loginCoordinator = LoginCoordinator(nav: nav)
+    func moveLogin() {
+        let loginCoordinator = LoginCoordinator()
         childCoordinators.append(loginCoordinator)
         loginCoordinator.start()
-        
-        
     }
+    
+    func moveHome(window: UIWindow) {
+        let tabbarVC = TabbarViewController()
         
+        
+        // Home 탭에 대한 Coordinator
+        let homeCoordinator = HomeCoordinator()
+        childCoordinators.append(homeCoordinator)
+        homeCoordinator.start() // homeCoordinator가 자신의 UINavigationController를 관리
+        let homeNavController = homeCoordinator.nav
+        homeNavController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+
+        // Chat 탭에 대한 Coordinator
+        let chatCoordinator = ChatCoordinator()
+        childCoordinators.append(chatCoordinator)
+        chatCoordinator.start() // chatCoordinator가 자신의 UINavigationController를 관리
+        let chatNavController = chatCoordinator.nav
+        chatNavController.tabBarItem = UITabBarItem(title: "Chat", image: UIImage(systemName: "message"), tag: 1)
+        
+        let profileCoordinator = UserProfileCoordinator()
+        childCoordinators.append(profileCoordinator)
+        profileCoordinator.start()
+        
+        let profileNavController = profileCoordinator.nav
+        profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person"), tag: 2)
+
+        // TabBar에 네비게이션 컨트롤러 추가
+        tabbarVC.viewControllers = [homeNavController,chatNavController,profileNavController]
+        
+        
+        
+        
+        
+        window.rootViewController = tabbarVC
+        window.makeKeyAndVisible()
+    }
 }

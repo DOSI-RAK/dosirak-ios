@@ -8,18 +8,16 @@
 import UIKit
 
 class HomeCoordinator: Coordinator {
-    var childCoordinators: [any Coordinator] = []
-    
+    var childCoordinators: [Coordinator] = []
     var nav: UINavigationController
     
-    init(nav: UINavigationController) {
-        self.nav = nav
+    init() {
+        self.nav = UINavigationController()
+        
     }
     
     func start() {
         let homeVC = HomeViewController()
-        nav.pushViewController(homeVC, animated: true)
+        nav.pushViewController(homeVC, animated: false)
     }
-    
-    
 }

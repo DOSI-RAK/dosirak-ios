@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import KakaoMapsSDK
 
 
 class HomeViewController: BaseViewController {
@@ -17,12 +18,39 @@ class HomeViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = .mainColor
+        title = "Home"
+        
+    }
+    
+    override func setupView() {
+        view.addSubview(collectionView)
+    }
+    override func setupLayout() {
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(self.view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(self.view)
+        }
+    
+    }
+    
+    override func setupAttibure() {
         
         
     }
     
+    
+    
+    //MARK: UI
+    let collectionView: UICollectionView = {
+        let layout = UICollectionViewLayout()
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        return view
+    }()
+    
+    
 
-  
-
+    
+    
 }

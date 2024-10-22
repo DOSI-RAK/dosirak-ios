@@ -50,14 +50,14 @@ class RxSocketManager {
         }
     }
  
-    func emit(event: String, with data: [Any]) -> Observable<Void> {
-        return Observable.create { observer in
-            self.socket.emit(event, with: data)
-            observer.onNext(())
-            observer.onCompleted()
-            return Disposables.create()
-        }
-    }
+//    func emit(event: String, with data: [Any]) -> Observable<Void> {
+//        return Observable.create { observer in
+//            self.socket.emit(event, with: data)
+//            observer.onNext(())
+//            observer.onCompleted()
+//            return Disposables.create()
+//        }
+//    }
     
     func on(event: String) -> Observable<[Any]> {
         return Observable.create { observer in

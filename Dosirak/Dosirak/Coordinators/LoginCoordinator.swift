@@ -9,15 +9,12 @@ import UIKit
 
 
 class LoginCoordinator: Coordinator {
-    var childCoordinators: [Coordinator] = []
-    
-    var nav: UINavigationController
-    
-    
-    init(nav: UINavigationController) {
-        self.nav = nav
+    func start(window: UIWindow) {
+        print("Hello")
     }
     
+    var childCoordinators: [Coordinator] = []
+    let nav = UINavigationController()
     
     func start() {
         let loginVC = LoginViewController()

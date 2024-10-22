@@ -36,9 +36,12 @@ class ChatViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .mainColor
         setupCollectionView()
         setupInputComponents()
+        collectionView.backgroundColor = .systemBackground
+        
+        title = "Chat"
     }
     
     // CollectionView 설정
