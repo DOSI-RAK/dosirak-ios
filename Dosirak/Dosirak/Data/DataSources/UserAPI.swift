@@ -7,7 +7,14 @@
 
 import Moya
 import Foundation
-//
+
+//baseURL:  http://dosirak.store:80
+//naver_redirectionURL:  http://dosirak.store:80/login/oauth2/code/naver
+//kakao_redirectionURL:  http://dosirak.store:80/login/oauth2/code/kakao
+//api: /api/user/register
+
+
+
 //enum UserError: Error {
 //    case invalidAccessToken
 //    case userNotFound
