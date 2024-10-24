@@ -18,7 +18,13 @@ class UserProfileCoordinator: Coordinator {
     
     func start() {
         let profileVC = UserProfileViewController()
+        profileVC.coordinator = self
         nav.pushViewController(profileVC, animated: false)
+    }
+    
+    func moveToEditProfile() {
+        let editProfileVC = EditProfileViewController()
+        nav.pushViewController(editProfileVC, animated: false)
     }
     
 }

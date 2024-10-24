@@ -12,6 +12,8 @@ import RxCocoa
 
 class UserProfileViewController: BaseViewController,UITableViewDelegate  {
     
+    weak var coordinator: UserProfileCoordinator?
+    
     
     let data: Observable<[(image: String, text: String)]> = Observable.just([
             ("contract", "서비스 이용약관"),
@@ -105,6 +107,13 @@ class UserProfileViewController: BaseViewController,UITableViewDelegate  {
             cell.selectionStyle = .none
         }
         .disposed(by: disposeBag)
+        
+        
+        editProfileButton.rx.tap
+            .bind { [weak self] in
+                self?.coordinator?.moveToEditProfile()
+            }
+            .disposed(by: disposeBag)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

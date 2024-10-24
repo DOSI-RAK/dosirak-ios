@@ -11,6 +11,7 @@ class EditProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "프로필 수정"
 
         // Do any additional setup after loading the view.
     }
