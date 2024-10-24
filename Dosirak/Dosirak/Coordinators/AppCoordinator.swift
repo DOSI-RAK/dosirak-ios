@@ -13,11 +13,12 @@ protocol Coordinator {
 
 protocol AppCoordinatorBindable {
     func moveOnboarding()
-    func moveLogin()
+    func moveLogin(window: UIWindow)
     func moveHome(window: UIWindow)
 }
 
 class AppCoordinator: Coordinator, AppCoordinatorBindable {
+   
     func start() {
         print("Hello")
     }
@@ -28,6 +29,7 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     func start(window: UIWindow) {
         if isFirstLaunch() {
             moveHome(window: window)
+            //moveLogin(window: window)
         } else {
             // moveLogin()
         }
@@ -53,14 +55,16 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         onboardingCoordinator.onboardingDidFinish = { [weak self] in
             self?.setupOnboardingComplete()
             self?.childCoordinators.removeAll()
-            self?.moveLogin()
+            //self?.moveLogin()
         }
     }
     
-    func moveLogin() {
-        let loginCoordinator = LoginCoordinator()
-        childCoordinators.append(loginCoordinator)
-        loginCoordinator.start()
+    func moveLogin(window: UIWindow) {
+//        let loginCoordinator = LoginCoordinator()
+//        childCoordinators.append(loginCoordinator)
+//        loginCoordinator.start()
+        let vc = LoginViewController()
+        window.rootViewController = vc
     }
     
     func moveHome(window: UIWindow) {
@@ -70,26 +74,25 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         // Home 탭에 대한 Coordinator
         let homeCoordinator = HomeCoordinator()
         childCoordinators.append(homeCoordinator)
-        homeCoordinator.start() // homeCoordinator가 자신의 UINavigationController를 관리
+        homeCoordinator.start()
         let homeNavController = homeCoordinator.nav
-        homeNavController.tabBarItem = UITabBarItem(title: "Home", image: UIImage(systemName: "house"), tag: 0)
+        homeNavController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(named: "home"),selectedImage: UIImage(named: "home_active"))
 
-        // Chat 탭에 대한 Coordinator
-        let chatCoordinator = ChatCoordinator()
-        childCoordinators.append(chatCoordinator)
-        chatCoordinator.start() // chatCoordinator가 자신의 UINavigationController를 관리
-        let chatNavController = chatCoordinator.nav
-        chatNavController.tabBarItem = UITabBarItem(title: "Chat", image: UIImage(systemName: "message"), tag: 1)
+        let communityCoordinator = CommuityCoordinator()
+        childCoordinators.append(communityCoordinator)
+        
+        let communityNavController = communityCoordinator.nav
+        communityNavController.tabBarItem = UITabBarItem(title: "커뮤니티", image: UIImage(named: "activities"),selectedImage: UIImage(named: "activities_active"))
         
         let profileCoordinator = UserProfileCoordinator()
         childCoordinators.append(profileCoordinator)
         profileCoordinator.start()
         
         let profileNavController = profileCoordinator.nav
-        profileNavController.tabBarItem = UITabBarItem(title: "Profile", image: UIImage(systemName: "person"), tag: 2)
+        profileNavController.tabBarItem = UITabBarItem(title: "내정보", image: UIImage(named: "person"),selectedImage: UIImage(named: "person_active"))
 
         // TabBar에 네비게이션 컨트롤러 추가
-        tabbarVC.viewControllers = [homeNavController,chatNavController,profileNavController]
+        tabbarVC.viewControllers = [homeNavController,communityNavController,profileNavController]
         
         
         
