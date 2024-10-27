@@ -28,8 +28,8 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     
     func start(window: UIWindow) {
         if isFirstLaunch() {
-            moveHome(window: window)
-            //moveLogin(window: window)
+            //moveHome(window: window)
+            moveLogin(window: window)
         } else {
             // moveLogin()
         }
@@ -63,7 +63,7 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
 //        let loginCoordinator = LoginCoordinator()
 //        childCoordinators.append(loginCoordinator)
 //        loginCoordinator.start()
-        let vc = LoginViewController()
+        let vc = LoginViewController(reactor: LoginReactor(loginManager: LoginManager.shared))
         window.rootViewController = vc
     }
     
@@ -90,9 +90,16 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         
         let profileNavController = profileCoordinator.nav
         profileNavController.tabBarItem = UITabBarItem(title: "내정보", image: UIImage(named: "person"),selectedImage: UIImage(named: "person_active"))
+        
+        
+        let chatListCoordinator = ChatListCoordinator()
+        childCoordinators.append(chatListCoordinator)
+        chatListCoordinator.start()
+        let chatListNavController = chatListCoordinator.nav
+        chatListNavController.tabBarItem = UITabBarItem(title: "채팅", image: UIImage(named: "chat"), selectedImage: UIImage(named: "chat_active"))
 
         // TabBar에 네비게이션 컨트롤러 추가
-        tabbarVC.viewControllers = [homeNavController,communityNavController,profileNavController]
+        tabbarVC.viewControllers = [homeNavController,communityNavController,profileNavController,chatListNavController]
         
         
         

@@ -24,7 +24,11 @@ class UserProfileCoordinator: Coordinator {
     
     func moveToEditProfile() {
         let editProfileVC = EditProfileViewController()
-        nav.pushViewController(editProfileVC, animated: false)
+        editProfileVC.hidesBottomBarWhenPushed = true // 탭 바 숨기기
+        nav.pushViewController(editProfileVC, animated: true)
+        
+        // 현재 네비게이션 바 숨기기 (필요한 경우)
+        //nav.setNavigationBarHidden(true, animated: false)
     }
     
 }

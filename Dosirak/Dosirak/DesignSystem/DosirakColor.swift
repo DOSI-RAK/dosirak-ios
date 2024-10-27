@@ -9,5 +9,6 @@ import UIKit
 
 extension UIColor {
     static var mainColor: UIColor = UIColor(hexCode: "#20c997")
+    static var bgColor: UIColor = UIColor(hexCode: "#f8f8f8")
     
 }

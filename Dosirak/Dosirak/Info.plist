@@ -2,6 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -21,7 +26,7 @@
 			<string>NaverLogin</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.minjae.Dosirak</string>
+				<string>com.gpu.dosirak</string>
 			</array>
 		</dict>
 	</array>
@@ -33,9 +38,9 @@
 		<string>naversearchthirdlogin</string>
 	</array>
 	<key>NAVER_CLIENT_ID</key>
-	<string>zctueunx2dcMUO390pc5</string>
+	<string>RofRaqjYRCQ7jBPmLPLc</string>
 	<key>NAVER_CLIENT_SECRET</key>
-	<string>totwdK2fm1</string>
+	<string>hhF40YzMjn</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
