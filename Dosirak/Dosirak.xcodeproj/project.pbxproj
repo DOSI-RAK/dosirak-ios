@@ -15,6 +15,8 @@
 		B5212EAC2CCA5A04004A8EA2 /* RxKakaoSDKTalk in Frameworks */ = {isa = PBXBuildFile; productRef = B5212EAB2CCA5A04004A8EA2 /* RxKakaoSDKTalk */; };
 		B5212EAE2CCA5A04004A8EA2 /* RxKakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = B5212EAD2CCA5A04004A8EA2 /* RxKakaoSDKUser */; };
 		B5212EB32CCD221C004A8EA2 /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = B5212EB22CCD221C004A8EA2 /* Inject */; };
+		B52F77F02CCE1939008FBC91 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B52F77EF2CCE1939008FBC91 /* Differentiator */; };
+		B52F77F22CCE1939008FBC91 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B52F77F12CCE1939008FBC91 /* RxDataSources */; };
 		B541AE042CC12B0D00271910 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE032CC12B0D00271910 /* SnapKit */; };
 		B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */; };
 		B541AE152CC12B6200271910 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE142CC12B6200271910 /* FSCalendar */; };
@@ -55,6 +57,7 @@
 			files = (
 				B541AE422CC12F7B00271910 /* RxRelay in Frameworks */,
 				B541AE042CC12B0D00271910 /* SnapKit in Frameworks */,
+				B52F77F02CCE1939008FBC91 /* Differentiator in Frameworks */,
 				B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */,
 				B5212EAA2CCA5A04004A8EA2 /* RxKakaoSDKShare in Frameworks */,
 				B5212EA42CCA5A04004A8EA2 /* RxKakaoSDKAuth in Frameworks */,
@@ -72,6 +75,7 @@
 				B541AF042CC51A2700271910 /* Moya in Frameworks */,
 				B5212EB32CCD221C004A8EA2 /* Inject in Frameworks */,
 				B541AE772CC1694F00271910 /* SocketIO in Frameworks */,
+				B52F77F22CCE1939008FBC91 /* RxDataSources in Frameworks */,
 				B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */,
 				B5212EA62CCA5A04004A8EA2 /* RxKakaoSDKCert in Frameworks */,
 			);
@@ -137,6 +141,8 @@
 				B5212EAB2CCA5A04004A8EA2 /* RxKakaoSDKTalk */,
 				B5212EAD2CCA5A04004A8EA2 /* RxKakaoSDKUser */,
 				B5212EB22CCD221C004A8EA2 /* Inject */,
+				B52F77EF2CCE1939008FBC91 /* Differentiator */,
+				B52F77F12CCE1939008FBC91 /* RxDataSources */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -178,6 +184,7 @@
 				B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */,
 				B5212EA02CCA5A04004A8EA2 /* XCRemoteSwiftPackageReference "kakao-ios-sdk-rx" */,
 				B5212EB12CCD221C004A8EA2 /* XCRemoteSwiftPackageReference "Inject" */,
+				B52F77EE2CCE1939008FBC91 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -428,6 +435,14 @@
 				minimumVersion = 1.5.2;
 			};
 		};
+		B52F77EE2CCE1939008FBC91 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.2;
+			};
+		};
 		B541AE022CC12B0D00271910 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -534,6 +549,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B5212EB12CCD221C004A8EA2 /* XCRemoteSwiftPackageReference "Inject" */;
 			productName = Inject;
+		};
+		B52F77EF2CCE1939008FBC91 /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B52F77EE2CCE1939008FBC91 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		B52F77F12CCE1939008FBC91 /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B52F77EE2CCE1939008FBC91 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
 		};
 		B541AE032CC12B0D00271910 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;

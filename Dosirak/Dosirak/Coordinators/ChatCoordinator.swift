@@ -14,7 +14,7 @@ class ChatListCoordinator: Coordinator {
     }
     
     func start() {
-        let chatVC = PopupViewController(title: "잠시만요!", subtitle: "채팅방을 나간 이후에는 기록이 모두 삭제되며, 복구가 불가능합니다.")
+        let chatVC = ChatListViewController()
         nav.pushViewController(chatVC, animated: false)
     }
 }

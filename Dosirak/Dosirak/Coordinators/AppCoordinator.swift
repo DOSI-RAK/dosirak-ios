@@ -28,8 +28,8 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     
     func start(window: UIWindow) {
         if isFirstLaunch() {
-            //moveHome(window: window)
-            moveLogin(window: window)
+            moveHome(window: window)
+            //moveLogin(window: window)
         } else {
             // moveLogin()
         }
