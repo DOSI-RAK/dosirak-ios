@@ -14,13 +14,6 @@ class MyChatListViewController: BaseViewController {
 
     private let disposeBag = DisposeBag()
 
-    // Dummy chat room data
-    struct ChatRoomData {
-        let image: UIImage
-        let title: String
-        let lastMessage: String
-        let date: String
-    }
     
     private let chatRooms: [ChatRoomData] = [
         ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 1", lastMessage: "채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:00"),
@@ -92,6 +85,7 @@ class MyChatListCell2: UICollectionViewCell {
     let lastMessageLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
+        label.numberOfLines = 2
         label.textColor = .gray
         return label
     }()

@@ -6,145 +6,239 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import SnapKit
+struct ChatRoomData {
+    let image: UIImage
+    let title: String
+    let lastMessage: String
+    let date: String
+}
 
-class ChatListViewController: UIViewController {
-    // MARK: - UI Elements
-    private let segmentedControl = UISegmentedControl(items: ["인기순", "최신순"])
-    private let searchBar = UISearchBar()
+class ChatListViewController: BaseViewController {
+    private let disposeBag = DisposeBag()
+    private let selectedButton = BehaviorRelay<SortToggleButton?>(value: nil)
+    private let chatRoomList: [ChatRoomData] = [
+        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 1", lastMessage: "채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:00"),
+        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 2", lastMessage: "How are you?채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:05"),
+        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
+        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
+        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
+        // Add more dummy data as needed
+    ]
+    // MARK: - 더미 데이터
+    private let chatRooms = BehaviorRelay<[ChatRoom]>(value: [
+        ChatRoom(id: 1, title: "마지막대화1", image: "profile1", personCount: 5, lastMessage: "안녕하세요!"),
+        ChatRoom(id: 2, title: "마지막대화2", image: "profile2", personCount: 10, lastMessage: "여기 채팅방 소개입니다."),
+        ChatRoom(id: 3, title: "마지막대화3", image: "profile3", personCount: 15, lastMessage: "어떤 도움이 필요하신가요?"),
+    ])
+    
+    // MARK: - 라이프 사이클
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .bgColor
+        popularButton.isSelected = true
+        recentButton.isSelected = false
+    }
+    override func setupView() {
+        view.addSubview(collectionView)
+        view.addSubview(baseView)
+        baseView.addSubview(chatRoomListView)
+        baseView.addSubview(myLocationLabel)
+        baseView.addSubview(locationLabel)
+        baseView.addSubview(chatroomSearchBar)
+        baseView.addSubview(buttonStackView)
+        buttonStackView.addArrangedSubview(popularButton)
+        buttonStackView.addArrangedSubview(recentButton)
+        
+        
+        view.addSubview(floatingButton)
+        
+        
+        
+        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+    }
+    
+    override func setupLayout() {
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.equalTo(view)
+            $0.trailing.equalTo(view)
+            $0.height.equalTo(120)
+        }
+        baseView.snp.makeConstraints {
+            $0.top.equalTo(collectionView.snp.bottom).offset(20)
+            $0.leading.trailing.equalTo(view)
+            $0.bottom.equalTo(self.view)
+        }
+        locationLabel.snp.makeConstraints {
+            $0.top.equalTo(baseView.snp.top).inset(10)
+            $0.leading.equalTo(baseView).inset(20)
+            $0.trailing.equalTo(baseView)
+        }
+        myLocationLabel.snp.makeConstraints {
+            $0.leading.equalTo(locationLabel)
+            $0.top.equalTo(locationLabel.snp.bottom).offset(10)
+        }
+        chatroomSearchBar.snp.makeConstraints {
+            $0.leading.equalTo(myLocationLabel.snp.leading)
+            $0.trailing.equalTo(view)
+            $0.height.equalTo(50)
+            $0.top.equalTo(myLocationLabel.snp.bottom).offset(10)
+        }
+        buttonStackView.snp.makeConstraints {
+            $0.leading.equalTo(chatroomSearchBar.snp.leading)
+            $0.top.equalTo(self.chatroomSearchBar.snp.bottom).offset(10)
+            $0.width.equalTo(120)
+            $0.height.equalTo(30)
+        }
+        chatRoomListView.snp.makeConstraints {
+            $0.top.equalTo(buttonStackView.snp.bottom).offset(10)
+            $0.leading.trailing.bottom.equalTo(view)
+        }
+        
+        floatingButton.snp.makeConstraints {
+            $0.bottom.equalTo(view.snp.bottom).inset(40)
+            $0.height.equalTo(55)
+            $0.width.equalTo(350)
+            $0.centerX.equalTo(view)
+            
+        }
+    }
+    
+    override func bindRX() {
+        
+        Observable.just(chatRoomList)
+            .bind(to: chatRoomListView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListCell2.self)) { index, chatRoom, cell in
+                // Configure the cell
+                cell.chatImageView.image = chatRoom.image
+                cell.titleLabel.text = chatRoom.title
+                cell.lastMessageLabel.text = chatRoom.lastMessage
+                cell.lastMessageLabel.textColor = .gray
+                // Set the date label, you can add it in your cell if needed
+                cell.dateLabel.text = chatRoom.date
+            }
+            .disposed(by: disposeBag)
+        chatRooms
+            .bind(to: collectionView.rx.items(cellIdentifier: "cell")) { index, chatRoom, cell in
+                cell.backgroundColor = .systemGreen // 컬렉션 뷰의 셀 디자인
+                // 이미지나 추가 UI 설정 필요 시 여기서 추가 가능
+            }
+            .disposed(by: disposeBag)
+        
+        floatingButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                // 채팅방 만들기 버튼 클릭 시 이벤트 처리
+                print("채팅방 만들기 버튼 클릭됨")
+            })
+            .disposed(by: disposeBag)
+        
+        popularButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.selectedButton.accept(self?.popularButton)
+            })
+            .disposed(by: disposeBag)
+        
+        // Recent button tapped
+        recentButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.selectedButton.accept(self?.recentButton)
+            })
+            .disposed(by: disposeBag)
+        
+        
+        selectedButton
+            .asObservable()
+            .subscribe(onNext: { [weak self] selected in
+                guard let self = self else { return }
+                self.popularButton.isSelected = (selected == self.popularButton)
+                self.recentButton.isSelected = (selected == self.recentButton)
+            })
+            .disposed(by: disposeBag)
+        
+    }
+    
+    
+    
+    
+    // MARK: - UI 요소들
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        return UICollectionView(frame: .zero, collectionViewLayout: layout)
-    }()
-    private let tableView = UITableView()
-    private let createChatButton = UIButton(type: .system)
-
-    // RxSwift
-    private let disposeBag = DisposeBag()
-
-    // MARK: - ViewModel (Assuming you have a ViewModel structure)
-    private let viewModel = ChatListViewModel()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupUI()
-        setupBindings()
-    }
-
-    private func setupUI() {
-        view.backgroundColor = .white
-        navigationItem.title = "Green Talk"
-
-        // Setup Segmented Control
-        view.addSubview(segmentedControl)
-        segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-
-        // Setup Search Bar
-        view.addSubview(searchBar)
-        searchBar.placeholder = "Search"
-        searchBar.snp.makeConstraints { make in
-            make.top.equalTo(segmentedControl.snp.bottom).offset(8)
-            make.leading.trailing.equalToSuperview().inset(16)
-        }
-
-        // Setup CollectionView
-        view.addSubview(collectionView)
+        layout.minimumLineSpacing = 10
+        layout.itemSize = CGSize(width: 100, height: 100)
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(16)
-            make.leading.trailing.equalToSuperview()
-            make.height.equalTo(80)
-        }
-
-        // Setup TableView
-        view.addSubview(tableView)
-        tableView.register(ChatRoomCell.self, forCellReuseIdentifier: ChatRoomCell.reusableIdentifier)
-        tableView.snp.makeConstraints { make in
-            make.top.equalTo(collectionView.snp.bottom).offset(16)
-            make.leading.trailing.bottom.equalToSuperview()
-        }
-
-        // Setup Create Button
-        view.addSubview(createChatButton)
-        createChatButton.setTitle("채팅방 만들기", for: .normal)
-        createChatButton.backgroundColor = .systemGreen
-        createChatButton.setTitleColor(.white, for: .normal)
-        createChatButton.layer.cornerRadius = 10
-        createChatButton.snp.makeConstraints { make in
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(16)
-            make.height.equalTo(50)
-        }
-    }
-
-    private func setupBindings() {
-        // Binding for segmented control
-        segmentedControl.rx.selectedSegmentIndex
-            .subscribe(onNext: { [weak self] index in
-                self?.viewModel.sortOrder.accept(index == 0 ? .popularity : .recent)
-            }).disposed(by: disposeBag)
-
-        // Binding for search bar text
-        searchBar.rx.text.orEmpty
-            .bind(to: viewModel.searchQuery)
-            .disposed(by: disposeBag)
-
-        // Binding chat list to the tableView
-        viewModel.filteredChatRooms
-            .bind(to: tableView.rx.items(cellIdentifier: ChatRoomCell.reusableIdentifier, cellType: ChatRoomCell.self)) { row, chatRoom, cell in
-                cell.configure(with: chatRoom)
-            }
-            .disposed(by: disposeBag)
-        
-        // Create Chat Button Action
-        createChatButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                self?.showCreateChatRoomScreen()
-            })
-            .disposed(by: disposeBag)
-    }
-
-    private func showCreateChatRoomScreen() {
-        // Handle navigation to create chat room screen
-    }
-}
-enum SortOrder {
-    case popularity
-    case recent
-}
-
-class ChatListViewModel {
-    let disposeBag = DisposeBag()
+        return collectionView
+    }()
     
-    // Inputs
-    let searchQuery = BehaviorRelay<String>(value: "")
-    let sortOrder = BehaviorRelay<SortOrder>(value: .popularity)
-
-    // Outputs
-    let filteredChatRooms: Observable<[ChatRoom]>
-
-    init() {
-        let allChatRooms = Observable.just([
-            ChatRoom(name: "Chat Room 1", members: 32),
-            ChatRoom(name: "Chat Room 2", members: 15),
-            // Add more mock data
-        ])
+    private let baseView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 34
+        return view
+    }()
+    private let locationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "현재 위치"
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .gray
+        return label
+    }()
+    private let myLocationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "dongjak"
+        label.font = .systemFont(ofSize: 18, weight: .bold)
+        return label
+    }()
+    private let chatroomSearchBar: UISearchBar = {
+        let sb = UISearchBar()
+        sb.backgroundColor = .bgColor
+        return sb
+    }()
+    
+    lazy var chatRoomListView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 96)
+        layout.minimumLineSpacing = 0
         
-        filteredChatRooms = Observable.combineLatest(searchQuery, sortOrder, allChatRooms) { query, sortOrder, rooms in
-            var filtered = rooms.filter { $0.name.contains(query) }
-            switch sortOrder {
-            case .popularity:
-                filtered.sort { $0.members > $1.members }
-            case .recent:
-                // Sort by recent (if you have a timestamp, use it)
-                break
-            }
-            return filtered
-        }
-    }
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.backgroundColor = .clear
+        view.register(MyChatListCell2.self, forCellWithReuseIdentifier: "MyChatListCell")
+        return view
+    }()
+    
+    private let floatingButton: UIButton = {
+        let button = UIButton(type: .system)
+        
+        button.setTitle("채팅방 만들기", for: .normal)
+        button.backgroundColor = .mainColor
+        button.tintColor = .white
+        button.layer.cornerRadius = 12
+        button.layer.shadowColor = UIColor.black.cgColor
+        button.layer.shadowOpacity = 0.3
+        button.layer.shadowOffset = CGSize(width: 0, height: 2)
+        return button
+    }()
+    
+    private let popularButton: SortToggleButton = {
+        let button = SortToggleButton()
+        button.setTitle("인기순", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private let recentButton: SortToggleButton = {
+        let button = SortToggleButton()
+        button.setTitle("최신순", for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    private let buttonStackView: UIStackView = {
+           let stackView = UIStackView()
+           stackView.axis = .horizontal
+           stackView.spacing = 5  // 버튼 간격 설정
+           //stackView.alignment = .fill
+           stackView.distribution = .fillEqually
+           return stackView
+       }()
+       
 }

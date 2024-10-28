@@ -14,7 +14,7 @@ class ChatListCoordinator: Coordinator {
     }
     
     func start() {
-        let chatVC = ChatListViewController()
+        let chatVC = ChatViewController()
         nav.pushViewController(chatVC, animated: false)
     }
 }
