@@ -9,6 +9,7 @@ import UIKit
 
 class UserProfileCoordinator: Coordinator {
     
+    
     var childCoordinators: [Coordinator] = []
     var nav: UINavigationController
     
@@ -23,19 +24,18 @@ class UserProfileCoordinator: Coordinator {
     }
     
     func moveToEditProfile() {
-        let editProfileVC = EditProfileViewController()
+        guard let reactor = DIContainer.shared.resolve(UserProfileReactor.self) else { fatalError()}
+        let editProfileVC = EditProfileViewController(reactor: reactor)
         editProfileVC.hidesBottomBarWhenPushed = true // 탭 바 숨기기
         nav.pushViewController(editProfileVC, animated: true)
         
-        // 현재 네비게이션 바 숨기기 (필요한 경우)
-        //nav.setNavigationBarHidden(true, animated: false)
     }
     func moveToLoginSheet() {
-        let sheetVC = LoginBottomSheetViewController(title: "잠시만요!", subtitle: "탈퇴 시 계정 및이용 기록은 모두 사라지며,\n 삭제된 데이터는 복구가 불가능 합니다.")
-        sheetVC.modalPresentationStyle = .popover
-        sheetVC.hidesBottomBarWhenPushed = true
-        sheetVC.navigationController?.navigationBar.isHidden = true
-        nav.pushViewController(sheetVC, animated: true)
+        let editVC = DIContainer.shared.resolve(EditProfileViewController.self)
+        editVC?.modalPresentationStyle = .popover
+        editVC?.hidesBottomBarWhenPushed = true
+        editVC?.navigationController?.navigationBar.isHidden = true
+        nav.pushViewController(editVC!, animated: true)
     }
     
 }

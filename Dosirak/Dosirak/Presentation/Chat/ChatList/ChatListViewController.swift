@@ -6,39 +6,36 @@
 import UIKit
 import RxSwift
 import RxCocoa
-struct ChatRoomData {
-    let image: UIImage
-    let title: String
-    let lastMessage: String
-    let date: String
-}
+import KeychainAccess
 
 class ChatListViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     private let selectedButton = BehaviorRelay<SortToggleButton?>(value: nil)
-    private let chatRoomList: [ChatRoomData] = [
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 1", lastMessage: "채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:00"),
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 2", lastMessage: "How are you?채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:05"),
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
-        // Add more dummy data as needed
-    ]
-    // MARK: - 더미 데이터
-    private let chatRooms = BehaviorRelay<[ChatRoom]>(value: [
-        ChatRoom(id: 1, title: "마지막대화1", image: "profile1", personCount: 5, lastMessage: "안녕하세요!"),
-        ChatRoom(id: 2, title: "마지막대화2", image: "profile2", personCount: 10, lastMessage: "여기 채팅방 소개입니다."),
-        ChatRoom(id: 3, title: "마지막대화3", image: "profile3", personCount: 15, lastMessage: "어떤 도움이 필요하신가요?"),
-    ])
+    
+    var reactor: ChatListReactor?
+    
+    init(reactor: ChatListReactor) {
+        super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
+        bind(reactor: reactor)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - 라이프 사이클
     override func viewDidLoad() {
         super.viewDidLoad()
+        //collectionView.delegate = self
+        chatRoomListView.delegate = self
+        title = "Green Talk"
         view.backgroundColor = .bgColor
         popularButton.isSelected = true
         recentButton.isSelected = false
     }
     override func setupView() {
+        view.addSubview(headerView)
         view.addSubview(collectionView)
         view.addSubview(baseView)
         baseView.addSubview(chatRoomListView)
@@ -46,23 +43,31 @@ class ChatListViewController: BaseViewController {
         baseView.addSubview(locationLabel)
         baseView.addSubview(chatroomSearchBar)
         baseView.addSubview(buttonStackView)
+        baseView.addSubview(reloadButton)
         buttonStackView.addArrangedSubview(popularButton)
         buttonStackView.addArrangedSubview(recentButton)
-        
         
         view.addSubview(floatingButton)
         
         
+        collectionView.register(MyChatHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
+        collectionView.register(MyChatCell.self, forCellWithReuseIdentifier: "cell")
         
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
     }
     
     override func setupLayout() {
-        collectionView.snp.makeConstraints {
+        
+        headerView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.leading.trailing.equalTo(view)
+            $0.height.equalTo(52)
+        }
+        
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(headerView.snp.bottom)
             $0.leading.equalTo(view)
             $0.trailing.equalTo(view)
-            $0.height.equalTo(120)
+            $0.height.equalTo(60)
         }
         baseView.snp.makeConstraints {
             $0.top.equalTo(collectionView.snp.bottom).offset(20)
@@ -70,7 +75,7 @@ class ChatListViewController: BaseViewController {
             $0.bottom.equalTo(self.view)
         }
         locationLabel.snp.makeConstraints {
-            $0.top.equalTo(baseView.snp.top).inset(10)
+            $0.top.equalTo(baseView.snp.top).inset(20)
             $0.leading.equalTo(baseView).inset(20)
             $0.trailing.equalTo(baseView)
         }
@@ -78,14 +83,22 @@ class ChatListViewController: BaseViewController {
             $0.leading.equalTo(locationLabel)
             $0.top.equalTo(locationLabel.snp.bottom).offset(10)
         }
+        reloadButton.snp.makeConstraints {
+            $0.leading.equalTo(myLocationLabel.snp.trailing)
+            $0.width.height.equalTo(52)
+            $0.centerY.equalTo(myLocationLabel)
+            
+        }
+        
+        
         chatroomSearchBar.snp.makeConstraints {
-            $0.leading.equalTo(myLocationLabel.snp.leading)
+            $0.leading.equalTo(baseView)
             $0.trailing.equalTo(view)
             $0.height.equalTo(50)
             $0.top.equalTo(myLocationLabel.snp.bottom).offset(10)
         }
         buttonStackView.snp.makeConstraints {
-            $0.leading.equalTo(chatroomSearchBar.snp.leading)
+            $0.leading.equalTo(myLocationLabel.snp.leading)
             $0.top.equalTo(self.chatroomSearchBar.snp.bottom).offset(10)
             $0.width.equalTo(120)
             $0.height.equalTo(30)
@@ -104,106 +117,137 @@ class ChatListViewController: BaseViewController {
         }
     }
     
-    override func bindRX() {
+    
+    func bind(reactor: ChatListReactor) {
+        // 액션 - summary와 nearby 데이터 로드
+        reactor.action.onNext(.loadChatRoomSummary)
+        reactor.action.onNext(.loadNearbyChatRooms("청담동"))
         
-        Observable.just(chatRoomList)
-            .bind(to: chatRoomListView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListCell2.self)) { index, chatRoom, cell in
-                // Configure the cell
-                cell.chatImageView.image = chatRoom.image
-                cell.titleLabel.text = chatRoom.title
-                cell.lastMessageLabel.text = chatRoom.lastMessage
-                cell.lastMessageLabel.textColor = .gray
-                // Set the date label, you can add it in your cell if needed
-                cell.dateLabel.text = chatRoom.date
+        // summary 데이터를 collectionView에 바인딩
+        reactor.state.map { $0.chatRoomSummary }
+            .do(onNext: { summary in
+                print("Fetched Summary:", summary)
+            })
+            .bind(to: collectionView.rx.items(cellIdentifier: "cell", cellType: MyChatCell.self)) { index, chatRoomSummary, cell in
+                cell.configure(with: chatRoomSummary)
             }
             .disposed(by: disposeBag)
-        chatRooms
-            .bind(to: collectionView.rx.items(cellIdentifier: "cell")) { index, chatRoom, cell in
-                cell.backgroundColor = .systemGreen // 컬렉션 뷰의 셀 디자인
-                // 이미지나 추가 UI 설정 필요 시 여기서 추가 가능
+        
+        // nearby 데이터를 chatRoomListView에 바인딩
+        reactor.state.map { $0.nearbyChatRooms }
+            .do(onNext: { nearbyRooms in
+                print("Fetched Nearby Chat Rooms:", nearbyRooms)
+            })
+            .bind(to: chatRoomListView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListTableViewCell.self)) { index, chatRoom, cell in
+                cell.chatImageView.image = UIImage(named: "profile")
+                cell.titleLabel.text = chatRoom.title
+                cell.lastMessageLabel.text = chatRoom.explanation
             }
+            .disposed(by: disposeBag)
+        
+        // 나머지 바인딩 설정
+        headerView.viewAllButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                let myChatListVC = MyChatListViewController(reactor: reactor)
+                myChatListVC.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(myChatListVC, animated: true)
+            })
             .disposed(by: disposeBag)
         
         floatingButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                // 채팅방 만들기 버튼 클릭 시 이벤트 처리
-                print("채팅방 만들기 버튼 클릭됨")
+                let createVC = CreateChatRoomViewController()
+                createVC.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(createVC, animated: true)
             })
             .disposed(by: disposeBag)
         
+        // 인기순, 최신순 버튼 클릭
         popularButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.selectedButton.accept(self?.popularButton)
             })
             .disposed(by: disposeBag)
         
-        // Recent button tapped
         recentButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.selectedButton.accept(self?.recentButton)
             })
             .disposed(by: disposeBag)
         
-        
         selectedButton
             .asObservable()
             .subscribe(onNext: { [weak self] selected in
-                guard let self = self else { return }
-                self.popularButton.isSelected = (selected == self.popularButton)
-                self.recentButton.isSelected = (selected == self.recentButton)
+                self?.popularButton.isSelected = (selected == self?.popularButton)
+                self?.recentButton.isSelected = (selected == self?.recentButton)
             })
             .disposed(by: disposeBag)
         
+        // 채팅방 선택 시 이동
+        collectionView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                let chatVC = ChatViewController()
+                chatVC.hidesBottomBarWhenPushed = true
+                self?.navigationController?.pushViewController(chatVC, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
     
     
-    
-    // MARK: - UI 요소들
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 10
-        layout.itemSize = CGSize(width: 100, height: 100)
+        layout.itemSize = CGSize(width: 128, height: 40)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        
         collectionView.backgroundColor = .clear
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
         return collectionView
     }()
+    
+    private let headerView =  MyChatHeaderView()
     
     private let baseView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
-        view.layer.cornerRadius = 34
+        view.layer.cornerRadius = 40
         return view
     }()
     private let locationLabel: UILabel = {
         let label = UILabel()
-        label.text = "현재 위치"
+        label.text = "내 주변"
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = .gray
         return label
     }()
     private let myLocationLabel: UILabel = {
         let label = UILabel()
-        label.text = "dongjak"
+        label.text = "동작구 상도동"
         label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
     }()
+    
+    private let reloadButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "reload"), for: .normal)
+        return button
+    }()
+    
+    
     private let chatroomSearchBar: UISearchBar = {
         let sb = UISearchBar()
         sb.backgroundColor = .bgColor
         return sb
     }()
     
-    lazy var chatRoomListView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 96)
-        layout.minimumLineSpacing = 0
-        
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = .clear
-        view.register(MyChatListCell2.self, forCellWithReuseIdentifier: "MyChatListCell")
-        return view
+    var chatRoomListView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .clear
+        tableView.separatorStyle = .none // 원한다면 구분선 제거
+        tableView.register(MyChatListTableViewCell.self, forCellReuseIdentifier: "MyChatListCell")
+        return tableView
     }()
     
     private let floatingButton: UIButton = {
@@ -222,23 +266,33 @@ class ChatListViewController: BaseViewController {
     private let popularButton: SortToggleButton = {
         let button = SortToggleButton()
         button.setTitle("인기순", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
+        
         return button
     }()
+    
     
     private let recentButton: SortToggleButton = {
         let button = SortToggleButton()
         button.setTitle("최신순", for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
+        
         return button
     }()
     private let buttonStackView: UIStackView = {
-           let stackView = UIStackView()
-           stackView.axis = .horizontal
-           stackView.spacing = 5  // 버튼 간격 설정
-           //stackView.alignment = .fill
-           stackView.distribution = .fillEqually
-           return stackView
-       }()
-       
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 5  // 버튼 간격 설정
+        //stackView.alignment = .fill
+        stackView.distribution = .fillEqually
+        return stackView
+    }()
+}
+    
+    
+    
+    
+extension ChatListViewController: UITableViewDelegate {
+    // 고정된 셀 높이 설정
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100 // 원하는 높이로 설정
+    }
 }

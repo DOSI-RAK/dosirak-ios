@@ -9,20 +9,13 @@ import UIKit
 import RxSwift
 import RxCocoa
 import SnapKit
-struct ChatMessage {
-    let text: String
-    let isSentByCurrentUser: Bool
-    let nickname: String
-    let profileImageName: String // 이미지 이름 또는 URL
-    let time: String // 시간 형식은 String으로 처리
-}
+
 
 class ChatViewController: UIViewController {
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     
-    // 채팅 메시지를 관리할 Observable 배열
     private let messages = BehaviorRelay<[ChatMessage]>(value: [])
     
     // MARK: - UI Elements
@@ -31,7 +24,7 @@ class ChatViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
         tableView.backgroundColor = .clear
-        tableView.estimatedRowHeight = 44 // 예상 높이 (임의 값)
+        tableView.estimatedRowHeight = 44
         tableView.rowHeight = UITableView.automaticDimension // 동적 높이 설정
         tableView.register(ChatMessageCell.self, forCellReuseIdentifier: ChatMessageCell.identifier)
         return tableView
@@ -55,6 +48,7 @@ class ChatViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "나의 채팅방"
         setupUI()
         setupBindings()
     }
@@ -91,7 +85,7 @@ class ChatViewController: UIViewController {
     
     // MARK: - Rx Bindings
     private func setupBindings() {
-        // Send button action
+
         sendButton.rx.tap
             .withLatestFrom(messageInputField.rx.text.orEmpty)
             .filter { !$0.isEmpty }
@@ -100,14 +94,12 @@ class ChatViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // Bind messages to the table view
         messages
             .bind(to: tableView.rx.items(cellIdentifier: ChatMessageCell.identifier, cellType: ChatMessageCell.self)) { index, message, cell in
                 cell.configure(with: message)
             }
             .disposed(by: disposeBag)
         
-        // Clear input field after sending a message
         sendButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.messageInputField.text = ""
@@ -136,7 +128,7 @@ class ChatViewController: UIViewController {
     
     private func getCurrentTime() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "a h:mm" // 오전/오후 h:mm 형식
+        dateFormatter.dateFormat = "a h:mm" 
         return dateFormatter.string(from: Date())
     }
 }

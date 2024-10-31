@@ -25,6 +25,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         appCoordinator.start(window: window)
         window.makeKeyAndVisible()
+        
+
 
     }
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -34,9 +36,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         return false
     }
+    
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        NaverThirdPartyLoginConnection
-            .getSharedInstance()
+      NaverThirdPartyLoginConnection
+        .getSharedInstance()?
+        .receiveAccessToken(URLContexts.first?.url)
     }
 
 

@@ -2,64 +2,58 @@
 //  MyChatCell.swift
 //  Dosirak
 //
-//  Created by 권민재 on 10/27/24.
+//  Created by 권민재 on 10/29/24.
 //
 import UIKit
 import SnapKit
-// MARK: - Custom Cells
+
 class MyChatCell: UICollectionViewCell {
-    private let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .mainColor
-        view.layer.cornerRadius = 20
-        return view
+
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 25 // 둥근 모서리 적용
+        imageView.image = UIImage(named: "profilemini02")
+        imageView.clipsToBounds = true
+        return imageView
     }()
-    
-    private let iconLabel: UILabel = {
-        let label = UILabel()
-        label.text = "🌲"
-        label.font = .systemFont(ofSize: 16)
-        return label
-    }()
-    
+
     private let titleLabel: UILabel = {
         let label = UILabel()
+        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .center
         label.textColor = .white
-        label.font = .systemFont(ofSize: 14)
         return label
     }()
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
+        contentView.addSubview(imageView)
+        contentView.addSubview(titleLabel)
+
+        imageView.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(self.contentView).inset(10)
+            make.top.equalToSuperview().offset(5)
+            make.width.height.equalTo(32)
+        }
+
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(imageView.snp.trailing).offset(10)
+            make.centerY.equalToSuperview()
+        }
+
+        // 배경 및 스타일 설정
+        contentView.backgroundColor = .mainColor
+        contentView.layer.cornerRadius = 20
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func setupUI() {
-        contentView.addSubview(containerView)
-        containerView.addSubview(iconLabel)
-        containerView.addSubview(titleLabel)
-        
-        containerView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-        iconLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(12)
-            make.centerY.equalToSuperview()
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(iconLabel.snp.trailing).offset(4)
-            make.trailing.equalToSuperview().offset(-12)
-            make.centerY.equalToSuperview()
-        }
-    }
-    
-    func configure(with title: String) {
-        titleLabel.text = title
+
+    func configure(with chatRoom: ChatRoomSummary) {
+        imageView.image = UIImage(named: "profile")
+        titleLabel.text = chatRoom.lastMessage
     }
 }

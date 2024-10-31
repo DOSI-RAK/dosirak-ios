@@ -14,7 +14,10 @@ class ChatListCoordinator: Coordinator {
     }
     
     func start() {
-        let chatVC = ChatViewController()
+        guard let reactor = DIContainer.shared.resolve(ChatListReactor.self) else {
+            fatalError()
+        }
+        let chatVC = ChatListViewController(reactor: reactor)
         nav.pushViewController(chatVC, animated: false)
     }
 }

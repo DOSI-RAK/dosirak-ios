@@ -19,7 +19,6 @@ class LoginCoordinator: Coordinator {
     }
     
     func start(window: UIWindow) {
-        // 앱의 윈도우를 설정하고 루트 뷰 컨트롤러로 내비게이션 컨트롤러를 설정
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
         
@@ -27,10 +26,8 @@ class LoginCoordinator: Coordinator {
         start()
     }
     
-    func start() {
-        // LoginReactor를 초기화하여 LoginViewController에 주입
-        let loginReactor = LoginReactor(loginManager: LoginManager.shared) // LoginReactor의 초기화
-        let loginVC = LoginViewController(reactor: loginReactor)
-        navigationController.pushViewController(loginVC, animated: true)
+    func start()  {
+        
+        
     }
 }

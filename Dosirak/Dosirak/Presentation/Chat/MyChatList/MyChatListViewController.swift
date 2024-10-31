@@ -13,14 +13,7 @@ import RxCocoa
 class MyChatListViewController: BaseViewController {
 
     private let disposeBag = DisposeBag()
-
-    
-    private let chatRooms: [ChatRoomData] = [
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 1", lastMessage: "채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:00"),
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 2", lastMessage: "How are you?채팅방소개채팅방소개채팅방소개채팅방소개채팅방소개", date: "오전 10:05"),
-        ChatRoomData(image: UIImage(named: "profile03_58px") ?? UIImage(), title: "Chat Room 3", lastMessage: "Let's meet up!채팅방소개채팅방소개채팅방소개", date: "오전 10:15"),
-        // Add more dummy data as needed
-    ]
+    var reactor: ChatListReactor?
 
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -32,37 +25,45 @@ class MyChatListViewController: BaseViewController {
         view.register(MyChatListCell2.self, forCellWithReuseIdentifier: "MyChatListCell")
         return view
     }()
-
+    
+    init(reactor: ChatListReactor) {
+        super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
+        bind(reactor: reactor) // 액션 및 바인딩 설정
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "내 채팅"
         view.backgroundColor = .bgColor
         setupView()
-        bindData()
     }
 
     override func setupView() {
         view.addSubview(collectionView)
+    }
+
+    override func setupLayout() {
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }
-
-    override func setupLayout() {
-        // Additional layout setup can go here
-    }
     
-    private func bindData() {
-        // Convert the chat room data into an observable sequence
-        Observable.just(chatRooms)
+    private func bind(reactor: ChatListReactor) {
+        // 액션 - MyChatRooms 데이터 로드
+        reactor.action.onNext(.loadMyChatRooms)
+        
+        // 상태 - MyChatRooms 데이터를 collectionView에 바인딩
+        reactor.state.map { $0.myChatRooms }
             .bind(to: collectionView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListCell2.self)) { index, chatRoom, cell in
-                // Configure the cell
-                cell.chatImageView.image = chatRoom.image
+                cell.chatImageView.image = UIImage(named: "profile")
                 cell.titleLabel.text = chatRoom.title
-                cell.lastMessageLabel.text = chatRoom.lastMessage
-                cell.lastMessageLabel.textColor = .gray
-                // Set the date label, you can add it in your cell if needed
-                cell.dateLabel.text = chatRoom.date
+                cell.lastMessageLabel.text = chatRoom.explanation
+                cell.dateLabel.text = chatRoom.lastMessageTime // 메시지 시간 표시
             }
             .disposed(by: disposeBag)
     }

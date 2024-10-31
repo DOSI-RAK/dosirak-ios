@@ -49,6 +49,10 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
         buttonContainerView.addSubview(logoutButton)
         buttonContainerView.addSubview(separatorLabel)
         buttonContainerView.addSubview(withdrawButton)
+        
+        buttonContainerView.isUserInteractionEnabled = true
+        logoutButton.isUserInteractionEnabled = true
+        withdrawButton.isUserInteractionEnabled = true
 
     }
     
@@ -57,6 +61,7 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
         digitViewsStack.axis = .horizontal
         digitViewsStack.distribution = .fillEqually
         digitViewsStack.spacing = 5
+        digitViewsStack.isUserInteractionEnabled = true
         scoreContainerView.addSubview(digitViewsStack)
         
         // 각 자릿수 뷰 생성
@@ -174,7 +179,7 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
         
         editProfileButton.rx.tap
             .bind { [weak self] in
-                self?.coordinator?.moveToLoginSheet()
+                self?.coordinator?.moveToEditProfile()
             }
             .disposed(by: disposeBag)
         
@@ -187,19 +192,22 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
             .disposed(by: disposeBag)
         
         logoutButton.rx.tap
-            .bind { [weak self] in
+            .subscribe(onNext: { [weak self] in
+                
                 print("로그아웃 버튼 클릭됨")
                 self?.coordinator?.moveToLoginSheet()
                 // 로그아웃 처리 코드 추가
-            }
+            })
             .disposed(by: disposeBag)
         
         withdrawButton.rx.tap
-            .bind { [weak self] in
-                print("탈퇴하기 버튼 클릭됨")
-                self?.coordinator?.moveToLoginSheet()
-            }
-            .disposed(by: disposeBag)
+            .subscribe(onNext: { [weak self] in
+            
+            print("로그아웃 버튼 클릭됨")
+            self?.coordinator?.moveToLoginSheet()
+            // 로그아웃 처리 코드 추가
+        })
+        .disposed(by: disposeBag)
     }
     
     
@@ -240,6 +248,7 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
     
     private let scoreContainerView = UIView()
     private let digitViewsStack = UIStackView()
+    
     
     lazy var baseView: UIView = {
         let view = UIView()

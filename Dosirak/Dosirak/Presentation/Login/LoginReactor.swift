@@ -8,41 +8,55 @@
 import ReactorKit
 import RxSwift
 
-import ReactorKit
-import RxSwift
-
 class LoginReactor: Reactor {
     enum Action {
         case tapKakaoLogin
+        case tapNaverLogin
     }
-    
+
     enum Mutation {
         case setLoading(Bool)
         case setLoginSuccess(Bool)
     }
-    
+
     struct State {
         var isLoading: Bool = false
         var isLoginSuccess: Bool = false
     }
-    
-    let initialState: State = State()
-    
-    private let loginManager: LoginManager
-    
-    init(loginManager: LoginManager) {
-        self.loginManager = loginManager
+
+    let initialState = State()
+    private let useCase: LoginUseCaseType
+
+    init(useCase: LoginUseCaseType) {
+        self.useCase = useCase
     }
-    
+
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .tapKakaoLogin:
             return Observable.concat([
                 Observable.just(Mutation.setLoading(true)),
                 
-                self.loginManager.loginWithKakao()
+                useCase.loginWithKakao()
                     .flatMap { accessToken in
-                            return self.loginManager.registerUser(accessToken: accessToken, nickName: nil)
+                    
+                        self.useCase.registerUser(accessToken: accessToken, nickName: nil)
+                    }
+                    .map { success in
+                        Mutation.setLoginSuccess(success)
+                    },
+                
+                Observable.just(Mutation.setLoading(false))
+            ])
+
+        case .tapNaverLogin:
+            return Observable.concat([
+                Observable.just(Mutation.setLoading(true)),
+                
+                useCase.loginWithNaver()
+                    .flatMap { accessToken in
+                        
+                        self.useCase.registerUser(accessToken: accessToken, nickName: nil)
                     }
                     .map { success in
                         Mutation.setLoginSuccess(success)
@@ -52,7 +66,7 @@ class LoginReactor: Reactor {
             ])
         }
     }
-    
+
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         switch mutation {

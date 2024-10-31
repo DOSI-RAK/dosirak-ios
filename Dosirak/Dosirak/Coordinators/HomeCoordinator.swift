@@ -18,6 +18,50 @@ class HomeCoordinator: Coordinator {
     
     func start() {
         let homeVC = HomeViewController()
+        homeVC.coordinator = self
         nav.pushViewController(homeVC, animated: false)
+    }
+    
+    func navigateToDetail(for indexPath: IndexPath) {
+        print("이동")
+        let vc: UIViewController
+        switch indexPath.section {
+        case 0:
+            vc = UIViewController()
+            vc.title = "Section 0 Controller" // title 설정
+        case 1:
+            if indexPath.row == 0 {
+                vc = UIViewController()
+                vc.title = "Green Club Controller" // title 설정
+            } else {
+                guard let reactor = DIContainer.shared.resolve(ChatListReactor.self) else {
+                    fatalError()
+                }
+                vc = ChatListViewController(reactor: reactor)
+                vc.hidesBottomBarWhenPushed = true
+            }
+        case 2:
+            vc = {
+                let viewController: UIViewController
+                switch indexPath.row {
+                case 0:
+                    viewController = UIViewController()
+                    viewController.title = "Green Elite Controller" // title 설정
+                case 1:
+                    viewController = UIViewController()
+                    viewController.title = "Green Heros Controller" // title 설정
+                default:
+                    viewController = UIViewController()
+                    viewController.title = "Green Auth Controller" // title 설정
+                }
+                return viewController
+            }()
+        default:
+            return
+        }
+        
+        print("VC Title: \(vc.title ?? "No Title")") // title이 설정되었는지 확인
+        
+        nav.pushViewController(vc, animated: true)
     }
 }

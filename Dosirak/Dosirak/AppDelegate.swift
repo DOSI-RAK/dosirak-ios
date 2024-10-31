@@ -41,6 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         instance?.appName = "DosiRak"  // 애플리케이션 이름
         return true
     }
+      
+      func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        NaverThirdPartyLoginConnection.getSharedInstance()?.application(app, open: url, options: options)
+        return true
+      }
 
     // MARK: UISceneSession Lifecycle
 

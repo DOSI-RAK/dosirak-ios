@@ -17,14 +17,20 @@ class LoginViewController: BaseViewController {
     
     var reactor: LoginReactor?
     
+    
+    
     init(reactor: LoginReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
+        bind(reactor: reactor)
     }
     
-    required init?(coder: NSCoder) {
+    @MainActor required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,44 +74,25 @@ class LoginViewController: BaseViewController {
     }
     
     func bind(reactor: LoginReactor) {
-        // 버튼 클릭 액션을 Reactor로 전달
 
-        kakaoLoginButton.rx.tap
-            .map { LoginReactor.Action.tapKakaoLogin }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
-
-        
-
-        // 로딩 상태 처리
-        reactor.state.map { $0.isLoading }
-            .distinctUntilChanged()
-            .subscribe(onNext: { isLoading in
-                if isLoading {
-                    // 로딩 인디케이터 보여주기
-                    print("Loading...")
-                } else {
-                    // 로딩 인디케이터 숨기기
-                    print("Loading completed.")
-                }
-            })
-            .disposed(by: disposeBag)
-
-        // 로그인 성공 여부에 따라 처리
-        reactor.state.map { $0.isLoginSuccess }
-            .distinctUntilChanged()
-            .subscribe(onNext: { isLoginSuccess in
-                if isLoginSuccess {
-                    print("Login Successful")
-                    // 로그인 성공 후 처리 (예: 화면 전환)
-                    self.navigateToHome()
-                } else {
-                    // 로그인 실패 시 처리 (예: 에러 메시지)
-                    self.showErrorMessage()
-                }
-            })
-            .disposed(by: disposeBag)
-    }
+            kakaoLoginButton.rx.tap
+                .map { LoginReactor.Action.tapKakaoLogin }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+            
+            naverLoginButton.rx.tap
+                .map { LoginReactor.Action.tapNaverLogin }
+                .bind(to: reactor.action)
+                .disposed(by: disposeBag)
+            
+            
+            reactor.state.map { $0.isLoginSuccess }
+                .subscribe(onNext: { isSuccess in
+                    let homeVC = HomeCoordinator()
+                    homeVC.start()
+                })
+                .disposed(by: disposeBag)
+        }
 
     // MARK: UI
     let logoImageView: UIImageView = {
