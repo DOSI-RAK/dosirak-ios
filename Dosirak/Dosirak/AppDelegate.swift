@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
        
         //MARK: KAKAO
-        RxKakaoSDK.initSDK(appKey: AppConfig.appkey!)
+        RxKakaoSDK.initSDK(appKey: "fb3bfc059c4b0f551403b2fdc9b7307b")
         
         //MARK:Naver
         let instance = NaverThirdPartyLoginConnection.getSharedInstance()

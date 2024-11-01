@@ -35,34 +35,40 @@ class LoginReactor: Reactor {
         switch action {
         case .tapKakaoLogin:
             return Observable.concat([
-                Observable.just(Mutation.setLoading(true)),
+                Observable.just(Mutation.setLoading(true))
+                    .do(onNext: { _ in print("Kakao login started") }),
                 
                 useCase.loginWithKakao()
+                    .do(onNext: { accessToken in print("Received Kakao access token: \(accessToken)") })
                     .flatMap { accessToken in
-                    
                         self.useCase.registerUser(accessToken: accessToken, nickName: nil)
                     }
                     .map { success in
-                        Mutation.setLoginSuccess(success)
+                        print("Kakao login success:", success)
+                        return Mutation.setLoginSuccess(success)
                     },
                 
                 Observable.just(Mutation.setLoading(false))
+                    .do(onNext: { _ in print("Kakao login finished") })
             ])
 
         case .tapNaverLogin:
             return Observable.concat([
-                Observable.just(Mutation.setLoading(true)),
+                Observable.just(Mutation.setLoading(true))
+                    .do(onNext: { _ in print("Naver login started") }),
                 
                 useCase.loginWithNaver()
+                    .do(onNext: { accessToken in print("Received Naver access token: \(accessToken)") })
                     .flatMap { accessToken in
-                        
                         self.useCase.registerUser(accessToken: accessToken, nickName: nil)
                     }
                     .map { success in
-                        Mutation.setLoginSuccess(success)
+                        print("Naver login success:", success)
+                        return Mutation.setLoginSuccess(success)
                     },
                 
                 Observable.just(Mutation.setLoading(false))
+                    .do(onNext: { _ in print("Naver login finished") })
             ])
         }
     }

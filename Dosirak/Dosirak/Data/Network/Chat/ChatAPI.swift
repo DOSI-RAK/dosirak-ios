@@ -47,9 +47,10 @@ extension ChatAPI: TargetType {
     
     var task: Task {
         switch self {
-        case .fetchMyLocationChatRoom, .fetchMyChatRoomList, .fetchMyChatRoomSummary, .fetchChatRoomInfo, .deleteChatRoom:
+        case .fetchMyChatRoomList, .fetchMyChatRoomSummary, .fetchChatRoomInfo, .deleteChatRoom:
             return .requestPlain
-            
+        case .fetchMyLocationChatRoom:
+            return .requestPlain
         }
     }
     

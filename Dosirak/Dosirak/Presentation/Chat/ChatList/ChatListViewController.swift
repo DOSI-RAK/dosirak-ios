@@ -127,16 +127,20 @@ class ChatListViewController: BaseViewController {
                 print("Fetched Summary:", summary) // 데이터가 바인딩되는지 확인
             })
             .bind(to: collectionView.rx.items(cellIdentifier: "cell", cellType: MyChatCell.self)) { index, chatRoomSummary, cell in
-                // 여기서 cell에 chatRoomSummary의 일부 데이터를 표시하여 데이터가 바인딩되었는지 확인
-                cell.titleLabel.text = chatRoomSummary.lastMessage // 예시
-                cell.backgroundColor = .mainColor
+                if let messageText = chatRoomSummary.lastMessage {
+                    cell.titleLabel.text = messageText
+                } else {
+                    cell.titleLabel.text  = "Hello"
+                }
+                cell.imageView.image = UIImage(named: "profilemini02")
+                
             }
             .disposed(by: disposeBag)
         
         // nearby 데이터를 chatRoomListView에 바인딩
         reactor.state.map { $0.nearbyChatRooms }
             .bind(to: chatRoomListView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListTableViewCell.self)) { index, chatRoom, cell in
-                cell.chatImageView.image = UIImage(named: "profile")
+                cell.chatImageView.image = UIImage(named: "profilemini02")
                 cell.titleLabel.text = chatRoom.title
                 cell.lastMessageLabel.text = chatRoom.explanation
             }
@@ -145,6 +149,7 @@ class ChatListViewController: BaseViewController {
         // 나머지 바인딩 설정
         headerView.viewAllButton.rx.tap
             .subscribe(onNext: { [weak self] in
+                guard let reactor = DIContainer.shared.resolve(ChatListReactor.self) else { fatalError() }
                 let myChatListVC = MyChatListViewController(reactor: reactor)
                 myChatListVC.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(myChatListVC, animated: true)
@@ -222,7 +227,7 @@ class ChatListViewController: BaseViewController {
     }()
     private let myLocationLabel: UILabel = {
         let label = UILabel()
-        label.text = "동작구 상도동"
+        label.text = "강남구 압구정동"
         label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
     }()

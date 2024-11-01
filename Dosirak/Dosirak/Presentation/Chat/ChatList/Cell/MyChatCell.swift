@@ -13,7 +13,6 @@ class MyChatCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 25 // 둥근 모서리 적용
-        imageView.image = UIImage(named: "profilemini02")
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -28,8 +27,8 @@ class MyChatCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        addSubview(imageView)
-        addSubview(titleLabel)
+        contentView.addSubview(imageView)
+        contentView.addSubview(titleLabel)
 
         imageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()

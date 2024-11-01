@@ -9,20 +9,19 @@ import Foundation
 
 struct MyChatRoomSummaryResponse: Decodable {
     let status: String
-    let message: String
     let data: [ChatRoomSummary]
-    let exception: String?
-    
 }
 struct ChatRoomResponse: Decodable {
     let status: String
     let message: String
     let data: [ChatRoom]
-    //let exception: String?
 }
 
-
-
+struct MyChatRoomListResponse: Decodable {
+    let status: String
+    let message: String
+    let data: [MyChatRoom]
+}
 
 // 채팅방 목록에 사용되는 채팅방 정보 기본 구조체
 struct ChatRoom: Decodable {
@@ -44,7 +43,7 @@ struct MyChatRoom: Decodable {
 struct ChatRoomSummary: Decodable {
     let id: Int
     let image: String
-    let lastMessage: String
+    let lastMessage: String?
 }
 
 // 상세한 채팅방 정보 구조체

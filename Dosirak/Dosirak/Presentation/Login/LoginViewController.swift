@@ -14,31 +14,27 @@ import RxCocoa
 class LoginViewController: BaseViewController {
 
     private let disposeBag = DisposeBag()
-    
+    private let appCoordinator: AppCoordinator
     var reactor: LoginReactor?
     
     
     
-    init(reactor: LoginReactor) {
-        super.init(nibName: nil, bundle: nil)
-        self.reactor = reactor
-        bind(reactor: reactor)
-    }
+    init(reactor: LoginReactor, appCoordinator: AppCoordinator) {
+            self.reactor = reactor
+            self.appCoordinator = appCoordinator
+            super.init(nibName: nil, bundle: nil)
+            bind(reactor: reactor)
+        }
+        
     
     @MainActor required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Home"
-        setupView() // UI 설정
-        setupLayout() // 레이아웃 설정
-        bind(reactor: reactor!) // Rx 바인딩
     }
     
     override func setupView() {
@@ -73,26 +69,26 @@ class LoginViewController: BaseViewController {
         }
     }
     
-    func bind(reactor: LoginReactor) {
-
-            kakaoLoginButton.rx.tap
-                .map { LoginReactor.Action.tapKakaoLogin }
-                .bind(to: reactor.action)
-                .disposed(by: disposeBag)
-            
-            naverLoginButton.rx.tap
-                .map { LoginReactor.Action.tapNaverLogin }
-                .bind(to: reactor.action)
-                .disposed(by: disposeBag)
-            
-            
-            reactor.state.map { $0.isLoginSuccess }
-                .subscribe(onNext: { isSuccess in
-                    let homeVC = HomeCoordinator()
-                    homeVC.start()
-                })
-                .disposed(by: disposeBag)
-        }
+    
+      func bind(reactor: LoginReactor) {
+          kakaoLoginButton.rx.tap
+              .map { LoginReactor.Action.tapKakaoLogin }
+              .bind(to: reactor.action)
+              .disposed(by: disposeBag)
+          
+          naverLoginButton.rx.tap
+              .map { LoginReactor.Action.tapNaverLogin }
+              .bind(to: reactor.action)
+              .disposed(by: disposeBag)
+          
+          reactor.state.map { $0.isLoginSuccess }
+              .filter { $0 }
+              .take(1)
+              .subscribe(onNext: { [weak self] _ in
+                  self?.navigateToHome() // 로그인 성공 시 navigateToHome 호출
+              })
+              .disposed(by: disposeBag)
+      }
 
     // MARK: UI
     let logoImageView: UIImageView = {
@@ -147,9 +143,9 @@ class LoginViewController: BaseViewController {
     
     // 네비게이션 처리
     private func navigateToHome() {
-        // 홈 화면으로의 전환 로직 구현
-        print("Navigating to home screen...")
-    }
+           print("Navigating to home screen...")
+           appCoordinator.moveHome(window: UIApplication.shared.windows.first!)
+       }
 
     // 에러 메시지 보여주기
     private func showErrorMessage() {

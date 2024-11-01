@@ -55,11 +55,9 @@ class MyChatListViewController: BaseViewController {
     
     private func bind(reactor: ChatListReactor) {
         reactor.action.onNext(.loadMyChatRooms)
-        
-        
         reactor.state.map { $0.myChatRooms }
             .bind(to: collectionView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListCell2.self)) { index, chatRoom, cell in
-                print(chatRoom)
+                print("==============>\(chatRoom)")
                 cell.chatImageView.image = UIImage(named: "profile")
                 cell.titleLabel.text = chatRoom.title
                 cell.lastMessageLabel.text = chatRoom.explanation
