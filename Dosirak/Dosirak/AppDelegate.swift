@@ -21,9 +21,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
        
         //MARK: KAKAO
-        RxKakaoSDK.initSDK(appKey: "fb3bfc059c4b0f551403b2fdc9b7307b")
+        RxKakaoSDK.initSDK(appKey: AppConfig.appkey!)
         
         //MARK:Naver
         let instance = NaverThirdPartyLoginConnection.getSharedInstance()
@@ -33,11 +34,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         instance?.isInAppOauthEnable = true
         // 인증 화면을 iPhone의 세로 모드에서만 활성화(true)
         instance?.setOnlyPortraitSupportInIphone(true)
-        
         // 로그인 설정
         instance?.serviceUrlScheme = "com.gpu.dosirak" // 콜백을 받을 URL Scheme
-        instance?.consumerKey = "zctueunx2dcMUO390pc5"  // 애플리케이션에서 사용하는 클라이언트 아이디
-        instance?.consumerSecret = "totwdK2fm1"  // 애플리케이션에서 사용하는 클라이언트 시크릿
+        instance?.consumerKey = AppConfig.naverClientId!  // 애플리케이션에서 사용하는 클라이언트 아이디
+        instance?.consumerSecret = AppConfig.naverClientSecret!  // 애플리케이션에서 사용하는 클라이언트 시크릿
         instance?.appName = "DosiRak"  // 애플리케이션 이름
         return true
     }

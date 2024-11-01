@@ -58,7 +58,6 @@ extension ChatAPI: TargetType {
         case .fetchMyLocationChatRoom(let accessToken, _),
              .fetchMyChatRoomSummary(let accessToken),
              .fetchChatRoomInfo(let accessToken, _),
-             //.createChatRoom(let accessToken, _, _),
              .fetchMyChatRoomList(let accessToken),
              .deleteChatRoom(let accessToken, _):
             return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]

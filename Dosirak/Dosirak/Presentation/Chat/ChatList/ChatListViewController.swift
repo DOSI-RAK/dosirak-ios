@@ -50,8 +50,6 @@ class ChatListViewController: BaseViewController {
         view.addSubview(floatingButton)
         
         
-        collectionView.register(MyChatHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "header")
-        collectionView.register(MyChatCell.self, forCellWithReuseIdentifier: "cell")
         
     }
     
@@ -126,18 +124,17 @@ class ChatListViewController: BaseViewController {
         // summary 데이터를 collectionView에 바인딩
         reactor.state.map { $0.chatRoomSummary }
             .do(onNext: { summary in
-                print("Fetched Summary:", summary)
+                print("Fetched Summary:", summary) // 데이터가 바인딩되는지 확인
             })
             .bind(to: collectionView.rx.items(cellIdentifier: "cell", cellType: MyChatCell.self)) { index, chatRoomSummary, cell in
-                cell.configure(with: chatRoomSummary)
+                // 여기서 cell에 chatRoomSummary의 일부 데이터를 표시하여 데이터가 바인딩되었는지 확인
+                cell.titleLabel.text = chatRoomSummary.lastMessage // 예시
+                cell.backgroundColor = .mainColor
             }
             .disposed(by: disposeBag)
         
         // nearby 데이터를 chatRoomListView에 바인딩
         reactor.state.map { $0.nearbyChatRooms }
-            .do(onNext: { nearbyRooms in
-                print("Fetched Nearby Chat Rooms:", nearbyRooms)
-            })
             .bind(to: chatRoomListView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListTableViewCell.self)) { index, chatRoom, cell in
                 cell.chatImageView.image = UIImage(named: "profile")
                 cell.titleLabel.text = chatRoom.title
@@ -204,6 +201,7 @@ class ChatListViewController: BaseViewController {
         collectionView.backgroundColor = .clear
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.register(MyChatCell.self, forCellWithReuseIdentifier: "cell")
         return collectionView
     }()
     

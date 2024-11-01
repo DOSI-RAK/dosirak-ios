@@ -9,7 +9,7 @@ import SnapKit
 
 class MyChatCell: UICollectionViewCell {
 
-    private let imageView: UIImageView = {
+    let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 25 // 둥근 모서리 적용
@@ -18,7 +18,7 @@ class MyChatCell: UICollectionViewCell {
         return imageView
     }()
 
-    private let titleLabel: UILabel = {
+    let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
@@ -28,8 +28,8 @@ class MyChatCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.addSubview(imageView)
-        contentView.addSubview(titleLabel)
+        addSubview(imageView)
+        addSubview(titleLabel)
 
         imageView.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
@@ -50,10 +50,5 @@ class MyChatCell: UICollectionViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    func configure(with chatRoom: ChatRoomSummary) {
-        imageView.image = UIImage(named: "profile")
-        titleLabel.text = chatRoom.lastMessage
     }
 }

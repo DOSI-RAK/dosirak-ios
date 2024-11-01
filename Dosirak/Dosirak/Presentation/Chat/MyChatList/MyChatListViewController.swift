@@ -29,7 +29,7 @@ class MyChatListViewController: BaseViewController {
     init(reactor: ChatListReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
-        bind(reactor: reactor) // 액션 및 바인딩 설정
+        bind(reactor: reactor)
     }
     
     required init?(coder: NSCoder) {
@@ -54,16 +54,16 @@ class MyChatListViewController: BaseViewController {
     }
     
     private func bind(reactor: ChatListReactor) {
-        // 액션 - MyChatRooms 데이터 로드
         reactor.action.onNext(.loadMyChatRooms)
         
-        // 상태 - MyChatRooms 데이터를 collectionView에 바인딩
+        
         reactor.state.map { $0.myChatRooms }
             .bind(to: collectionView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListCell2.self)) { index, chatRoom, cell in
+                print(chatRoom)
                 cell.chatImageView.image = UIImage(named: "profile")
                 cell.titleLabel.text = chatRoom.title
                 cell.lastMessageLabel.text = chatRoom.explanation
-                cell.dateLabel.text = chatRoom.lastMessageTime // 메시지 시간 표시
+                cell.dateLabel.text = chatRoom.lastMessageTime
             }
             .disposed(by: disposeBag)
     }

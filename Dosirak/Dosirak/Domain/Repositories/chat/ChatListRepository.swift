@@ -27,29 +27,35 @@ class ChatListRepository: ChatListRepositoryType {
     }
     
     func fetchMyLocationChatRoom(zone: String) -> Single<[ChatRoom]> {
+        print("Calling fetchMyLocationChatRoom")
         return provider.rx.request(.fetchMyLocationChatRoom(accessToken: accessToken, zone: zone))
             .filterSuccessfulStatusCodes()
-            .map { response -> [ChatRoom] in
-                let json = try response.mapJSON() as? [String: Any]
-                guard let data = json?["data"] as? [[String: Any]] else {
-                    throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Data not found"])
+            .map(ChatRoomResponse.self)
+            .flatMap { response in
+                if response.status == "SUCCESS" {
+                    return Single.just(response.data)
+                } else {
+                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"]))
                 }
-                let chatRoomsData = try JSONSerialization.data(withJSONObject: data)
-                return try JSONDecoder().decode([ChatRoom].self, from: chatRoomsData)
             }
     }
     
     func fetchMyChatRoomSummary() -> Single<[ChatRoomSummary]> {
+        print("Calling fetchMyChatRoomSummary ")
         return provider.rx.request(.fetchMyChatRoomSummary(accessToken: accessToken))
             .filterSuccessfulStatusCodes()
-            .map { response -> [ChatRoomSummary] in
-                let json = try response.mapJSON() as? [String: Any]
-                guard let data = json?["data"] as? [[String: Any]] else {
-                    throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Data not found"])
+            .map(MyChatRoomSummaryResponse.self)
+            .flatMap { response in
+                if response.status == "SUCCESS" {
+                    print("Fetched ChatRoomSummary Response:", response.data) // 디버그용 출력
+                    return Single.just(response.data)
+                } else {
+                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"]))
                 }
-                let chatRoomSummariesData = try JSONSerialization.data(withJSONObject: data)
-                return try JSONDecoder().decode([ChatRoomSummary].self, from: chatRoomSummariesData)
             }
+            .do(onSuccess: { summaries in
+                print("Decoded My Chat Room Summary:", summaries) // 디코딩 확인용
+            })
     }
     
     func fetchChatRoomInfo(chatRoomId: Double) -> Single<ChatRoomInfo> {
@@ -63,6 +69,9 @@ class ChatListRepository: ChatListRepositoryType {
                 let chatRoomInfoData = try JSONSerialization.data(withJSONObject: data)
                 return try JSONDecoder().decode(ChatRoomInfo.self, from: chatRoomInfoData)
             }
+            .do(onSuccess: { chatRoomInfo in
+                print("Fetched Chat Room Info:", chatRoomInfo)
+            })
     }
     
     func fetchMyChatRoomList() -> Single<[MyChatRoom]> {
@@ -76,14 +85,17 @@ class ChatListRepository: ChatListRepositoryType {
                 let chatRoomsData = try JSONSerialization.data(withJSONObject: data)
                 return try JSONDecoder().decode([MyChatRoom].self, from: chatRoomsData)
             }
+            .do(onSuccess: { myChatRooms in
+                print("Fetched My Chat Room List:", myChatRooms)
+            })
     }
     
     func deleteChatRoom(chatRoomId: Double) -> Single<Void> {
         return provider.rx.request(.deleteChatRoom(accessToken: accessToken, chatRoomId: chatRoomId))
             .filterSuccessfulStatusCodes()
-            .map { response in
-                print("Delete response:", response)
-                return ()
-            }
+            .do(onSuccess: { response in
+                print("Delete Chat Room Response:", response)
+            })
+            .map { _ in () }
     }
 }
