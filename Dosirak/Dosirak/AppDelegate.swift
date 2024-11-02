@@ -9,6 +9,8 @@ import UIKit
 import CoreData
 import RxKakaoSDKCommon
 import NaverThirdPartyLogin
+import NMapsMap
+
 
 
 
@@ -24,7 +26,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
        
         //MARK: KAKAO
-        RxKakaoSDK.initSDK(appKey: "fb3bfc059c4b0f551403b2fdc9b7307b")
+        RxKakaoSDK.initSDK(appKey: AppConfig.appkey!)
+        
         
         //MARK:Naver
         let instance = NaverThirdPartyLoginConnection.getSharedInstance()
@@ -39,6 +42,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         instance?.consumerKey = AppConfig.naverClientId!  // 애플리케이션에서 사용하는 클라이언트 아이디
         instance?.consumerSecret = AppConfig.naverClientSecret!  // 애플리케이션에서 사용하는 클라이언트 시크릿
         instance?.appName = "DosiRak"  // 애플리케이션 이름
+        
+        NMFAuthManager.shared().clientId = "kq6strtnog"
         return true
     }
       

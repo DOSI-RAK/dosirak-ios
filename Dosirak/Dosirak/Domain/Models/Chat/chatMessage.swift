@@ -7,18 +7,40 @@
 
 import Foundation
 
-//struct ChatMessage: Codable {
-//    let id: Int
-//    let content: String
-//    let messageType: String
-//    let createdAt: String
-//    let userId: Int
-//    let chatRoomId: Int
-//}
-struct ChatMessage: Codable {
-    let text: String
-    let isSentByCurrentUser: Bool
-    let nickname: String
-    let profileImageName: String
-    let time: String
+// 최상위 응답 구조체
+struct ChatRoomInfoResponse: Decodable {
+    let status: String
+    let message: String
+    let data: ChatRoomInfo?
+    let exception: String? // 'exception' 필드는 Optional
+}
+
+// 메시지 타입 열거형
+enum MessageType: String, Codable {
+    case chat = "CHAT"
+    case join = "JOIN"
+}
+
+// 메시지 구조체
+struct Message: Decodable {
+    let id: Int
+    let content: String
+    let messageType: MessageType
+    let createdAt: String
+    let userChatRoomResponse: UserChatRoomResponse
+    let chatRoomId: Int
+}
+
+// 메시지 내 사용자 정보 (userChatRoomResponse 필드용)
+struct UserChatRoomResponse: Decodable {
+    let userId: Int
+    let nickName: String?
+    let profileImg: String
+}
+
+// 사용자 정보 구조체 (userList 필드용)
+struct User: Decodable {
+    let userId: Int
+    let nickName: String? // 닉네임이 null일 수 있으므로 Optional로 설정
+    let profileImg: String
 }

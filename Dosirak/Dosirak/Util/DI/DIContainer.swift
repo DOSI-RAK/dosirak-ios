@@ -44,6 +44,8 @@ final class DIContainer {
             )
         }
         
+    
+        
         // UseCase 등록
         container.register(LoginUseCaseType.self) { resolver in
             LoginUseCase(userRepository: resolver.resolve(UserRepositoryType.self)!)
@@ -52,6 +54,9 @@ final class DIContainer {
         container.register(ChatListUseCaseType.self) { resolver in
             ChatListUseCase(chatListRepository: resolver.resolve(ChatListRepositoryType.self)!)
         }
+        
+       
+                
         
         // Reactor 등록
         container.register(LoginReactor.self) { resolver in
@@ -65,9 +70,37 @@ final class DIContainer {
         container.register(ChatListReactor.self) { resolver in
             ChatListReactor(chatListUseCase: resolver.resolve(ChatListUseCaseType.self)!)
         }
+        
+        
+        
+        //MARK: CHAT
+        container.register(ChatRepositoryType.self) { (resolver, chatRoomId: Int) in
+            let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+            return ChatRepository(accessToken: accessToken, chatRoomId: chatRoomId)
+        }
+        
+        // Chat UseCase 등록 (chatRoomId를 받아 ChatRepository 초기화)
+        container.register(ChatUseCaseType.self) { (resolver, chatRoomId: Int) in
+            let repository = resolver.resolve(ChatRepositoryType.self, argument: chatRoomId)!
+            return ChatUseCase(repository: repository, chatRoomId: chatRoomId)
+        }
+        
+        // Chat Reactor 등록 (chatRoomId를 받아 ChatUseCase 초기화)
+        container.register(ChatReactor.self) { (resolver, chatRoomId: Int) in
+            let useCase = resolver.resolve(ChatUseCaseType.self, argument: chatRoomId)!
+            return ChatReactor(chatUseCase: useCase)
+        }
+        
+        
+        
+        
     }
     
     func resolve<T>(_ type: T.Type) -> T? {
         return container.resolve(type)
+    }
+    
+    func resolve<T, Arg>(_ type: T.Type, argument: Arg) -> T? {
+        return container.resolve(type, argument: argument)
     }
 }

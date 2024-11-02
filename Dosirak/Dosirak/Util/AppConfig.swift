@@ -14,4 +14,10 @@ struct AppConfig {
     
     @InfoPlist("NAVER_CLIENT_SECRET")
     static var naverClientSecret: String?
+    
+    @InfoPlist("NAVER_MAP_CLIENTID")
+    static var naverMapClientId: String?
+    
+    @InfoPlist("NAVER_MAP_SECRET")
+    static var naverMapSecret: String?
 }

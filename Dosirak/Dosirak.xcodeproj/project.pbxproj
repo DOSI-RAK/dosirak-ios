@@ -33,6 +33,8 @@
 		B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF052CC51A2700271910 /* ReactiveMoya */; };
 		B541AF082CC51A2700271910 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF072CC51A2700271910 /* RxMoya */; };
 		B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF0A2CC53C7800271910 /* NaverThirdPartyLogin */; };
+		B5B9B4002CD52DB10081A0DA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B5B9B3FF2CD52DB10081A0DA /* Kingfisher */; };
+		B5FF13C22CD4BBC7008A48DB /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B5FF13C12CD4BBC7008A48DB /* NMapsMap */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +45,7 @@
 		B515F5262CC0FA4300AC64E9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Dosirak.xcdatamodeld,
 				Info.plist,
 			);
 			target = B515F4FA2CC0FA4200AC64E9 /* Dosirak */;
@@ -71,8 +74,10 @@
 				B5212EAE2CCA5A04004A8EA2 /* RxKakaoSDKUser in Frameworks */,
 				B541AE152CC12B6200271910 /* FSCalendar in Frameworks */,
 				B5212EA22CCA5A04004A8EA2 /* RxKakaoSDK in Frameworks */,
+				B5FF13C22CD4BBC7008A48DB /* NMapsMap in Frameworks */,
 				B5212EA82CCA5A04004A8EA2 /* RxKakaoSDKCommon in Frameworks */,
 				B52F78DA2CD3A3AD008FBC91 /* RxGesture in Frameworks */,
+				B5B9B4002CD52DB10081A0DA /* Kingfisher in Frameworks */,
 				B5212EAC2CCA5A04004A8EA2 /* RxKakaoSDKTalk in Frameworks */,
 				B541AF082CC51A2700271910 /* RxMoya in Frameworks */,
 				B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */,
@@ -152,6 +157,8 @@
 				B52F78932CD0AED5008FBC91 /* Swinject */,
 				B52F789C2CD0F11D008FBC91 /* KeychainAccess */,
 				B52F78D92CD3A3AD008FBC91 /* RxGesture */,
+				B5FF13C12CD4BBC7008A48DB /* NMapsMap */,
+				B5B9B3FF2CD52DB10081A0DA /* Kingfisher */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -197,6 +204,8 @@
 				B52F78922CD0AED5008FBC91 /* XCRemoteSwiftPackageReference "Swinject" */,
 				B52F789B2CD0F11D008FBC91 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				B52F78D82CD3A3AD008FBC91 /* XCRemoteSwiftPackageReference "RxGesture" */,
+				B5FF13C02CD4BBC7008A48DB /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
+				B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -543,6 +552,22 @@
 				kind = branch;
 			};
 		};
+		B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.1.0;
+			};
+		};
+		B5FF13C02CD4BBC7008A48DB /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/navermaps/SPM-NMapsMap";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.19.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -675,6 +700,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */;
 			productName = NaverThirdPartyLogin;
+		};
+		B5B9B3FF2CD52DB10081A0DA /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		B5FF13C12CD4BBC7008A48DB /* NMapsMap */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B5FF13C02CD4BBC7008A48DB /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */;
+			productName = NMapsMap;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -27,8 +27,8 @@ class HomeCoordinator: Coordinator {
         let vc: UIViewController
         switch indexPath.section {
         case 0:
-            vc = UIViewController()
-            vc.title = "Section 0 Controller" // title 설정
+            vc = GreenGuideViewController()
+        
         case 1:
             if indexPath.row == 0 {
                 vc = UIViewController()
@@ -61,7 +61,7 @@ class HomeCoordinator: Coordinator {
         }
         
         print("VC Title: \(vc.title ?? "No Title")") // title이 설정되었는지 확인
-        
+        vc.hidesBottomBarWhenPushed = true
         nav.pushViewController(vc, animated: true)
     }
 }

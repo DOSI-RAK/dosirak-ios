@@ -1,5 +1,5 @@
 {
-  "originHash" : "70fc37158c48d5e41fe6f5712fc72733ef470da2bd5d0960a505667af9d29886",
+  "originHash" : "a1c884408d4926a0b9a385a1042ac812a2a5f3dfd21e0fd3aa6d4ed988c5fbdd",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -62,6 +62,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "e0c7eebc5a4465a3c4680764f26b7a61f567cdaf"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher",
+      "state" : {
+        "revision" : "c0940e241945e6378c01fbd45fd3815579d47ef5",
+        "version" : "8.1.0"
       }
     },
     {
@@ -161,6 +170,24 @@
       "state" : {
         "branch" : "master",
         "revision" : "42da871d9369f290d6ec4930636c40672143905b"
+      }
+    },
+    {
+      "identity" : "spm-nmapsgeometry",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/navermaps/SPM-NMapsGeometry.git",
+      "state" : {
+        "revision" : "436d5e2e684f557faf5ef5862fd6633a42d7af11",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "spm-nmapsmap",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/navermaps/SPM-NMapsMap",
+      "state" : {
+        "revision" : "5de1d3a201ab8f8893d99e225abdc4af1b239bd9",
+        "version" : "3.19.0"
       }
     },
     {

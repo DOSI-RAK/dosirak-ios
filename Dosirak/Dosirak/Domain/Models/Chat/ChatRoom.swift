@@ -9,6 +9,7 @@ import Foundation
 
 struct MyChatRoomSummaryResponse: Decodable {
     let status: String
+    let message: String
     let data: [ChatRoomSummary]
 }
 struct ChatRoomResponse: Decodable {
@@ -36,7 +37,7 @@ struct MyChatRoom: Decodable {
     let title: String
     let image: String
     let explanation: String
-    let lastMessageTime: String
+    let lastMessageTime: String?
 }
 
 // 요약된 채팅방 정보 구조체
@@ -46,27 +47,9 @@ struct ChatRoomSummary: Decodable {
     let lastMessage: String?
 }
 
-// 상세한 채팅방 정보 구조체
 struct ChatRoomInfo: Decodable {
     let personCount: Int
     let explanation: String
     let messageList: [Message]
     let userList: [User]
-}
-
-// 메시지 정보 구조체
-struct Message: Decodable {
-    let id: Int
-    let content: String
-    let messageType: String
-    let createdAt: String
-    let userId: Int
-    let chatRoomId: Int
-}
-
-// 사용자 정보 구조체
-struct User: Decodable {
-    let userId: Int
-    let nickName: String
-    let profileImg: String
 }

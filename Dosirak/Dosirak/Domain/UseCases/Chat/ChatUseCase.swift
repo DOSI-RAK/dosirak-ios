@@ -8,22 +8,30 @@ import Foundation
 import RxSwift
 
 protocol ChatUseCaseType {
-    func sendMessage(_ message: String, to chatRoomId: Int) -> Observable<Void>
-    func observeMessages() -> Observable<ChatMessage>
+    var chatRoomId: Int { get }
+    func sendMessage(_ message: String) -> Observable<Void>
+    func observeMessages() -> Observable<Message>
+    func fetchChatRoomInfo() -> Single<ChatRoomInfo>
 }
 
 final class ChatUseCase: ChatUseCaseType {
     private let repository: ChatRepositoryType
+    let chatRoomId: Int
     
-    init(repository: ChatRepositoryType) {
+    init(repository: ChatRepositoryType, chatRoomId: Int) {
         self.repository = repository
+        self.chatRoomId = chatRoomId
     }
     
-    func sendMessage(_ message: String, to chatRoomId: Int) -> Observable<Void> {
-        return repository.sendMessage(message, to: chatRoomId)
+    func sendMessage(_ message: String) -> Observable<Void> {
+        return repository.sendMessage(message)
     }
     
-    func observeMessages() -> Observable<ChatMessage> {
+    func observeMessages() -> Observable<Message> {
         return repository.observeMessages()
+    }
+    
+    func fetchChatRoomInfo() -> Single<ChatRoomInfo> {
+        return repository.fetchChatRoomInfo()
     }
 }
