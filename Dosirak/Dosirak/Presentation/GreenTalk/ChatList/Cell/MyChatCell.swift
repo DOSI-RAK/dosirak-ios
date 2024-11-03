@@ -40,8 +40,9 @@ class MyChatCell: UICollectionViewCell {
         }
 
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(imageView.snp.trailing).offset(10)
+            make.leading.equalTo(imageView.snp.trailing).offset(5)
             make.centerY.equalToSuperview()
+            make.trailing.equalTo(self).inset(5)
         }
 
         // 배경 및 스타일 설정

@@ -114,9 +114,9 @@ class UserProfileViewController: BaseViewController {
         }
         
         profileView.snp.makeConstraints {
-            $0.top.equalTo(baseView.snp.top)
+            $0.top.equalTo(baseView.snp.top).inset(20)
             $0.leading.trailing.equalTo(baseView).inset(20)
-            $0.height.equalTo(417)
+            $0.height.equalTo(400)
         }
         
         earthImageview.snp.makeConstraints {
@@ -148,8 +148,8 @@ class UserProfileViewController: BaseViewController {
         
         infoView.snp.makeConstraints {
             $0.leading.trailing.equalTo(profileView)
-            $0.top.equalTo(profileView.snp.bottom).offset(5)
-            $0.height.equalTo(190)
+            $0.top.equalTo(profileView.snp.bottom).offset(20)
+            $0.height.equalTo(160)
         }
         
         tableView.snp.makeConstraints {

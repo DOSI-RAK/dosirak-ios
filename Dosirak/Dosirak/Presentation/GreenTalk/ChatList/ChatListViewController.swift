@@ -119,14 +119,14 @@ class ChatListViewController: BaseViewController {
     
     
     func bind(reactor: ChatListReactor) {
-        // 액션 - summary와 nearby 데이터 로드
+       
         reactor.action.onNext(.loadChatRoomSummary)
         reactor.action.onNext(.loadNearbyChatRooms("청담동"))
         
-        // summary 데이터를 collectionView에 바인딩
+
         reactor.state.map { $0.chatRoomSummary }
             .do(onNext: { summary in
-                print("Fetched Summary:", summary) // 데이터가 바인딩되는지 확인
+                print("Fetched Summary:", summary)
             })
             .bind(to: collectionView.rx.items(cellIdentifier: "cell", cellType: MyChatCell.self)) { index, chatRoomSummary, cell in
                 if let messageText = chatRoomSummary.lastMessage {
@@ -135,7 +135,9 @@ class ChatListViewController: BaseViewController {
                     cell.titleLabel.text  = "채팅이 없습니다."
                     cell.chatRoomId = chatRoomSummary.id
                 }
-                cell.imageView.image = UIImage(named: "profilemini02")
+                
+                let url = URL(string: chatRoomSummary.image)
+                cell.imageView.kf.setImage(with: url)
                 
             }
             .disposed(by: disposeBag)
@@ -156,7 +158,8 @@ class ChatListViewController: BaseViewController {
         
         reactor.state.map { $0.nearbyChatRooms }
             .bind(to: chatRoomListView.rx.items(cellIdentifier: "MyChatListCell", cellType: MyChatListTableViewCell.self)) { index, chatRoom, cell in
-                cell.chatImageView.image = UIImage(named: "profilemini02")
+                let url = URL(string: chatRoom.image)
+                cell.chatImageView.kf.setImage(with: url)
                 cell.titleLabel.text = chatRoom.title
                 cell.lastMessageLabel.text = chatRoom.explanation
             }
@@ -170,6 +173,8 @@ class ChatListViewController: BaseViewController {
                 let chatVC = ChatViewController(chatRoomId: chatRoom.id)
                 chatVC.title = chatRoom.title
                 self.navigationController?.pushViewController(chatVC, animated: true)
+                
+                
             })
             .disposed(by: disposeBag)
         

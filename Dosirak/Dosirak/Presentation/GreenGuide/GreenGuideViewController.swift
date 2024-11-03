@@ -44,6 +44,7 @@ class GreenGuideViewController: UIViewController {
         view.addSubview(mapView)
         mapView.addSubview(searchTextField)
         mapView.addSubview(findRouteButtton)
+        mapView.addSubview(myLocationButton)
     }
     
     private func setupLayout() {
@@ -62,6 +63,10 @@ class GreenGuideViewController: UIViewController {
             $0.leading.equalTo(searchTextField.snp.trailing).offset(10)
             $0.width.height.equalTo(52)
             $0.top.equalTo(searchTextField)
+        }
+        myLocationButton.snp.makeConstraints {
+            $0.leading.equalTo(view).inset(20)
+            $0.width.height.equalTo(52)
         }
     }
     
@@ -132,6 +137,12 @@ class GreenGuideViewController: UIViewController {
         let button = UIButton()
         button.setImage(UIImage(named: "goto"), for: .normal)
         button.backgroundColor = .systemBlue
+        return button
+    }()
+    lazy var myLocationButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "mylocation"), for: .normal)
+        button.backgroundColor = .white
         return button
     }()
 }

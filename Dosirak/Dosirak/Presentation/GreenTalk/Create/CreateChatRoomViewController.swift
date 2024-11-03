@@ -11,12 +11,16 @@ import RxSwift
 import RxCocoa
 
 class CreateChatRoomViewController: BaseViewController {
-
+    
+    private let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "채팅방 만들기"
-
         
+        setupView()
+        setupLayout()
+        bindRX()
     }
     
     override func setupView() {
@@ -35,58 +39,48 @@ class CreateChatRoomViewController: BaseViewController {
         view.addSubview(myInfoTextView)
         
         view.addSubview(createChatRoomButton)
-        
-        
-        
     }
     
     override func setupLayout() {
-       
         baseView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(50)
             $0.centerX.equalTo(view)
             $0.width.equalTo(156)
             $0.height.equalTo(96)
         }
+        
         chatProfileImageView.snp.makeConstraints {
             $0.width.equalTo(95)
-            $0.top.equalTo(baseView)
-            $0.leading.equalTo(baseView)
-            $0.bottom.equalTo(baseView)
+            $0.top.leading.bottom.equalTo(baseView)
         }
+        
         editProfileButton.snp.makeConstraints {
-            $0.bottom.equalTo(baseView)
-            $0.trailing.equalTo(baseView)
-            $0.leading.equalTo(chatProfileImageView.snp.trailing)
+            $0.bottom.trailing.equalTo(baseView)
             $0.width.equalTo(45)
             $0.height.equalTo(30)
         }
+        
         chatNameLabel.snp.makeConstraints {
             $0.top.equalTo(baseView.snp.bottom).offset(40)
-            $0.leading.equalTo(view).inset(30)
-            $0.trailing.equalTo(view).inset(30)
+            $0.leading.trailing.equalTo(view).inset(30)
             $0.height.equalTo(18)
         }
+        
         chatNameTextField.snp.makeConstraints {
             $0.top.equalTo(chatNameLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(chatNameLabel)
-            $0.trailing.equalTo(chatNameLabel)
+            $0.leading.trailing.equalTo(chatNameLabel)
             $0.height.equalTo(52)
-            
         }
         
         locationLabel.snp.makeConstraints {
             $0.top.equalTo(chatNameTextField.snp.bottom).offset(30)
-            $0.leading.equalTo(chatNameLabel)
-            $0.trailing.equalTo(chatNameLabel)
+            $0.leading.trailing.equalTo(chatNameLabel)
             $0.height.equalTo(18)
         }
         
         myLocationLabel.snp.makeConstraints {
-            $0.leading.equalTo(locationLabel)
-            $0.trailing.equalTo(locationLabel)
             $0.top.equalTo(locationLabel.snp.bottom).offset(10)
-            
+            $0.leading.trailing.equalTo(locationLabel)
         }
         
         myInfoLabel.snp.makeConstraints {
@@ -101,21 +95,33 @@ class CreateChatRoomViewController: BaseViewController {
             $0.height.equalTo(76)
         }
         
-   
-        
         createChatRoomButton.snp.makeConstraints {
             $0.leading.trailing.equalTo(view).inset(30)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(30)
             $0.height.equalTo(52)
         }
-        
     }
     
     override func bindRX() {
-        
+        // 버튼 클릭 시 바텀 시트 표시
+        editProfileButton.rx.tap
+            .bind { [weak self] in
+                self?.showBottomSheet()
+            }
+            .disposed(by: disposeBag)
     }
     
-    //MARK: UI
+    private func showBottomSheet() {
+        let bottomSheetVC = CreateBottomViewController()
+        bottomSheetVC.modalPresentationStyle = .currentContext
+        bottomSheetVC.didSelectIcon = { [weak self] selectedImage in
+            self?.chatProfileImageView.image = selectedImage
+        }
+        
+        present(bottomSheetVC, animated: true, completion: nil)
+    }
+    
+    // MARK: UI Elements
     let baseView: UIView = {
         let view = UIView()
         view.backgroundColor = .clear
@@ -125,6 +131,7 @@ class CreateChatRoomViewController: BaseViewController {
     let chatProfileImageView: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "profilemini02")
+        view.contentMode = .scaleAspectFit
         return view
     }()
     
@@ -178,7 +185,6 @@ class CreateChatRoomViewController: BaseViewController {
         return textView
     }()
     
-    
     let createChatRoomButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .mainColor
@@ -186,13 +192,4 @@ class CreateChatRoomViewController: BaseViewController {
         button.layer.cornerRadius = 14
         return button
     }()
-    
-    
-    
-    
-    
-    
-    
-
-
 }

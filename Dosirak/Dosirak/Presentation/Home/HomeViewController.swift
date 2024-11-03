@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import RxSwift
+import CoreLocation
 
 
 struct GuideData {
@@ -16,98 +17,6 @@ struct GuideData {
     let imageName: String
 }
 
-//class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout {
-//    
-//    private let disposeBag = DisposeBag()
-//    
-//    let guideItems = Observable.just([
-//           GuideData(title: "Green Guide", subtitle: "내 주변 다회용기 포장\n가능 매장 찾기", imageName: "greenguide_bg"),
-//           GuideData(title: "Green Club", subtitle: "내 주변 마감\n세일 확인하기", imageName: "greenclub_bg"),
-//           GuideData(title: "Green Talk", subtitle: "내 주변 환경 지킴이들과\n이야기하기", imageName: "greentalk_bg"),
-//           GuideData(title: "Green Elite", subtitle: "greenelite", imageName: "greenelite"),
-//           GuideData(title: "Green Heros", subtitle: "greenheros", imageName: "greenheros"),
-//           GuideData(title: "Green Auth", subtitle: "greenauth", imageName: "greenauth")
-//       ])
-//    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        
-//        setupView()
-//        setupLayout()
-//    }
-//    
-//    override func setupView() {
-//        view.addSubview(collectionView)
-//        collectionView.backgroundColor = .bgColor
-//        collectionView.delegate = self
-//        collectionView.register(GuideCell.self, forCellWithReuseIdentifier: GuideCell.identifier)
-//        collectionView.register(DoubleGridCell.self, forCellWithReuseIdentifier: DoubleGridCell.identifier)
-//        collectionView.register(ListCell.self, forCellWithReuseIdentifier: ListCell.identifier)
-//    }
-//    
-//    override func setupLayout() {
-//        collectionView.snp.makeConstraints {
-//            $0.top.equalTo(view.safeAreaLayoutGuide)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide)
-//            $0.leading.trailing.equalTo(view)
-//        }
-//    }
-//    override func bindRX() {
-//        guideItems.bind(to: collectionView.rx.items) { collectionView, index, item in
-//            let identifier: String
-//            switch index {
-//            case 0:
-//                identifier = GuideCell.identifier
-//            case 1, 2:
-//                identifier = DoubleGridCell.identifier
-//            default:
-//                identifier = ListCell.identifier
-//            }
-//            
-//            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: IndexPath(item: index, section: 0))
-//            
-//            if let guideCell = cell as? GuideCell {
-//                guideCell.configure(image: UIImage(named: item.imageName), title: item.title, subtitle: item.subtitle)
-//            } else if let gridCell = cell as? DoubleGridCell {
-//                gridCell.configure(image: UIImage(named: item.imageName), title: item.title, subtitle: item.subtitle)
-//                
-//                // index 값에 따라 titleLabel의 색상 설정
-//                if index == 1 {
-//                    gridCell.titleLabel.textColor = .white // Green Club에 해당하는 색상
-//                } else if index == 2 {
-//                    gridCell.titleLabel.textColor = .black // Green Talk에 해당하는 색상
-//                }
-//            } else if let listCell = cell as? ListCell {
-//                listCell.configure(icon: UIImage(named: item.imageName), title: item.title, subTitle: item.subtitle)
-//                listCell.backgroundColor = .white
-//            }
-//            
-//            return cell
-//        }
-//        .disposed(by: disposeBag)
-//    }
-//    
-//    // MARK: - UICollectionView 설정
-//    let collectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.minimumLineSpacing = 16
-//        layout.minimumInteritemSpacing = 16
-//        return UICollectionView(frame: .zero, collectionViewLayout: layout)
-//    }()
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        let width = collectionView.bounds.width
-//        switch indexPath.item {
-//        case 0:
-//            return CGSize(width: width - 32, height: 200) // 큰 셀 (Green Guide)
-//        case 1, 2:
-//            let gridWidth = (width - 48) / 2
-//            return CGSize(width: gridWidth, height: 130) // 중간 크기 셀 (Green Club, Green Talk)
-//        default:
-//            return CGSize(width: width - 32, height: 60) // 작은 셀 (Green Elite, Green Heros, Green Auth)
-//        }
-//    }
-//}
 import UIKit
 import RxSwift
 import RxCocoa
@@ -134,6 +43,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     
     private let disposeBag = DisposeBag()
     var coordinator = HomeCoordinator()
+    private let locationManager = CLLocationManager()
     
     
     // Section별 데이터
@@ -154,7 +64,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupNavigationBar()
         
     }
     
@@ -221,40 +131,79 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
                 }
                 .disposed(by: disposeBag)
     }
+    private func setupNavigationBar() {
+        locationButton.setImage(UIImage(named: "mylocation"), for: .normal)
+        locationButton.setTitleColor(.black, for: .normal)
+        locationButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        locationButton.tintColor = .black
+        
+        // 버튼의 이미지와 텍스트 간 간격 설정
+        locationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -5, bottom: 0, right: 5)
+        
+        // 스택 뷰에 버튼과 위치 라벨을 수평 배치
+        let locationStackView = UIStackView(arrangedSubviews: [locationButton, myLocationLabel])
+        locationStackView.axis = .horizontal
+        locationStackView.spacing = 5
+        locationStackView.alignment = .center
+        
+        // 스택 뷰를 네비게이션 아이템으로 설정
+        let locationItem = UIBarButtonItem(customView: locationStackView)
+        navigationItem.leftBarButtonItem = locationItem
+        
+        // 버튼 크기 설정
+        locationButton.snp.makeConstraints { make in
+            make.height.equalTo(30)
+        }
+        
+    }
     
    
     
     
     
-    // MARK: - UICollectionView 설정
+    private let locationButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "mylocation"), for: .normal)
+        return button
+    }()
+    private let myLocationLabel: UILabel = {
+        let label = UILabel()
+        label.text = "강남구 압구정동"
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+                label.textColor = .black
+        return label
+    }()
+        
+    
+    
+    // MARK: - UICollectionView
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 8
-        layout.minimumInteritemSpacing = 8
+        layout.minimumLineSpacing = 10
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
-    // UICollectionViewDelegateFlowLayout 구현
+   
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width
         switch indexPath.section {
         case 0:
-            return CGSize(width: width - 32, height: 200) // 큰 셀 (Green Guide)
+            return CGSize(width: width - 32, height: 200)
         case 1:
-            let gridWidth = (width - 48) / 2
-            return CGSize(width: gridWidth, height: 130) // 중간 크기 셀 (Green Club, Green Talk)
+            let gridWidth = (width - 48) / 2 - 10
+            return CGSize(width: gridWidth, height: 130)
         default:
-            return CGSize(width: width - 32, height: 60) // 작은 셀 (Green Elite, Green Heros, Green Auth)
+            return CGSize(width: width - 32, height: 60)
         }
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         switch section {
         case 0:
-            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20) // 첫 번째 섹션 여백
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         case 1:
-            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20) // 두 번째 섹션 여백
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         default:
-            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20) // 마지막 섹션 여백
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         }
     }
 }
