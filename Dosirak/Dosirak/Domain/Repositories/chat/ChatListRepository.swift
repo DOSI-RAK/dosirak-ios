@@ -89,7 +89,7 @@ class ChatListRepository: ChatListRepositoryType {
                     let decodedResponse = try JSONDecoder().decode(MyChatRoomListResponse.self, from: response.data)
                     if decodedResponse.status == "SUCCESS" {
                         print("=======>\(decodedResponse.status)")
-                        print("Fetched ChatRoomSummary Response:", decodedResponse.data) // 디버그용 출력
+                        print("Fetched ChatRoomSummary Response:", decodedResponse.data)
                         return decodedResponse.data
                     } else {
                         throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"])

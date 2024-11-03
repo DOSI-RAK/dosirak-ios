@@ -43,6 +43,7 @@ struct MyChatRoom: Decodable {
 // 요약된 채팅방 정보 구조체
 struct ChatRoomSummary: Decodable {
     let id: Int
+    let title: String
     let image: String
     let lastMessage: String?
 }

@@ -109,7 +109,7 @@ class ChatViewController: UIViewController {
             .compactMap { $0 }
             .subscribe(onNext: { [weak self] info in
                 DispatchQueue.main.async {
-                    self?.title = info.explanation
+                    //self?.title = info.explanation
                 }
             })
             .disposed(by: disposeBag)

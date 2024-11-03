@@ -6,11 +6,19 @@
 //
 
 import UIKit
+import SnapKit
+import RxSwift
+import ReactorKit
 
-class BottomSheetViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class BottomSheetViewController: UIViewController {
     
+    // MARK: - Properties
+    var disposeBag = DisposeBag()
     let tableView = UITableView()
+    var reactor:
+    GreenGuideReactor? // GuideReactor를 사용하기 위한 프로퍼티
     
+    // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -20,8 +28,6 @@ class BottomSheetViewController: UIViewController, UITableViewDelegate, UITableV
         view.backgroundColor = .white
         view.addSubview(tableView)
         
-        tableView.delegate = self
-        tableView.dataSource = self
         tableView.register(StoreTableViewCell.self, forCellReuseIdentifier: StoreTableViewCell.identifier)
         
         tableView.snp.makeConstraints {
@@ -29,19 +35,27 @@ class BottomSheetViewController: UIViewController, UITableViewDelegate, UITableV
         }
     }
     
-    // TableView DataSource & Delegate methods
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+    // MARK: - Reactor Binding
+    func bind(reactor: GreenGuideReactor) {
+        // 상점 목록 데이터를 tableView에 바인딩
+        reactor.state
+            .map { $0.stores }
+            .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
+                cell.configure(store: store)
+            }
+            .disposed(by: disposeBag)
+        
+        // 로딩 상태 표시
+        reactor.state
+            .map { $0.isLoading }
+            .distinctUntilChanged()
+            .subscribe(onNext: { isLoading in
+                if isLoading {
+                    print("Loading...")
+                } else {
+                    print("Loading finished.")
+                }
+            })
+            .disposed(by: disposeBag)
     }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: StoreTableViewCell.identifier, for: indexPath) as? StoreTableViewCell else {
-            return UITableViewCell()
-        }
-        cell.configure(title: "가게 이름 \(indexPath.row)", distance: "\(indexPath.row * 100)m", status: "운영중")
-        return cell
-    }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-            return 100
-        }
 }

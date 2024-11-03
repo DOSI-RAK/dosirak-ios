@@ -66,72 +66,86 @@ class ChatMessageCell: UITableViewCell {
     }
     
     func configure(with message: Message) {
-        messageLabel.text = message.content
-        let imageURL = URL(string: message.userChatRoomResponse.profileImg)
-        profileImageView.kf.setImage(with: imageURL)
-        nicknameLabel.text = message.userChatRoomResponse.nickName
-        timeLabel.text = message.createdAt
-
-        if message.userChatRoomResponse.nickName == "Test" {
-            // 내가 보낸 메시지: 오른쪽 정렬
-            messageBubble.backgroundColor = .systemBlue
-            messageLabel.textColor = .white
-            profileImageView.isHidden = true
-            nicknameLabel.isHidden = true
+        
+        
+        
+        if message.messageType == .chat {
+            messageLabel.text = message.content
+            let imageURL = URL(string: message.userChatRoomResponse.profileImg)
+            profileImageView.kf.setImage(with: imageURL)
+            nicknameLabel.text = message.userChatRoomResponse.nickName
+            timeLabel.text = message.createdAt
             
-            // 오른쪽 정렬 레이아웃 설정
-            messageBubble.snp.remakeConstraints { make in
-                make.top.equalToSuperview().offset(10)
-                make.trailing.equalToSuperview().offset(-10)
-                make.width.lessThanOrEqualTo(250)
-                make.bottom.equalToSuperview().offset(-10)
+            if message.userChatRoomResponse.nickName == "민재" {
+                // 내가 보낸 메시지: 오른쪽 정렬
+                messageBubble.backgroundColor = .white
+                messageLabel.textColor = .black
+                
+                
+                // 오른쪽 정렬 레이아웃 설정
+                profileImageView.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(10)
+                    make.trailing.equalToSuperview().inset(10)
+                    make.width.height.equalTo(40)
+                }
+                
+                messageBubble.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(10)
+                    make.trailing.equalTo(profileImageView.snp.leading).offset(-10)
+                    make.width.lessThanOrEqualTo(250)
+                    make.bottom.equalToSuperview().offset(-10)
+                }
+                
+                messageLabel.snp.remakeConstraints { make in
+                    make.edges.equalTo(messageBubble).inset(10)
+                }
+                nicknameLabel.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(10)
+                    make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+                    make.trailing.lessThanOrEqualToSuperview().offset(-10)
+                }
+                
+                timeLabel.snp.remakeConstraints { make in
+                    make.bottom.equalTo(messageBubble)
+                    make.trailing.equalTo(messageBubble.snp.leading).offset(-5)
+                }
+                
+            } else {
+                // 상대방이 보낸 메시지: 왼쪽 정렬
+                messageBubble.backgroundColor = .white
+                messageLabel.textColor = .black
+                // 왼쪽 정렬 레이아웃 설정
+                profileImageView.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(10)
+                    make.leading.equalToSuperview().offset(10)
+                    make.width.height.equalTo(40)
+                }
+                
+                nicknameLabel.snp.remakeConstraints { make in
+                    make.top.equalToSuperview().offset(10)
+                    make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+                    make.trailing.lessThanOrEqualToSuperview().offset(-10)
+                }
+                
+                messageBubble.snp.remakeConstraints { make in
+                    make.top.equalTo(nicknameLabel.snp.bottom).offset(4)
+                    make.leading.equalTo(profileImageView.snp.trailing).offset(10)
+                    make.width.lessThanOrEqualTo(250)
+                    make.bottom.equalToSuperview().offset(-10)
+                }
+                
+                messageLabel.snp.remakeConstraints { make in
+                    make.edges.equalTo(messageBubble).inset(10)
+                }
+                
+                timeLabel.snp.remakeConstraints { make in
+                    make.bottom.equalTo(messageBubble)
+                    make.leading.equalTo(messageBubble.snp.trailing).offset(5)
+                    make.trailing.lessThanOrEqualToSuperview().offset(-10)
+                }
             }
-            
-            messageLabel.snp.remakeConstraints { make in
-                make.edges.equalTo(messageBubble).inset(10)
-            }
-            
-            timeLabel.snp.remakeConstraints { make in
-                make.bottom.equalTo(messageBubble)
-                make.trailing.equalTo(messageBubble.snp.leading).offset(-5)
-            }
-            
         } else {
-            // 상대방이 보낸 메시지: 왼쪽 정렬
-            messageBubble.backgroundColor = .white
-            messageLabel.textColor = .black
-            profileImageView.isHidden = false
-            nicknameLabel.isHidden = false
-            
-            // 왼쪽 정렬 레이아웃 설정
-            profileImageView.snp.remakeConstraints { make in
-                make.top.equalToSuperview().offset(10)
-                make.leading.equalToSuperview().offset(10)
-                make.width.height.equalTo(40)
-            }
-            
-            nicknameLabel.snp.remakeConstraints { make in
-                make.top.equalToSuperview().offset(10)
-                make.leading.equalTo(profileImageView.snp.trailing).offset(10)
-                make.trailing.lessThanOrEqualToSuperview().offset(-10)
-            }
-            
-            messageBubble.snp.remakeConstraints { make in
-                make.top.equalTo(nicknameLabel.snp.bottom).offset(4)
-                make.leading.equalTo(profileImageView.snp.trailing).offset(10)
-                make.width.lessThanOrEqualTo(250)
-                make.bottom.equalToSuperview().offset(-10)
-            }
-            
-            messageLabel.snp.remakeConstraints { make in
-                make.edges.equalTo(messageBubble).inset(10)
-            }
-            
-            timeLabel.snp.remakeConstraints { make in
-                make.bottom.equalTo(messageBubble)
-                make.leading.equalTo(messageBubble.snp.trailing).offset(5)
-                make.trailing.lessThanOrEqualToSuperview().offset(-10)
-            }
+            print("Hello World!")
         }
     }
 }

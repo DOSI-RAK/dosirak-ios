@@ -8,7 +8,7 @@ import RxSwift
 import RxCocoa
 import KeychainAccess
 
-class ChatListViewController: BaseViewController, UICollectionViewDelegate {
+class ChatListViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     private let selectedButton = BehaviorRelay<SortToggleButton?>(value: nil)
     
@@ -27,8 +27,8 @@ class ChatListViewController: BaseViewController, UICollectionViewDelegate {
     // MARK: - 라이프 사이클
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.delegate = self
-        chatRoomListView.delegate = self
+        chatRoomListView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
         title = "Green Talk"
         view.backgroundColor = .bgColor
         popularButton.isSelected = true
@@ -132,12 +132,23 @@ class ChatListViewController: BaseViewController, UICollectionViewDelegate {
                 if let messageText = chatRoomSummary.lastMessage {
                     cell.titleLabel.text = messageText
                 } else {
-                    cell.titleLabel.text  = "Hello"
+                    cell.titleLabel.text  = "채팅이 없습니다."
                     cell.chatRoomId = chatRoomSummary.id
                 }
                 cell.imageView.image = UIImage(named: "profilemini02")
                 
             }
+            .disposed(by: disposeBag)
+        
+        collectionView.rx.modelSelected(ChatRoomSummary.self)
+            .subscribe(onNext: { [weak self] chatRoom in
+                guard let self = self else { return }
+                
+                // ChatRoomId를 전달하여 ChatViewController 초기화
+                let chatVC = ChatViewController(chatRoomId: chatRoom.id)
+                chatVC.title = chatRoom.title
+                self.navigationController?.pushViewController(chatVC, animated: true)
+            })
             .disposed(by: disposeBag)
         
         
@@ -149,6 +160,17 @@ class ChatListViewController: BaseViewController, UICollectionViewDelegate {
                 cell.titleLabel.text = chatRoom.title
                 cell.lastMessageLabel.text = chatRoom.explanation
             }
+            .disposed(by: disposeBag)
+        
+        chatRoomListView.rx.modelSelected(ChatRoom.self)
+            .subscribe(onNext: { [weak self] chatRoom in
+                guard let self = self else { return }
+                
+                // ChatRoomId를 전달하여 ChatViewController 초기화
+                let chatVC = ChatViewController(chatRoomId: chatRoom.id)
+                chatVC.title = chatRoom.title
+                self.navigationController?.pushViewController(chatVC, animated: true)
+            })
             .disposed(by: disposeBag)
         
         // 나머지 바인딩 설정

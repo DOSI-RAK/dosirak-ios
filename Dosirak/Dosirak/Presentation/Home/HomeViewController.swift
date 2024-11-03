@@ -115,7 +115,7 @@ import RxDataSources
 import SnapKit
 import RxGesture
 
-// Section 모델 설정
+
 struct GuideSection {
     var header: String
     var items: [GuideData]
@@ -229,8 +229,8 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     // MARK: - UICollectionView 설정
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 16
-        layout.minimumInteritemSpacing = 16
+        layout.minimumLineSpacing = 8
+        layout.minimumInteritemSpacing = 8
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
@@ -245,6 +245,16 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
             return CGSize(width: gridWidth, height: 130) // 중간 크기 셀 (Green Club, Green Talk)
         default:
             return CGSize(width: width - 32, height: 60) // 작은 셀 (Green Elite, Green Heros, Green Auth)
+        }
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        switch section {
+        case 0:
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20) // 첫 번째 섹션 여백
+        case 1:
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20) // 두 번째 섹션 여백
+        default:
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20) // 마지막 섹션 여백
         }
     }
 }

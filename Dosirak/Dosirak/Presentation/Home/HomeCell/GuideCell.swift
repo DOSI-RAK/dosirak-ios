@@ -16,6 +16,12 @@ class GuideCell: UICollectionViewCell {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        layer.cornerRadius = 12
+                layer.shadowColor = UIColor.black.cgColor
+                layer.shadowOpacity = 0.1
+                layer.shadowOffset = CGSize(width: 0, height: 4)
+                layer.shadowRadius = 8
+                layer.masksToBounds = false
         setupUI()
     }
 

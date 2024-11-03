@@ -23,9 +23,10 @@ class UserProfileCoordinator: Coordinator {
         nav.pushViewController(profileVC, animated: false)
     }
     
-    func moveToEditProfile() {
+    func moveToEditProfile(userInfo: UserProfileData) {
         guard let reactor = DIContainer.shared.resolve(UserProfileReactor.self) else { fatalError()}
         let editProfileVC = EditProfileViewController(reactor: reactor)
+        editProfileVC.userProfileData = userInfo
         editProfileVC.hidesBottomBarWhenPushed = true // 탭 바 숨기기
         nav.pushViewController(editProfileVC, animated: true)
         

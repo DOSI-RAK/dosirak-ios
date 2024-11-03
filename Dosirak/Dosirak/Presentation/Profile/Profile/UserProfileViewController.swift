@@ -9,11 +9,16 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import KeychainAccess
 
-class UserProfileViewController: BaseViewController, UITableViewDelegate {
+class UserProfileViewController: BaseViewController {
     
     weak var coordinator: UserProfileCoordinator?
-    private let score = BehaviorRelay<Int>(value: 153)
+    //private let score = BehaviorRelay<Int>(value: 153)
+    private let viewModel = ProfileViewModel()
+    
+    
+    let token = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
     
     let data: Observable<[(image: String, text: String)]> = Observable.just([
         ("contract", "서비스 이용약관"),
@@ -28,7 +33,23 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.delegate = self
+        tableView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        viewModel.fetchUserProfile(accessToken: token)
+            .subscribe(onSuccess: { userProfile in
+                print(userProfile)
+                self.userNameLabel.text = userProfile.nickName
+                self.updateScore(userProfile.reward)
+                // 프로필 정보 업데이트
+            }, onFailure: { error in
+            })
+            .disposed(by: disposeBag)
+        
+        
     }
     
     override func setupView() {
@@ -177,19 +198,23 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
         }
         .disposed(by: disposeBag)
         
-        editProfileButton.rx.tap
-            .bind { [weak self] in
-                self?.coordinator?.moveToEditProfile()
-            }
-            .disposed(by: disposeBag)
-        
-        // 점수 업데이트 및 애니메이션
-        score
-            .map { String(format: "%03d", $0) } // 3자리 문자열로 포맷
-            .subscribe(onNext: { [weak self] scoreString in
-                self?.updateDigitLabels(with: scoreString)
+        viewModel.fetchUserProfile(accessToken: token)
+            .subscribe(onSuccess: { userProfile in
+                print(userProfile)
+                self.userNameLabel.text = "\(userProfile.nickName!)님"
+                self.updateScore(userProfile.reward)
+                
+                self.editProfileButton.rx.tap
+                    .bind { [weak self] in
+                        self?.coordinator?.moveToEditProfile(userInfo: userProfile)
+                    }
+                    .disposed(by: self.disposeBag)
+                // 프로필 정보 업데이트
+            }, onFailure: { error in
             })
             .disposed(by: disposeBag)
+        
+       
         
         logoutButton.rx.tap
             .subscribe(onNext: { [weak self] in
@@ -210,27 +235,17 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
         .disposed(by: disposeBag)
     }
     
+    private func updateScore(_ score: Int) {
+        let scoreString = String(format: "%03d", score) // 3자리 포맷으로 점수 변환
+        updateDigitLabels(with: scoreString) // 자릿수별 애니메이션 적용
+        
+    }
+    
     
     private func updateDigitLabels(with scoreString: String) {
-        let currentDigits = score.value // 현재 점수의 자리수
-        _ = Int(scoreString) ?? 0 // 새로운 점수의 자리수
-
-        let currentString = String(format: "%03d", currentDigits)
-        let newString = scoreString
-
-        // 각 자리수를 비교하여 애니메이션을 추가
-        for index in 0..<newString.count {
-            let currentIndex = currentString.index(currentString.startIndex, offsetBy: index)
-            let newIndex = newString.index(newString.startIndex, offsetBy: index)
-
-            let currentChar = currentString[currentIndex]
-            let newChar = newString[newIndex]
-
-            if currentChar != newChar {
-                animateDigitChange(label: digitLabels[index], newDigit: String(newChar))
-            } else {
-                digitLabels[index].text = String(newChar)
-            }
+        for (index, character) in scoreString.enumerated() {
+            let newDigit = String(character)
+            animateDigitChange(label: digitLabels[index], newDigit: newDigit)
         }
     }
 
@@ -241,10 +256,7 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
            }, completion: nil)
        }
 
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return infoView.frame.height / 3
-    }
+
     
     private let scoreContainerView = UIView()
     private let digitViewsStack = UIStackView()
@@ -283,7 +295,7 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
     
     lazy var userNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "니노막시무스카이저소제소제님"
+        //label.text = "니노막시무스카이저소제소제님"
         label.font = .preferredFont(forTextStyle: .headline)
         label.textColor = .white
         return label
@@ -344,4 +356,12 @@ class UserProfileViewController: BaseViewController, UITableViewDelegate {
         button.titleLabel?.font = .systemFont(ofSize: 12, weight: .bold)
         return button
     }()
+}
+
+
+extension UserProfileViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return infoView.frame.height / 3
+    }
+    
 }

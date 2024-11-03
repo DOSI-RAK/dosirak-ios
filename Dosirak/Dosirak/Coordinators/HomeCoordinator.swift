@@ -27,7 +27,10 @@ class HomeCoordinator: Coordinator {
         let vc: UIViewController
         switch indexPath.section {
         case 0:
-            vc = GreenGuideViewController()
+            guard let reactor = DIContainer.shared.resolve(GreenGuideReactor.self) else {
+                fatalError()
+            }
+            vc = GreenGuideViewController(reactor: reactor)
         
         case 1:
             if indexPath.row == 0 {

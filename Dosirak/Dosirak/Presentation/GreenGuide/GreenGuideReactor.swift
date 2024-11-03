@@ -8,7 +8,7 @@
 import ReactorKit
 import RxSwift
 
-class GuideReactor: Reactor {
+class GreenGuideReactor: Reactor {
     // Action 정의
     enum Action {
         case loadAllStores

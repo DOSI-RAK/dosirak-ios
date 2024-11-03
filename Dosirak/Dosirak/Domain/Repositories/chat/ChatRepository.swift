@@ -35,7 +35,7 @@ final class ChatRepository: ChatRepositoryType {
         ])
             
         self.socket = manager.defaultSocket
-        self.socket.connect()
+        // self.socket.connect()
     }
     
     func fetchChatRoomInfo() -> Single<ChatRoomInfo> {

@@ -27,7 +27,7 @@ class TabBarCoordinator: Coordinator {
         let communityCoordinator = CommuityCoordinator()
         childCoordinators.append(communityCoordinator)
         let communityNavController = communityCoordinator.nav
-        communityNavController.tabBarItem = UITabBarItem(title: "커뮤니티", image: UIImage(named: "activities"), selectedImage: UIImage(named: "activities_active"))
+        communityNavController.tabBarItem = UITabBarItem(title: "내 활동", image: UIImage(named: "activities"), selectedImage: UIImage(named: "activities_active"))
         
         // Profile 탭
         let profileCoordinator = UserProfileCoordinator()

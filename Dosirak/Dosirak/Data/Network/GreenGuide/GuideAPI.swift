@@ -22,7 +22,7 @@ extension GuideAPI: TargetType {
         switch self {
         case .fetchAllStores:
             return "/api/guide/stores/all"
-        case .fetchStoreDetail(accessToken: let accessToken, storeID: let storeID):
+        case .fetchStoreDetail(accessToken: _, storeID: let storeID):
             return "/api/guide/stores/\(storeID)"
         }
     }

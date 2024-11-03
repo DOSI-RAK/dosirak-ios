@@ -95,11 +95,11 @@ class StoreTableViewCell: UITableViewCell {
     }
     
     // 셀 데이터 설정 메서드
-    func configure(title: String, distance: String, status: String, benefit: String? = "다회용기 혜택 제공 가게") {
-        titleLabel.text = title
-        distanceLabel.text = distance
-        statusLabel.text = status
-        benefitLabel.text = benefit
-        statusLabel.textColor = status == "운영종료" ? .gray : .systemRed
+    func configure(store: Store) {
+        titleLabel.text = store.storeName
+        distanceLabel.text = "500m"
+        statusLabel.text = store.ifValid
+        benefitLabel.text = store.ifReward
+        statusLabel.textColor = store.storeCategory == "운영종료" ? .gray : .systemRed
     }
 }

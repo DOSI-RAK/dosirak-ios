@@ -92,6 +92,25 @@ final class DIContainer {
         }
         
         
+        //MARK: Green Guide
+        container.register(GuideRepositoryType.self) { _ in
+            GuideRepository()
+        }
+        
+        // GuideUseCaseType 등록
+        container.register(GuideUseCaseType.self) { resolver in
+            let repository = resolver.resolve(GuideRepositoryType.self)!
+            return GuideUseCase(repository: repository)
+        }
+        
+        // GuideReactor 등록
+        container.register(GreenGuideReactor.self) { resolver in
+            let useCase = resolver.resolve(GuideUseCaseType.self)!
+            let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+            return GreenGuideReactor(useCase: useCase, accessToken: accessToken)
+        }
+        
+        
         
         
     }
