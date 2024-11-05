@@ -6,6 +6,7 @@
 //
 import UIKit
 import SnapKit
+import Kingfisher
 
 class StoreTableViewCell: UITableViewCell {
     static let identifier = "StoreTableViewCell"
@@ -34,72 +35,84 @@ class StoreTableViewCell: UITableViewCell {
         contentView.addSubview(statusLabel)
         contentView.addSubview(benefitLabel)
         
-        // 아이콘 이미지 뷰
+        
         iconImageView.image = UIImage(systemName: "building.2.fill")
         iconImageView.tintColor = .gray
         iconImageView.contentMode = .scaleAspectFill
         iconImageView.layer.cornerRadius = 8
         iconImageView.clipsToBounds = true
         
-        // 상점명 라벨
+      
         titleLabel.font = .boldSystemFont(ofSize: 16)
         titleLabel.numberOfLines = 1
         
-        // 거리 라벨
+       
         distanceLabel.font = .systemFont(ofSize: 14)
         distanceLabel.textColor = .gray
         
-        // 상태 라벨 (운영중, 운영종료 등)
+      
         statusLabel.font = .systemFont(ofSize: 14)
         statusLabel.textColor = .red  // 운영 종료일 경우 빨간색으로 표시
         statusLabel.textAlignment = .right
         
-        // 혜택 라벨
+   
         benefitLabel.font = .systemFont(ofSize: 12)
         benefitLabel.textColor = .systemBlue
         benefitLabel.text = "다회용기 혜택 제공 가게"
     }
     
     private func setupLayout() {
-        // 아이콘 이미지 뷰 레이아웃
+        
+      
         iconImageView.snp.makeConstraints {
             $0.leading.centerY.equalToSuperview().inset(10)
-            $0.width.height.equalTo(50)
+            $0.width.height.equalTo(90)
         }
         
-        // 혜택 라벨 레이아웃
+       
         benefitLabel.snp.makeConstraints {
             $0.leading.equalTo(iconImageView.snp.trailing).offset(10)
             $0.top.equalToSuperview().inset(10)
         }
         
-        // 상점명 라벨 레이아웃
+      
         titleLabel.snp.makeConstraints {
             $0.leading.equalTo(iconImageView.snp.trailing).offset(10)
             $0.top.equalTo(benefitLabel.snp.bottom).offset(2)
             $0.trailing.lessThanOrEqualTo(statusLabel.snp.leading).offset(-10)
         }
         
-        // 거리 라벨 레이아웃
+     
         distanceLabel.snp.makeConstraints {
             $0.leading.equalTo(titleLabel)
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
             $0.bottom.equalToSuperview().inset(10)
         }
         
-        // 상태 라벨 레이아웃
+    
         statusLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(10)
             $0.top.equalToSuperview().inset(10)
         }
     }
     
-    // 셀 데이터 설정 메서드
+  
     func configure(store: Store) {
         titleLabel.text = store.storeName
+        let url = URL(string: store.storeImg)
+        iconImageView.kf.setImage(with: url)
         distanceLabel.text = "500m"
-        statusLabel.text = store.ifValid
-        benefitLabel.text = store.ifReward
-        statusLabel.textColor = store.storeCategory == "운영종료" ? .gray : .systemRed
+        if store.ifReward == " YES" {
+            benefitLabel.text = "다회용기 혜택 제공 가게"
+        }else {
+            benefitLabel.text = nil
+        }
+        if store.ifValid == " YES" {
+            statusLabel.text = "운영중"
+            statusLabel.textColor = .red
+        } else {
+            statusLabel.text = "운영종료"
+            statusLabel.textColor = .lightGray
+        }
     }
 }

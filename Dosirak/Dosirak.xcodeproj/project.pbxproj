@@ -33,6 +33,7 @@
 		B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF052CC51A2700271910 /* ReactiveMoya */; };
 		B541AF082CC51A2700271910 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF072CC51A2700271910 /* RxMoya */; };
 		B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF0A2CC53C7800271910 /* NaverThirdPartyLogin */; };
+		B594EF042CD8491200484191 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = B594EF032CD8491200484191 /* PanModal */; };
 		B5B9B4002CD52DB10081A0DA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B5B9B3FF2CD52DB10081A0DA /* Kingfisher */; };
 		B5FF13C22CD4BBC7008A48DB /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B5FF13C12CD4BBC7008A48DB /* NMapsMap */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B594EF042CD8491200484191 /* PanModal in Frameworks */,
 				B541AE422CC12F7B00271910 /* RxRelay in Frameworks */,
 				B541AE042CC12B0D00271910 /* SnapKit in Frameworks */,
 				B52F77F02CCE1939008FBC91 /* Differentiator in Frameworks */,
@@ -159,6 +161,7 @@
 				B52F78D92CD3A3AD008FBC91 /* RxGesture */,
 				B5FF13C12CD4BBC7008A48DB /* NMapsMap */,
 				B5B9B3FF2CD52DB10081A0DA /* Kingfisher */,
+				B594EF032CD8491200484191 /* PanModal */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -206,6 +209,7 @@
 				B52F78D82CD3A3AD008FBC91 /* XCRemoteSwiftPackageReference "RxGesture" */,
 				B5FF13C02CD4BBC7008A48DB /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 				B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */,
+				B594EF022CD8491200484191 /* XCRemoteSwiftPackageReference "PanModal" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -552,6 +556,14 @@
 				kind = branch;
 			};
 		};
+		B594EF022CD8491200484191 /* XCRemoteSwiftPackageReference "PanModal" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/slackhq/PanModal";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.7;
+			};
+		};
 		B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
@@ -700,6 +712,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */;
 			productName = NaverThirdPartyLogin;
+		};
+		B594EF032CD8491200484191 /* PanModal */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B594EF022CD8491200484191 /* XCRemoteSwiftPackageReference "PanModal" */;
+			productName = PanModal;
 		};
 		B5B9B3FF2CD52DB10081A0DA /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

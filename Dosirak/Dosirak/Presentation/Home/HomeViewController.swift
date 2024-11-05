@@ -43,7 +43,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     
     private let disposeBag = DisposeBag()
     var coordinator = HomeCoordinator()
-    private let locationManager = CLLocationManager()
+    private let locationManager = LocationManager.shared
     
     
     // Section별 데이터
@@ -130,6 +130,18 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
                     self?.coordinator.navigateToDetail(for: indexPath)
                 }
                 .disposed(by: disposeBag)
+        
+        locationButton.rx.tap
+            .bind { [weak self] in
+                self?.locationManager.requestLocationUpdate()
+            }
+            .disposed(by: disposeBag)
+        
+       
+        locationManager.address
+            .observe(on: MainScheduler.instance)
+            .bind(to: myLocationLabel.rx.text)
+            .disposed(by: disposeBag)
     }
     private func setupNavigationBar() {
         locationButton.setImage(UIImage(named: "mylocation"), for: .normal)
@@ -157,10 +169,6 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         
     }
     
-   
-    
-    
-    
     private let locationButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "mylocation"), for: .normal)
@@ -168,7 +176,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     }()
     private let myLocationLabel: UILabel = {
         let label = UILabel()
-        label.text = "강남구 압구정동"
+        label.text = "위치 정보 설정이 필요합니다."
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
                 label.textColor = .black
         return label
@@ -203,7 +211,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         case 1:
             return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         default:
-            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
+            return UIEdgeInsets(top: 25, left: 20, bottom: 10, right: 20)
         }
     }
 }

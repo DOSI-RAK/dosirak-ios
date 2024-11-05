@@ -24,9 +24,10 @@ class TabBarCoordinator: Coordinator {
         homeNavController.tabBarItem = UITabBarItem(title: "홈", image: UIImage(named: "home"), selectedImage: UIImage(named: "home_active"))
         
         // Community 탭
-        let communityCoordinator = CommuityCoordinator()
-        childCoordinators.append(communityCoordinator)
-        let communityNavController = communityCoordinator.nav
+//        let communityCoordinator = CommuityCoordinator()
+//        childCoordinators.append(communityCoordinator)
+//        let communityNavController = communityCoordinator.nav
+        let communityNavController = UINavigationController(rootViewController: CommunityViewController())
         communityNavController.tabBarItem = UITabBarItem(title: "내 활동", image: UIImage(named: "activities"), selectedImage: UIImage(named: "activities_active"))
         
         // Profile 탭

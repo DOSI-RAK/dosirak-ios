@@ -14,7 +14,6 @@ protocol GuideRepositoryType {
     func fetchStoreDetail(storeID: Int, accessToken: String) -> Single<Store>
 }
 
-// Repository 구현
 final class GuideRepository: GuideRepositoryType {
     private let provider: MoyaProvider<GuideAPI>
     
@@ -25,19 +24,39 @@ final class GuideRepository: GuideRepositoryType {
     func fetchAllStores() -> Single<[Store]> {
         return provider.rx.request(.fetchAllStores)
             .filterSuccessfulStatusCodes()
-            .map(StoreListResponse.self)
-            .flatMap { response in
-                // data가 nil인 경우 에러 반환
-                guard let stores = response.data else {
-                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data available"]))
+            .do(onSuccess: { response in
+                print("fetchAllStores - Raw Response: \(response)")
+            })
+            .map { response in
+                do {
+                    let decodedResponse = try JSONDecoder().decode(StoreListResponse.self, from: response.data)
+                    if decodedResponse.status == "SUCCESS" {
+                        print("=======>\(decodedResponse.status)")
+                        print("Fetched storelist Response:", decodedResponse.data) // 디버그용 출력
+                        return decodedResponse.data
+                    } else {
+                        throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"])
+                    }
+                } catch {
+                    print("Decoding error:", error)
+                    throw error
                 }
-                return Single.just(stores)
-            }
+            }.do(onSuccess: { summaries in
+                print("Decoded My storelist Summary:", summaries) // 디코딩 확인용
+            })
+        
     }
     
     func fetchStoreDetail(storeID: Int, accessToken: String) -> Single<Store> {
         return provider.rx.request(.fetchStoreDetail(accessToken: accessToken, storeID: storeID))
             .filterSuccessfulStatusCodes()
+            .do(onSuccess: { response in
+                print("fetchStoreDetail - Raw Response for StoreID \(storeID): \(response)")
+            })
             .map(Store.self)
+            .do(onSuccess: { store in
+                print("fetchStoreDetail - Mapped Store: \(store)")
+            })
+            .debug("fetchStoreDetail Debug", trimOutput: true)
     }
 }

@@ -1,5 +1,5 @@
 {
-  "originHash" : "a1c884408d4926a0b9a385a1042ac812a2a5f3dfd21e0fd3aa6d4ed988c5fbdd",
+  "originHash" : "0523dff9cb273c97d3bfcbea44b48876f5d725e87244d4b96cb853bfbaec599f",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -98,6 +98,15 @@
       "state" : {
         "revision" : "12f19662426d0434d6c330c6974d53e2eb10ecd9",
         "version" : "9.1.0"
+      }
+    },
+    {
+      "identity" : "panmodal",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/slackhq/PanModal",
+      "state" : {
+        "revision" : "b012aecb6b67a8e46369227f893c12544846613f",
+        "version" : "1.2.7"
       }
     },
     {

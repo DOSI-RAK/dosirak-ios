@@ -15,6 +15,8 @@ class CommuityCoordinator: Coordinator {
     
     func start() {
         let communityVC = CommunityViewController()
+        communityVC.coordinator = self
+        
         nav.pushViewController(communityVC, animated: false)
     }
     

@@ -10,15 +10,19 @@ import SnapKit
 import RxSwift
 import ReactorKit
 
-class BottomSheetViewController: UIViewController {
-    
-    // MARK: - Properties
+class BottomSheetViewController: UIViewController, View {
+   
     var disposeBag = DisposeBag()
     let tableView = UITableView()
-    var reactor:
-    GreenGuideReactor? // GuideReactor를 사용하기 위한 프로퍼티
+    var reactor: GreenGuideReactor? {
+        didSet {
+            if let reactor = reactor {
+                self.bind(reactor: reactor)
+            }
+        }
+    }
     
-    // MARK: - Life Cycle
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -33,11 +37,13 @@ class BottomSheetViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(10)
         }
+        tableView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
     }
     
-    // MARK: - Reactor Binding
+    
     func bind(reactor: GreenGuideReactor) {
-        // 상점 목록 데이터를 tableView에 바인딩
+       
         reactor.state
             .map { $0.stores }
             .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
@@ -45,7 +51,7 @@ class BottomSheetViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        // 로딩 상태 표시
+
         reactor.state
             .map { $0.isLoading }
             .distinctUntilChanged()
@@ -57,5 +63,14 @@ class BottomSheetViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
+    }
+}
+
+
+
+
+extension BottomSheetViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 100
     }
 }

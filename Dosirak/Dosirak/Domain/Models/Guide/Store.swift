@@ -8,13 +8,13 @@
 struct StoreListResponse: Decodable {
     let status: String
     let message: String
-    let data: [Store]?
+    let data: [Store]
 }
 
 struct Store: Decodable {
     let storeId: Int
     let storeName: String
-    let storeCategory: String
+    let storeCategory: String?
     let storeImg: String
     let ifValid: String
     let ifReward: String
