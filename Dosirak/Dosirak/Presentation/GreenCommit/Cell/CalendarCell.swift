@@ -45,13 +45,13 @@ class CalendarCell: FSCalendarCell {
         
         dayLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalToSuperview().offset(8) // 상단에서 약간 여백 추가
+            make.top.equalToSuperview() // 상단에서 약간 여백 추가
         }
         
         activityImageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(dayLabel.snp.bottom).offset(4)
-            make.width.height.equalTo(30)
+            make.top.equalTo(dayLabel.snp.bottom).offset(5)
+            make.width.height.equalTo(31)
         }
     }
     

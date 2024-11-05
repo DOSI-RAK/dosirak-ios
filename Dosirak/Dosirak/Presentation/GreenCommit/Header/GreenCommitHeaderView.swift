@@ -8,7 +8,7 @@ import FSCalendar
 import UIKit
 import SnapKit
 
-class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSCalendarDelegate, FSCalendarDelegateAppearance {
+class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSCalendarDelegate {
     static let identifier = "GreenCommitHeaderView"
     
     let calendar: FSCalendar = {
@@ -24,6 +24,9 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         view.appearance.subtitleFont = UIFont.systemFont(ofSize: 12)
         view.appearance.borderRadius = 0.5
         view.register(CalendarCell.self, forCellReuseIdentifier: "calendarCell")
+        view.appearance.todayColor = .clear
+        view.appearance.selectionColor = .clear
+        view.weekdayHeight = 18
         view.adjustsBoundingRectWhenChangingMonths = true
         return view
     }()
@@ -67,16 +70,13 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         monthLabel.backgroundColor = .black
         monthLabel.textAlignment = .center
         monthLabel.layer.cornerRadius = 17
-        monthLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         monthLabel.clipsToBounds = true
         headerView.addSubview(monthLabel)
-        
         
         monthLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.width.equalTo(87)
             make.height.equalTo(38)
-           
         }
         
         nextButton.snp.makeConstraints { make in
@@ -84,6 +84,7 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
             make.centerY.equalTo(monthLabel)
             make.width.height.equalTo(52)
         }
+        
         prevButton.snp.makeConstraints { make in
             make.centerY.equalTo(monthLabel)
             make.width.height.equalTo(52)
@@ -96,10 +97,9 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         calendar.dataSource = self
         calendar.delegate = self
         calendar.snp.makeConstraints {
-            $0.top.equalTo(headerView.snp.bottom).offset(10) // 헤더 아래에 위치하도록 수정
+            $0.top.equalTo(headerView.snp.bottom)//.offset(10)
             $0.leading.equalTo(self).inset(20)
             $0.trailing.equalTo(self).inset(20)
-            $0.bottom.equalTo(self)
             $0.height.equalTo(400)
         }
     }
@@ -158,5 +158,12 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         default:
             return nil
         }
+    }
+}
+
+extension GreenCommitHeaderView: FSCalendarDelegateAppearance {
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, sizeFor date: Date) -> CGSize {
+        // 셀 크기를 줄여 셀 간 간격을 넓어 보이게 설정
+        return CGSize(width: 40, height: 50)
     }
 }
