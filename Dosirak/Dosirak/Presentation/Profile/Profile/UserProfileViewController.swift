@@ -4,20 +4,17 @@
 //
 //  Created by 권민재 on 10/18/24.
 //
-
 import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
 import KeychainAccess
+import PanModal
 
 class UserProfileViewController: BaseViewController {
     
     weak var coordinator: UserProfileCoordinator?
-    //private let score = BehaviorRelay<Int>(value: 153)
     private let viewModel = ProfileViewModel()
-    
-    
     let token = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
     
     let data: Observable<[(image: String, text: String)]> = Observable.just([
@@ -27,16 +24,14 @@ class UserProfileViewController: BaseViewController {
     ])
     
     private let disposeBag = DisposeBag()
-    
-    // 자릿수 뷰 배열
     private var digitLabels: [UILabel] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-        
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.fetchUserProfile(accessToken: token)
@@ -44,12 +39,9 @@ class UserProfileViewController: BaseViewController {
                 print(userProfile)
                 self.userNameLabel.text = userProfile.nickName
                 self.updateScore(userProfile.reward)
-                // 프로필 정보 업데이트
             }, onFailure: { error in
             })
             .disposed(by: disposeBag)
-        
-        
     }
     
     override func setupView() {
@@ -57,6 +49,7 @@ class UserProfileViewController: BaseViewController {
         view.addSubview(profileView)
         view.addSubview(scoreContainerView)
         setupStackView()
+        
         profileView.addSubview(earthImageview)
         profileView.addSubview(editProfileButton)
         profileView.addSubview(profileImageView)
@@ -66,37 +59,29 @@ class UserProfileViewController: BaseViewController {
         baseView.addSubview(infoView)
         infoView.addSubview(tableView)
         
-        infoView.addSubview(buttonContainerView)
-        buttonContainerView.addSubview(logoutButton)
-        buttonContainerView.addSubview(separatorLabel)
-        buttonContainerView.addSubview(withdrawButton)
-        
-        buttonContainerView.isUserInteractionEnabled = true
-        logoutButton.isUserInteractionEnabled = true
-        withdrawButton.isUserInteractionEnabled = true
-
+        // 버튼 및 separator를 직접 추가
+        view.addSubview(separatorLabel)
+        view.addSubview(logoutButton)
+        view.addSubview(withdrawButton)
     }
     
-    // StackView 설정 메서드
     private func setupStackView() {
         digitViewsStack.axis = .horizontal
         digitViewsStack.distribution = .fillEqually
         digitViewsStack.spacing = 5
-        digitViewsStack.isUserInteractionEnabled = true
         scoreContainerView.addSubview(digitViewsStack)
         
-        // 각 자릿수 뷰 생성
         for _ in 0..<3 {
             let digitView = UIView()
             let digitLabel = UILabel()
             digitLabel.font = .boldSystemFont(ofSize: 25)
             digitLabel.textAlignment = .center
-            digitLabel.text = "0" // 초기값 설정
+            digitLabel.text = "0"
             digitView.addSubview(digitLabel)
             digitView.backgroundColor = .white
             digitView.layer.cornerRadius = 15
             digitLabel.snp.makeConstraints { $0.edges.equalToSuperview() }
-            digitLabels.append(digitLabel) // UILabel을 배열에 추가
+            digitLabels.append(digitLabel)
             digitViewsStack.addArrangedSubview(digitView)
         }
         let expLabel = UILabel()
@@ -167,29 +152,24 @@ class UserProfileViewController: BaseViewController {
             $0.edges.equalTo(scoreContainerView)
         }
         
-        buttonContainerView.snp.makeConstraints { make in
-            make.centerX.equalTo(view)
-            make.top.equalTo(tableView.snp.bottom).offset(20)
-            make.height.equalTo(44)
+        // 버튼 및 separator 레이아웃 설정
+        separatorLabel.snp.makeConstraints {
+            $0.centerX.equalTo(baseView)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
         
-        logoutButton.snp.makeConstraints { make in
-            make.leading.equalTo(buttonContainerView).offset(20)
-            make.top.bottom.equalToSuperview()
+        logoutButton.snp.makeConstraints {
+            $0.leading.equalTo(separatorLabel.snp.trailing).offset(5)
+            $0.centerY.equalTo(separatorLabel)
+            $0.width.equalTo(80)
         }
-        
-        separatorLabel.snp.makeConstraints { make in
-            make.leading.equalTo(logoutButton.snp.trailing).offset(10)
-            make.centerY.equalTo(logoutButton)
-        }
-        
-        withdrawButton.snp.makeConstraints { make in
-            make.leading.equalTo(separatorLabel.snp.trailing).offset(10)
-            make.trailing.equalTo(buttonContainerView).inset(20)
-            make.top.bottom.equalToSuperview()
+                
+        withdrawButton.snp.makeConstraints {
+            $0.trailing.equalTo(separatorLabel.snp.leading).offset(-5)
+            $0.centerY.equalTo(separatorLabel)
+            $0.width.equalTo(80)
         }
     }
-    
     override func bindRX() {
         data.bind(to: tableView.rx.items(cellIdentifier: ProfileCell.reusableIdentifier, cellType: ProfileCell.self)) { _, item, cell in
             cell.imgView.image = UIImage(named: item.image)
@@ -209,30 +189,52 @@ class UserProfileViewController: BaseViewController {
                         self?.coordinator?.moveToEditProfile(userInfo: userProfile)
                     }
                     .disposed(by: self.disposeBag)
-                // 프로필 정보 업데이트
+                
             }, onFailure: { error in
             })
             .disposed(by: disposeBag)
         
        
         
+        // 로그아웃 버튼 클릭 시
         logoutButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-                
-                print("로그아웃 버튼 클릭됨")
-                self?.coordinator?.moveToLoginSheet()
-                // 로그아웃 처리 코드 추가
-            })
+            .bind { [weak self] in
+                let vc = ConfirmAuthViewController(
+                    title: "잠시만요!",
+                    message: "로그아웃 시 app push 알림을\n받을 수 없습니다.",
+                    primaryButtonTitle: "취소",
+                    secondaryButtonTitle: "로그아웃",
+                    primaryAction: {
+                        // 취소 동작
+                    },
+                    secondaryAction: {
+                        // 로그아웃 처리 동작
+                        print("로그아웃 처리")
+                    }
+                )
+                self?.presentPanModal(vc)
+            }
             .disposed(by: disposeBag)
-        
+
+        // 탈퇴하기 버튼 클릭 시
         withdrawButton.rx.tap
-            .subscribe(onNext: { [weak self] in
-            
-            print("로그아웃 버튼 클릭됨")
-            self?.coordinator?.moveToLoginSheet()
-            // 로그아웃 처리 코드 추가
-        })
-        .disposed(by: disposeBag)
+            .bind { [weak self] in
+                let vc = ConfirmAuthViewController(
+                    title: "잠시만요!",
+                    message: "탈퇴 시 계정 및 이용 기록은 모두 삭제되며,\n삭제된 데이터는 복구가 불가능합니다.",
+                    primaryButtonTitle: "취소",
+                    secondaryButtonTitle: "탈퇴하기",
+                    primaryAction: {
+                        // 취소 동작
+                    },
+                    secondaryAction: {
+                        // 탈퇴 처리 동작
+                        print("탈퇴 처리")
+                    }
+                )
+                self?.presentPanModal(vc)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func updateScore(_ score: Int) {
@@ -334,6 +336,7 @@ class UserProfileViewController: BaseViewController {
         label.text = "|"
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textColor = .lightGray
+        label.backgroundColor = .clear
         return label
     }()
     
@@ -343,7 +346,7 @@ class UserProfileViewController: BaseViewController {
         button.setTitle("로그아웃", for: .normal)
         button.setTitleColor(.lightGray, for: .normal)
         button.backgroundColor = .clear
-        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .bold)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         return button
     }()
 
@@ -353,7 +356,7 @@ class UserProfileViewController: BaseViewController {
         button.setTitle("탈퇴하기", for: .normal)
         button.setTitleColor(.lightGray, for: .normal)
         button.backgroundColor = .clear
-        button.titleLabel?.font = .systemFont(ofSize: 12, weight: .bold)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         return button
     }()
 }

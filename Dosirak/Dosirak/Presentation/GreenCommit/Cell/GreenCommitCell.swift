@@ -29,7 +29,7 @@ class GreenCommitCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .gray
-        label.text = "12시 41분" // 기본 시간 텍스트
+        label.text = "12시 41분"
         return label
     }()
     

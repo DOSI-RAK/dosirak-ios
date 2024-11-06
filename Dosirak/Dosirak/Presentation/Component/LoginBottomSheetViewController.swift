@@ -4,135 +4,146 @@
 //
 //  Created by 권민재 on 10/27/24.
 //
-
 import UIKit
+import PanModal
+import SnapKit
+import RxSwift
+import RxCocoa
 
-class LoginBottomSheetViewController: UIViewController {
+class ConfirmAuthViewController: UIViewController, PanModalPresentable {
 
-    private let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 12
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 4
-        return view
-    }()
+    // MARK: - PanModal 설정
+    var panScrollable: UIScrollView? {
+        return nil
+    }
     
+    var shortFormHeight: PanModalHeight {
+        return .contentHeight(250)
+    }
+    
+    var longFormHeight: PanModalHeight {
+        return .contentHeight(250)
+    }
+    
+    var shouldRoundTopCorners: Bool {
+        return true
+    }
+    
+    var cornerRadius: CGFloat {
+        return 20.0 // 상단 둥글기 조절
+    }
+    
+    var prefersGrabberVisible: Bool {
+        return false // 그랩바를 숨김
+    }
+    
+    // MARK: - UI Components
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 17)
+        label.font = .boldSystemFont(ofSize: 20)
+        label.textColor = .systemRed
         label.textAlignment = .center
-        label.textColor = .red
         return label
     }()
     
-    private let subtitleLabel: UILabel = {
+    private let messageLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15)
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .darkGray
         label.textAlignment = .center
-        label.textColor = .gray
         label.numberOfLines = 0
         return label
     }()
     
-    private let firstButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("취소", for: .normal)
+    private let primaryButton: UIButton = {
+        let button = UIButton()
         button.backgroundColor = .mainColor
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = 12
         return button
     }()
     
-    private let secondButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("채팅방 나가기", for: .normal)
+    private let secondaryButton: UIButton = {
+        let button = UIButton()
         button.backgroundColor = .bgColor
-        button.setTitleColor(.black, for: .normal)
-        button.layer.cornerRadius = 10
+        button.setTitleColor(.darkGray, for: .normal)
+        button.layer.cornerRadius = 12
         return button
     }()
     
-    // 초기화 메서드
-    init(title: String, subtitle: String) {
+    private let disposeBag = DisposeBag()
+
+    // MARK: - Properties
+    private var primaryAction: (() -> Void)?
+    private var secondaryAction: (() -> Void)?
+    
+    // MARK: - Initializer
+    init(title: String, message: String, primaryButtonTitle: String, secondaryButtonTitle: String, primaryAction: @escaping () -> Void, secondaryAction: @escaping () -> Void) {
         super.init(nibName: nil, bundle: nil)
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
-        
+        self.titleLabel.text = title
+        self.messageLabel.text = message
+        self.primaryButton.setTitle(primaryButtonTitle, for: .normal)
+        self.secondaryButton.setTitle(secondaryButtonTitle, for: .normal)
+        self.primaryAction = primaryAction
+        self.secondaryAction = secondaryAction
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
-        setupUI()
+        view.backgroundColor = .white
+        setupLayout()
+        setupBindings()
     }
     
-    private func setupUI() {
-        view.addSubview(containerView)
-        containerView.addSubview(titleLabel)
-        containerView.addSubview(subtitleLabel)
-        containerView.addSubview(firstButton)
-        containerView.addSubview(secondButton)
+    private func setupLayout() {
+        view.addSubview(titleLabel)
+        view.addSubview(messageLabel)
+        view.addSubview(primaryButton)
+        view.addSubview(secondaryButton)
         
-        // 컨테이너 뷰 레이아웃 설정
-        containerView.snp.makeConstraints { make in
-            make.bottom.equalTo(view) // 중앙에 위치
-            make.width.equalTo(view) // 가로 폭
-            make.height.greaterThanOrEqualTo(300) // 높이
-        }
-        
-        // titleLabel 레이아웃 설정
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(containerView).offset(20)
-            make.leading.trailing.equalToSuperview().inset(16)
+            make.top.equalTo(view).offset(30)
+            make.centerX.equalTo(view)
         }
         
-        // subtitleLabel 레이아웃 설정
-        subtitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(16)
+        messageLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.leading.trailing.equalTo(view).inset(20)
         }
         
-        // 첫 번째 버튼 레이아웃 설정
-        firstButton.snp.makeConstraints { make in
-            make.top.equalTo(subtitleLabel.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(50) // 버튼 높이
+        primaryButton.snp.makeConstraints { make in
+            make.top.equalTo(messageLabel.snp.bottom).offset(20)
+            make.leading.equalTo(view).inset(20)
+            make.trailing.equalTo(view).inset(20)
+            make.height.equalTo(50)
         }
         
-        // 두 번째 버튼 레이아웃 설정
-        secondButton.snp.makeConstraints { make in
-            make.top.equalTo(firstButton.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(50) // 버튼 높이
-            make.bottom.equalTo(containerView).offset(-40) // 컨테이너 뷰 아래쪽 여백
+        secondaryButton.snp.makeConstraints { make in
+            make.top.equalTo(primaryButton.snp.bottom).offset(10)
+            make.leading.equalTo(view).offset(20)
+            make.trailing.equalTo(view).inset(20)
+            make.height.equalTo(50)
         }
-        
-        // 버튼 동작 설정
-        firstButton.addTarget(self, action: #selector(firstButtonTapped), for: .touchUpInside)
-        secondButton.addTarget(self, action: #selector(secondButtonTapped), for: .touchUpInside)
     }
     
-    @objc private func firstButtonTapped() {
-        // 버튼 1 클릭 시 동작
-        print("버튼 1 클릭됨")
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc private func secondButtonTapped() {
-        // 버튼 2 클릭 시 동작
-        print("버튼 2 클릭됨")
-        navigationController?.popViewController(animated: true)
-    }
-    
-    // 모달 표시 메서드
-    func presentPopup(from viewController: UIViewController) {
-        viewController.present(self, animated: true, completion: nil)
+    private func setupBindings() {
+        primaryButton.rx.tap
+            .bind { [weak self] in
+                self?.primaryAction?()
+                self?.dismiss(animated: true, completion: nil)
+            }
+            .disposed(by: disposeBag)
+        
+        secondaryButton.rx.tap
+            .bind { [weak self] in
+                self?.secondaryAction?()
+                self?.dismiss(animated: true, completion: nil)
+            }
+            .disposed(by: disposeBag)
     }
 }

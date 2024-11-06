@@ -10,7 +10,7 @@ import UIKit
 enum GuideAPI {
     case fetchAllStores
     case fetchStoreDetail(accessToken: String, storeID: Int)
-    
+    case searchStore(accessToken: String, query: String)
 }
 
 extension GuideAPI: TargetType {
@@ -22,33 +22,35 @@ extension GuideAPI: TargetType {
         switch self {
         case .fetchAllStores:
             return "/api/guide/stores/all"
-        case .fetchStoreDetail(accessToken: _, storeID: let storeID):
+        case .fetchStoreDetail(_, let storeID):
             return "/api/guide/stores/\(storeID)"
+        case .searchStore:
+            return "/api/guide/stores/search"
         }
     }
+    
     var method: Moya.Method {
-        switch self {
-        case .fetchAllStores, .fetchStoreDetail:
-            return .get
-        }
+        return .get
     }
     
     var task: Task {
         switch self {
-        case .fetchAllStores,.fetchStoreDetail:
+        case .fetchAllStores, .fetchStoreDetail:
             return .requestPlain
+            
+        case .searchStore(_, let query):
+            return .requestParameters(parameters: ["keyword": query], encoding: URLEncoding.queryString)
         }
     }
     
     var headers: [String: String]? {
         switch self {
         case .fetchAllStores:
-            return .none
-                
-        case .fetchStoreDetail(let accessToken,_):
+            return nil
+            
+        case .fetchStoreDetail(let accessToken, _),
+             .searchStore(let accessToken, _):
             return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
         }
     }
-    
-    
 }
