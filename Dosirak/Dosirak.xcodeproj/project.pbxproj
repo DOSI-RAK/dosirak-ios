@@ -33,6 +33,7 @@
 		B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF052CC51A2700271910 /* ReactiveMoya */; };
 		B541AF082CC51A2700271910 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF072CC51A2700271910 /* RxMoya */; };
 		B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */ = {isa = PBXBuildFile; productRef = B541AF0A2CC53C7800271910 /* NaverThirdPartyLogin */; };
+		B57718472CDC9302004DB4B0 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = B57718462CDC9302004DB4B0 /* Starscream */; };
 		B594EF042CD8491200484191 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = B594EF032CD8491200484191 /* PanModal */; };
 		B5B9B4002CD52DB10081A0DA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B5B9B3FF2CD52DB10081A0DA /* Kingfisher */; };
 		B5FF13C22CD4BBC7008A48DB /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B5FF13C12CD4BBC7008A48DB /* NMapsMap */; };
@@ -85,6 +86,7 @@
 				B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */,
 				B541AE442CC12F7B00271910 /* RxSwift in Frameworks */,
 				B541AF042CC51A2700271910 /* Moya in Frameworks */,
+				B57718472CDC9302004DB4B0 /* Starscream in Frameworks */,
 				B5212EB32CCD221C004A8EA2 /* Inject in Frameworks */,
 				B541AE772CC1694F00271910 /* SocketIO in Frameworks */,
 				B52F77F22CCE1939008FBC91 /* RxDataSources in Frameworks */,
@@ -162,6 +164,7 @@
 				B5FF13C12CD4BBC7008A48DB /* NMapsMap */,
 				B5B9B3FF2CD52DB10081A0DA /* Kingfisher */,
 				B594EF032CD8491200484191 /* PanModal */,
+				B57718462CDC9302004DB4B0 /* Starscream */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -210,6 +213,7 @@
 				B5FF13C02CD4BBC7008A48DB /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 				B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				B594EF022CD8491200484191 /* XCRemoteSwiftPackageReference "PanModal" */,
+				B57718452CDC9302004DB4B0 /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -556,6 +560,14 @@
 				kind = branch;
 			};
 		};
+		B57718452CDC9302004DB4B0 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.8;
+			};
+		};
 		B594EF022CD8491200484191 /* XCRemoteSwiftPackageReference "PanModal" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/slackhq/PanModal";
@@ -712,6 +724,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B541AF092CC53C7800271910 /* XCRemoteSwiftPackageReference "naveridlogin-sdk-ios" */;
 			productName = NaverThirdPartyLogin;
+		};
+		B57718462CDC9302004DB4B0 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B57718452CDC9302004DB4B0 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
 		};
 		B594EF032CD8491200484191 /* PanModal */ = {
 			isa = XCSwiftPackageProductDependency;

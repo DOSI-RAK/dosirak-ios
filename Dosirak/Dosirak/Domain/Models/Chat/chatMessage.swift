@@ -7,15 +7,7 @@
 
 import Foundation
 
-// 최상위 응답 구조체
-struct ChatRoomInfoResponse: Decodable {
-    let status: String
-    let message: String
-    let data: ChatRoomInfo?
-    let exception: String? // 'exception' 필드는 Optional
-}
 
-// 메시지 타입 열거형
 enum MessageType: String, Codable {
     case chat = "CHAT"
     case join = "JOIN"

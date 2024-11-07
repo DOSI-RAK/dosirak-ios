@@ -29,7 +29,7 @@ final class GuideRepository: GuideRepositoryType {
             })
             .map { response in
                 do {
-                    let decodedResponse = try JSONDecoder().decode(StoreListResponse.self, from: response.data)
+                    let decodedResponse = try JSONDecoder().decode(APIResponse<[Store]>.self, from: response.data)
                     if decodedResponse.status == "SUCCESS" {
                         print("=======>\(decodedResponse.status)")
                         print("Fetched storelist Response:", decodedResponse.data) // 디버그용 출력

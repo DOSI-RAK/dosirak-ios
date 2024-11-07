@@ -30,7 +30,7 @@ class ChatListRepository: ChatListRepositoryType {
         print("Calling fetchMyLocationChatRoom")
         return provider.rx.request(.fetchMyLocationChatRoom(accessToken: accessToken, zone: zone))
             .filterSuccessfulStatusCodes()
-            .map(ChatRoomResponse.self)
+            .map(APIResponse<[ChatRoom]>.self)
             .flatMap { response in
                 if response.status == "SUCCESS" {
                     return Single.just(response.data)
@@ -46,7 +46,7 @@ class ChatListRepository: ChatListRepositoryType {
             .filterSuccessfulStatusCodes()
             .map { response in
                 do {
-                    let decodedResponse = try JSONDecoder().decode(MyChatRoomSummaryResponse.self, from: response.data)
+                    let decodedResponse = try JSONDecoder().decode(APIResponse<[ChatRoomSummary]>.self, from: response.data)
                     if decodedResponse.status == "SUCCESS" {
                         print("=======>\(decodedResponse.status)")
                         print("Fetched ChatRoomSummary Response:", decodedResponse.data) // 디버그용 출력
@@ -86,7 +86,7 @@ class ChatListRepository: ChatListRepositoryType {
             .filterSuccessfulStatusCodes()
             .map { response in
                 do {
-                    let decodedResponse = try JSONDecoder().decode(MyChatRoomListResponse.self, from: response.data)
+                    let decodedResponse = try JSONDecoder().decode(APIResponse<[MyChatRoom]>.self, from: response.data)
                     if decodedResponse.status == "SUCCESS" {
                         print("=======>\(decodedResponse.status)")
                         print("Fetched ChatRoomSummary Response:", decodedResponse.data)

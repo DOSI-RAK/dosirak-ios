@@ -7,22 +7,6 @@
 
 import Foundation
 
-struct MyChatRoomSummaryResponse: Decodable {
-    let status: String
-    let message: String
-    let data: [ChatRoomSummary]
-}
-struct ChatRoomResponse: Decodable {
-    let status: String
-    let message: String
-    let data: [ChatRoom]
-}
-
-struct MyChatRoomListResponse: Decodable {
-    let status: String
-    let message: String
-    let data: [MyChatRoom]
-}
 
 // 채팅방 목록에 사용되는 채팅방 정보 기본 구조체
 struct ChatRoom: Decodable {

@@ -163,7 +163,6 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
 
 extension GreenCommitHeaderView: FSCalendarDelegateAppearance {
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, sizeFor date: Date) -> CGSize {
-        // 셀 크기를 줄여 셀 간 간격을 넓어 보이게 설정
         return CGSize(width: 40, height: 50)
     }
 }

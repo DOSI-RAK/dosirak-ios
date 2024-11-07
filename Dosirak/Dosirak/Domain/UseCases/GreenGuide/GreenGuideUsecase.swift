@@ -13,7 +13,7 @@ protocol GuideUseCaseType {
     func getStoreDetail(storeID: Int, accessToken: String) -> Single<Store>
 }
 
-// UseCase 구현
+
 final class GuideUseCase: GuideUseCaseType {
     private let repository: GuideRepositoryType
     

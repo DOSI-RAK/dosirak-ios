@@ -70,7 +70,7 @@ final class ChatRepository: ChatRepositoryType {
                     print("Raw JSON Data: \(String(data: data, encoding: .utf8) ?? "No JSON Data")")
                     
                     // 전체 응답을 `ChatRoomInfoResponse`로 디코딩하고 `data` 필드만 추출
-                    let chatRoomInfoResponse = try JSONDecoder().decode(ChatRoomInfoResponse.self, from: data)
+                    let chatRoomInfoResponse = try JSONDecoder().decode(APIResponse<ChatRoomInfo?>.self, from: data)
                     
                     if let chatRoomInfo = chatRoomInfoResponse.data {
                         single(.success(chatRoomInfo))  // `data` 필드만 반환

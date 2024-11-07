@@ -11,6 +11,8 @@ enum GuideAPI {
     case fetchAllStores
     case fetchStoreDetail(accessToken: String, storeID: Int)
     case searchStore(accessToken: String, query: String)
+    case fetchCategory(query: String)
+    case fetchNearMyLocation(mapX: Double, mayY: Double)
 }
 
 extension GuideAPI: TargetType {
@@ -26,6 +28,10 @@ extension GuideAPI: TargetType {
             return "/api/guide/stores/\(storeID)"
         case .searchStore:
             return "/api/guide/stores/search"
+        case .fetchCategory:
+            return "/api/guide/stores/filter"
+        case .fetchNearMyLocation:
+            return "/api/guide/stores/nearby"
         }
     }
     
@@ -40,12 +46,18 @@ extension GuideAPI: TargetType {
             
         case .searchStore(_, let query):
             return .requestParameters(parameters: ["keyword": query], encoding: URLEncoding.queryString)
+
+        case .fetchCategory(let query):
+            return .requestParameters(parameters: ["storeCategory" : query], encoding: URLEncoding.queryString)
+        case .fetchNearMyLocation(let mapX, let mapY):
+            return .requestParameters(parameters: ["currentMapX": mapX, "currentMapY": mapY], encoding: URLEncoding.default)
         }
+        
     }
     
     var headers: [String: String]? {
         switch self {
-        case .fetchAllStores:
+        case .fetchAllStores, .fetchCategory, .fetchNearMyLocation:
             return nil
             
         case .fetchStoreDetail(let accessToken, _),
