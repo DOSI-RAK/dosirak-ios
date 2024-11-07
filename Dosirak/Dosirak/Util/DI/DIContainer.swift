@@ -75,21 +75,27 @@ final class DIContainer {
         
         //MARK: CHAT
         container.register(ChatRepositoryType.self) { (resolver, chatRoomId: Int) in
-            let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
-            return ChatRepository(accessToken: accessToken, chatRoomId: chatRoomId)
-        }
-        
-        // Chat UseCase 등록 (chatRoomId를 받아 ChatRepository 초기화)
-        container.register(ChatUseCaseType.self) { (resolver, chatRoomId: Int) in
-            let repository = resolver.resolve(ChatRepositoryType.self, argument: chatRoomId)!
-            return ChatUseCase(repository: repository, chatRoomId: chatRoomId)
-        }
-        
-        // Chat Reactor 등록 (chatRoomId를 받아 ChatUseCase 초기화)
-        container.register(ChatReactor.self) { (resolver, chatRoomId: Int) in
-            let useCase = resolver.resolve(ChatUseCaseType.self, argument: chatRoomId)!
-            return ChatReactor(chatUseCase: useCase)
-        }
+                let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+                return ChatRepository(chatRoomId: chatRoomId, accessToken: accessToken)
+            }
+            
+            // ChatUseCase
+            container.register(ChatUseCaseType.self) { (resolver, chatRoomId: Int) in
+                let repository = resolver.resolve(ChatRepositoryType.self, argument: chatRoomId)!
+                return ChatUseCase(repository: repository)
+            }
+            
+            // ChatReactor
+            container.register(ChatReactor.self) { (resolver, chatRoomId: Int) in
+                let useCase = resolver.resolve(ChatUseCaseType.self, argument: chatRoomId)!
+                return ChatReactor(useCase: useCase)
+            }
+            
+            // ChatViewController
+            container.register(ChatViewController.self) { (resolver, chatRoomId: Int) in
+                let reactor = resolver.resolve(ChatReactor.self, argument: chatRoomId)!
+                return ChatViewController(reactor: reactor)
+            }
         
         
         //MARK: Green Guide

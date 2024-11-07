@@ -146,10 +146,12 @@ class ChatListViewController: BaseViewController {
             .subscribe(onNext: { [weak self] chatRoom in
                 guard let self = self else { return }
                 
-                // ChatRoomId를 전달하여 ChatViewController 초기화
-                let chatVC = ChatViewController(chatRoomId: chatRoom.id)
-                chatVC.title = chatRoom.title
-                self.navigationController?.pushViewController(chatVC, animated: true)
+                if let chatVC = DIContainer.shared.resolve(ChatViewController.self, argument: chatRoom.id) {
+                    chatVC.title = chatRoom.title
+                    self.navigationController?.pushViewController(chatVC, animated: true)
+                } else {
+                    print("Error: ChatViewController could not be resolved.")
+                }
             })
             .disposed(by: disposeBag)
         
@@ -169,12 +171,12 @@ class ChatListViewController: BaseViewController {
             .subscribe(onNext: { [weak self] chatRoom in
                 guard let self = self else { return }
                 
-                // ChatRoomId를 전달하여 ChatViewController 초기화
-                let chatVC = ChatViewController(chatRoomId: chatRoom.id)
-                chatVC.title = chatRoom.title
-                self.navigationController?.pushViewController(chatVC, animated: true)
-                
-                
+                if let chatVC = DIContainer.shared.resolve(ChatViewController.self, argument: chatRoom.id) {
+                    chatVC.title = chatRoom.title
+                    self.navigationController?.pushViewController(chatVC, animated: true)
+                } else {
+                    print("Error: ChatViewController could not be resolved.")
+                }
             })
             .disposed(by: disposeBag)
         

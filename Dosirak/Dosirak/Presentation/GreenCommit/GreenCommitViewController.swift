@@ -29,7 +29,7 @@ class GreenCommitViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        title = "Green Commits"
         setupViews()
         setupConstraints()
         
@@ -67,7 +67,18 @@ class GreenCommitViewController: UIViewController {
             "저탄소 이동수단 인증",
             "플라스틱 없는 날 인증",
             "자전거 타기 인증",
-        
+            "다회용기 포장 인증",
+            "저탄소 이동수단 인증",
+            "플라스틱 없는 날 인증",
+            "자전거 타기 인증",
+            "다회용기 포장 인증",
+            "저탄소 이동수단 인증",
+            "플라스틱 없는 날 인증",
+            "자전거 타기 인증",
+            "다회용기 포장 인증",
+            "저탄소 이동수단 인증",
+            "플라스틱 없는 날 인증",
+            "자전거 타기 인증",
             
         ]
         return records.shuffled()

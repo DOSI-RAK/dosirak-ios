@@ -9,11 +9,12 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import ReactorKit
 
-class ChatViewController: UIViewController {
-    
-    private let disposeBag = DisposeBag()
+class ChatViewController: UIViewController{
+    var disposeBag = DisposeBag()
     var reactor: ChatReactor?
+        
     
     private let messageInputField: UITextField = {
         let textField = UITextField()
@@ -36,9 +37,9 @@ class ChatViewController: UIViewController {
         return tableView
     }()
     
-    init(chatRoomId: Int) {
+    init(reactor: ChatReactor) {
         super.init(nibName: nil, bundle: nil)
-        self.reactor = DIContainer.shared.resolve(ChatReactor.self, argument: chatRoomId)
+        self.reactor = reactor
     }
     
     required init?(coder: NSCoder) {
@@ -48,31 +49,34 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        bindReactor()
+        bind(reactor: reactor!)
+        // WebSocket 연결
+        reactor?.action.onNext(.connect)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        reactor?.action.onNext(.disconnect)
+    }
+
     private func setupUI() {
         view.backgroundColor = .bgColor
-        
         view.addSubview(tableView)
         view.addSubview(messageInputField)
         view.addSubview(sendButton)
-        
-        // 테이블 뷰 레이아웃
+
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.left.right.equalToSuperview()
             make.bottom.equalTo(messageInputField.snp.top).offset(-10)
         }
-        
-        // 메시지 입력 필드 레이아웃
+
         messageInputField.snp.makeConstraints { make in
             make.left.equalTo(view.safeAreaLayoutGuide).offset(16)
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-10)
             make.height.equalTo(44)
         }
-        
-        // 전송 버튼 레이아웃
+
         sendButton.snp.makeConstraints { make in
             make.centerY.equalTo(messageInputField)
             make.left.equalTo(messageInputField.snp.right).offset(8)
@@ -80,11 +84,9 @@ class ChatViewController: UIViewController {
             make.width.equalTo(60)
         }
     }
-    
-    private func bindReactor() {
-        guard let reactor = reactor else { return }
-        
-        // 메시지 전송 액션
+
+    func bind(reactor: ChatReactor) {
+        // 메시지 전송
         sendButton.rx.tap
             .withLatestFrom(messageInputField.rx.text.orEmpty)
             .filter { !$0.isEmpty }
@@ -94,24 +96,13 @@ class ChatViewController: UIViewController {
         
         // 채팅방 정보 로드
         reactor.action.onNext(.loadChatRoomInfo)
-        
+
         // 메시지 리스트 바인딩
         reactor.state
             .map { $0.chatRoomInfo?.messageList ?? [] }
             .bind(to: tableView.rx.items(cellIdentifier: ChatMessageCell.identifier, cellType: ChatMessageCell.self)) { index, message, cell in
                 cell.configure(with: message)
             }
-            .disposed(by: disposeBag)
-        
-        // 채팅방 정보 상태 바인딩
-        reactor.state
-            .map { $0.chatRoomInfo }
-            .compactMap { $0 }
-            .subscribe(onNext: { [weak self] info in
-                DispatchQueue.main.async {
-                    //self?.title = info.explanation
-                }
-            })
             .disposed(by: disposeBag)
         
         // 메시지 입력 필드 초기화
