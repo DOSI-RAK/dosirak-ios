@@ -76,6 +76,7 @@ final class DIContainer {
         //MARK: CHAT
         container.register(ChatRepositoryType.self) { (resolver, chatRoomId: Int) in
                 let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+            print("==========================>\(accessToken)")
                 return ChatRepository(chatRoomId: chatRoomId, accessToken: accessToken)
             }
             

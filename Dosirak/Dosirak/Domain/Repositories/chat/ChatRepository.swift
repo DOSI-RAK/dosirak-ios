@@ -20,32 +20,44 @@ class ChatRepository: ChatRepositoryType {
     private let stompClient: StompClient
     private let messageSubject = PublishSubject<String>()
     private let chatRoomId: Int
-    
     private let accessToken: String
-    
+
     init(chatRoomId: Int, accessToken: String) {
         self.chatRoomId = chatRoomId
         self.accessToken = accessToken
         self.stompClient = StompClient(chatRoomId: chatRoomId, accessToken: accessToken)
+        
+        setupStompClient()
     }
     
+    private func setupStompClient() {
+        // StompClient의 메시지 수신을 구독하여 messageSubject로 전달
+        stompClient.didReceiveMessage = { [weak self] message in
+            self?.messageSubject.onNext(message)
+        }
+    }
+
+    // WebSocket 연결
     func connect() {
         stompClient.connect()
         stompClient.subscribe()
     }
-    
+
+    // WebSocket 연결 해제
     func disconnect() {
         stompClient.disconnect()
     }
-    
+
+    // 메시지 전송
     func sendMessage(_ content: String, messageType: String) {
         stompClient.sendMessage(content: content, messageType: messageType)
     }
-    
+
+    // 메시지 수신을 관찰
     func observeMessages() -> Observable<String> {
         return messageSubject.asObservable()
     }
-    
+
     // 채팅방 정보 불러오기
     func fetchChatRoomInfo() -> Single<ChatRoomInfo> {
         let url = URL(string: "http://dosirak.store/api/chat-rooms/\(chatRoomId)/information")!

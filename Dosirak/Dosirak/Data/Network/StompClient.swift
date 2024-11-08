@@ -4,97 +4,87 @@
 //
 //  Created by 권민재 on 11/7/24.
 //
-
+import StompClientLib
 import Foundation
 
-class StompClient {
-    private var webSocketTask: URLSessionWebSocketTask?
-    private let urlSession = URLSession(configuration: .default)
+class StompClient: StompClientLibDelegate {
+    private let stompClient = StompClientLib()
+    private let url = URL(string: "ws://dosirak.store/dosirak")!
     private let accessToken: String
     private let chatRoomId: Int
-    
-    private var url: URL {
-        return URL(string: "ws://dosirak.store/dosirak")! // 서버의 STOMP 엔드포인트
-    }
-    
+
     init(chatRoomId: Int, accessToken: String) {
         self.chatRoomId = chatRoomId
         self.accessToken = accessToken
+        connect()
     }
-    
+    var didReceiveMessage: ((String) -> Void)?
     // WebSocket 연결
     func connect() {
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        webSocketTask = urlSession.webSocketTask(with: request)
-        webSocketTask?.resume()
+        let headers = [
+            "Authorization": "Bearer \(accessToken)",
+            "Content-Type": "application/json"
+            
+        ]
         
-        // STOMP CONNECT 프레임 전송
-        let connectFrame = 
-        """
-        CONNECT
-        accept-version:1.2,1.1,1.0
-        """
-        sendFrame(connectFrame)
-        
-        // 메시지 수신 대기
-        receiveMessages()
+        stompClient.openSocketWithURLRequest(request: URLRequest(url: url) as NSURLRequest, delegate: self, connectionHeaders: headers)
     }
-    
-    // STOMP 프레임 전송
-    private func sendFrame(_ frame: String) {
-        webSocketTask?.send(.string(frame)) { error in
-            if let error = error {
-                print("Frame 전송 오류: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    // 메시지 전송
-    func sendMessage(content: String, messageType: String) {
-        let messageFrame =
-        """
-        SEND
-        destination:/app/chat-room/\(chatRoomId)/sendMessage
-        content-type:application/json\n\n{"content":"\(content)", "messageType":"CHAT"}\u{00}
-        """
-        sendFrame(messageFrame)
-    }
-    
-    // 구독
+
+    // 채팅방에 메시지 구독
     func subscribe() {
-        let subscribeFrame = """
-        SUBSCRIBE\ndestination:/topic/chat-room/\(chatRoomId)\nid:sub-\(chatRoomId)\n\n\u{00}
-        """
-        sendFrame(subscribeFrame)
+        let destination = "/topic/chat-room/\(chatRoomId)"
+        stompClient.subscribe(destination: destination)
+        print("구독 요청: \(destination)")
     }
-    
-    // 메시지 수신
-    private func receiveMessages() {
-        webSocketTask?.receive { [weak self] result in
-            switch result {
-            case .success(let message):
-                switch message {
-                case .string(let text):
-                    print("Received message: \(text)")
-                    // 메시지 처리 로직 추가
-                case .data(let data):
-                    print("Received data: \(data)")
-                @unknown default:
-                    break
-                }
-            case .failure(let error):
-                print("Receive error: \(error.localizedDescription)")
-            }
-            self?.receiveMessages() // 계속 수신 대기
+
+    // 채팅방에 메시지 전송
+    func sendMessage(content: String, messageType: String) {
+        let destination = "/app/chat-room/\(chatRoomId)/sendMessage"
+        
+        // JSON 형식의 메시지 생성
+        let message: [String: Any] = [
+            "content": content,
+            "messageType": messageType
+        ]
+        
+        if let jsonData = try? JSONSerialization.data(withJSONObject: message, options: []),
+           let jsonString = String(data: jsonData, encoding: .utf8) {
+            stompClient.sendMessage(message: jsonString, toDestination: destination, withHeaders: ["Content-Type": "application/json"], withReceipt: nil)
+            print("메시지 전송: \(jsonString) -> \(destination)")
         }
     }
-    
-    // 연결 해제
+
+    // WebSocket 연결 해제
     func disconnect() {
-        let disconnectFrame = "DISCONNECT\n\n\u{00}"
-        sendFrame(disconnectFrame)
-        webSocketTask?.cancel(with: .goingAway, reason: nil)
+        stompClient.disconnect()
+        print("STOMP 연결 해제")
+    }
+
+    // MARK: - StompClientLibDelegate 메서드
+
+    func stompClientDidConnect(client: StompClientLib!) {
+        print("STOMP 연결 성공")
+    }
+
+    func stompClientDidDisconnect(client: StompClientLib!) {
+        print("STOMP 연결 종료")
+    }
+
+    func stompClient(client: StompClientLib!, didReceiveMessageWithJSONBody jsonBody: AnyObject?, akaStringBody stringBody: String?, withHeader header: [String : String]?, withDestination destination: String) {
+        if let message = stringBody {
+            print("받은 메시지: \(message)")
+        }
+    }
+
+    func serverDidSendReceipt(client: StompClientLib!, withReceiptId receiptId: String) {
+        print("서버에서 메시지 수신 확인: \(receiptId)")
+    }
+
+    func serverDidSendError(client: StompClientLib!, withErrorMessage description: String, detailedErrorMessage message: String?) {
+        print("STOMP 에러 발생: \(description), 세부 메시지: \(message?.description ?? "")")
+    }
+
+    func serverDidSendPing() {
+        print("서버에서 Ping 수신")
     }
 }
