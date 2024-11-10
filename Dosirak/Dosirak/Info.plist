@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>앨범 접근 권한을 요청합니다</string>
 	<key>NSLocationAlwaysUsageDescription</key>
@@ -10,8 +12,6 @@
 	<string>사용자의 위치정보를 받아와야합니다.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>사용자의 위치 정보를 받아오려고 합니다.</string>
-	<key>UIUserInterfaceStyle</key>
-	<string>Light</string>
 	<key>NAVER_MAP_SECRET</key>
 	<string>YCRg2zlEe3pjeHXTOpNdTVqxLv3oDOmjzYywbPji</string>
 	<key>NAVER_MAP_CLIENTID</key>

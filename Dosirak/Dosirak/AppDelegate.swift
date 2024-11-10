@@ -28,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //MARK: KAKAO
         RxKakaoSDK.initSDK(appKey: AppConfig.appkey!)
         
-        
+        window?.overrideUserInterfaceStyle = .light
         //MARK:Naver
         let instance = NaverThirdPartyLoginConnection.getSharedInstance()
         // 네이버 앱으로 인증하는 방식 활성화(true)

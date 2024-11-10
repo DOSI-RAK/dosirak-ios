@@ -41,6 +41,9 @@ class EditProfileViewController: BaseViewController, View {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            view.endEditing(true)
+        }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -154,6 +157,8 @@ class EditProfileViewController: BaseViewController, View {
         
         completeButton.rx.tap
             .bind(onNext:  {
+                let vc = UserProfileViewController()
+                vc.userNameLabel.text = self.nickNameTextField.text
                 self.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)

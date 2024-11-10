@@ -107,7 +107,7 @@ class LoginViewController: BaseViewController {
     
     let signUpImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Signup")
+        imageView.image = UIImage(named: "whitebg")
         return imageView
     }()
     
@@ -122,21 +122,21 @@ class LoginViewController: BaseViewController {
     
     let appleLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "applelogin"), for: .normal)
+        button.setImage(UIImage(named: "apple"), for: .normal)
         button.contentMode = .scaleAspectFit
         return button
     }()
     
     let kakaoLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "kakaologin"), for: .normal)
+        button.setImage(UIImage(named: "kakao"), for: .normal)
         button.contentMode = .scaleAspectFit
         return button
     }()
     
     let naverLoginButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "naverlogin"), for: .normal)
+        button.setImage(UIImage(named: "naver"), for: .normal)
         button.contentMode = .scaleAspectFit
         return button
     }()

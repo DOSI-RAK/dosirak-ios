@@ -40,9 +40,10 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     }
     
     func start(window: UIWindow) {
+        //moveHome(window: window)
         guard let accessToken = keychain["accessToken"],
-              let refreshToken = keychain["refreshToken"] else {
-            //moveLogin(window: window)
+              let refreshToken = keychain["refreshToken"]
+        else {
             moveLogin(window: window)
             print("로그인 시작")
             return
@@ -99,7 +100,7 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
             fatalError("LoginReactor cannot be resolved")
         }
         
-        let loginVC = LoginViewController(reactor: reactor, appCoordinator: self)
+        let loginVC = WhiteLoginViewController(reactor: reactor, appCoordinator: self)
         window.rootViewController = loginVC
         window.makeKeyAndVisible()
         

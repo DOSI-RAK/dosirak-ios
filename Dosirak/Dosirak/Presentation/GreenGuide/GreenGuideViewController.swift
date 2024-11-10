@@ -19,7 +19,7 @@ class GreenGuideViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let reactor: GreenGuideReactor
     private let overlayView = UIView()
-    
+    private var bottomSheetVC: BottomSheetViewController?
 
     private let categoryTitles = ["전체", "한식", "일식", "양식", "분식", "카페", "디저트"]
     private var selectedCategoryButton: UIButton?
@@ -41,13 +41,16 @@ class GreenGuideViewController: UIViewController {
         setupLayout()
         setupBottomSheet()
         bindReactor()
-        
+        navigationController?.delegate = self
+
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        //self.mapView.isHidden = true
+        setupBottomSheet()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -99,6 +102,7 @@ class GreenGuideViewController: UIViewController {
         homeButton.snp.makeConstraints {
             $0.leading.equalTo(findRouteButton.snp.trailing).offset(5)
             $0.width.height.equalTo(52)
+            $0.trailing.equalTo(mapView.snp.trailing).inset(5)
             $0.top.equalTo(searchTextField)
         }
         
@@ -110,24 +114,34 @@ class GreenGuideViewController: UIViewController {
     }
     
     private func setupBottomSheet() {
-        let bottomSheetVC = BottomSheetViewController()
-        bottomSheetVC.reactor = self.reactor // Reactor 주입
+        bottomSheetVC = BottomSheetViewController()
+        bottomSheetVC?.reactor = self.reactor
+
+        bottomSheetVC?.storeSelected
+            .subscribe(onNext: { [weak self] store in
+                self?.bottomSheetVC?.dismiss(animated: false) {
+                    let detailVC = StoreDetailViewController(storeId: store.storeId,reactor: self!.reactor)
+                    self?.bottomSheetVC?.view.isHidden = true
+                    self?.navigationController?.pushViewController(detailVC, animated: true)
+                }
+                
+            })
+            .disposed(by: disposeBag)
         
-        if let sheet = bottomSheetVC.sheetPresentationController {
+        if let sheet = bottomSheetVC?.sheetPresentationController {
             sheet.detents = [.medium(), .large()]
             sheet.prefersGrabberVisible = true
             sheet.prefersScrollingExpandsWhenScrolledToEdge = false
             sheet.largestUndimmedDetentIdentifier = .medium
             sheet.selectedDetentIdentifier = .medium
-            
-            // Bottom sheet detent 상태 변화 감지
             sheet.delegate = self
         }
         
-        present(bottomSheetVC, animated: true)
+        if let bottomSheetVC = bottomSheetVC {
+            present(bottomSheetVC, animated: true)
+        }
     }
     
-    // 카테고리 버튼들을 오버레이 수평 스택 뷰에 추가
     private func setupCategoryButtons() {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -165,11 +179,17 @@ class GreenGuideViewController: UIViewController {
     
     // 카테고리 버튼 탭 시 액션
     @objc private func categoryButtonTapped(_ sender: UIButton) {
-        guard let title = sender.currentTitle else { return }
-        print("\(title) 버튼이 탭되었습니다.")
-        selectCategoryButton(sender)
-        // 카테고리 필터링 로직을 여기에 구현합니다. 예: 지도 마커 업데이트
-    }
+           guard let category = sender.currentTitle else { return }
+           print("\(category) 버튼이 탭되었습니다.")
+           selectCategoryButton(sender)
+           
+    
+           if category == "전체" {
+               reactor.action.onNext(.loadAllStores) // 전체 카테고리일 때
+           } else {
+               reactor.action.onNext(.loadStoresByCategory(category)) // 특정 카테고리일 때
+           }
+       }
     
     private func selectCategoryButton(_ button: UIButton) {
         // 기존 선택된 버튼 스타일 초기화
@@ -226,7 +246,7 @@ class GreenGuideViewController: UIViewController {
     lazy var findRouteButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "goto"), for: .normal)
-        button.backgroundColor = .systemBlue
+        //button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 12
         button.clipsToBounds = true
         return button
@@ -251,7 +271,7 @@ class GreenGuideViewController: UIViewController {
 
 // MARK: - UIAdaptivePresentationControllerDelegate
 extension GreenGuideViewController: UISheetPresentationControllerDelegate {
-    func presentationControllerDidChangeSelectedDetentIdentifier(_ presentationController: UIPresentationController) {
+    private func presentationControllerDidChangeSelectedDetentIdentifier(_ presentationController: UIPresentationController) {
         guard let sheet = presentationController as? UISheetPresentationController else { return }
         
         // Bottom sheet가 large일 때 myLocationButton 숨기기
@@ -259,6 +279,20 @@ extension GreenGuideViewController: UISheetPresentationControllerDelegate {
             myLocationButton.isHidden = true
         } else {
             myLocationButton.isHidden = false
+        }
+    }
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        if let sheet = presentationController as? UISheetPresentationController {
+            sheet.selectedDetentIdentifier = .medium
+        }
+    }
+}
+
+extension GreenGuideViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        // 뒤로 이동할 때, BottomSheet 표시
+        if viewController is GreenGuideViewController {
+            bottomSheetVC?.view.isHidden = false
         }
     }
 }

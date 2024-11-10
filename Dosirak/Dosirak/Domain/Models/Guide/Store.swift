@@ -20,23 +20,44 @@ struct Store: Decodable {
     let storeImg: String
     let ifValid: String
     let ifReward: String
-    let operationTime: String
     let mapX: Double
     let mapY: Double
+    let operating: Bool
 }
 
 
 struct StoreDetail: Decodable {
     let storeId: Int
     let storeName: String
-    let storeCategory: String?
+    let storeCategory: String
     let storeImg: String
-    let ifValid: String
-    let ifReward: String
-    let operationTime: String
     let mapX: Double
     let mapY: Double
-    let meduId: Int
+    let telNumber: String
+    let ifValid: String
+    let ifReward: String
+    let menus: [Menu]
+    let operationTime: String
+}
+struct OperatingTime: Decodable {
+    let day: String
+    let hours: String
+    
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let keyValue = try container.decode([String: String].self)
+        guard let (day, hours) = keyValue.first else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid operation time format.")
+        }
+        self.day = day
+        self.hours = hours
+    }
+}
+
+// 메뉴에 대한 모델
+struct Menu: Codable {
+    let menuId: Int
     let menuName: String
     let menuImg: String
     let menuPrice: Int

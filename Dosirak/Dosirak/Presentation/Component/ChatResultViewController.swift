@@ -84,10 +84,5 @@ class ChatResultViewController: BaseViewController {
         button.setTitle("내 채팅", for: .normal)
         return button
     }()
-    
-    
-    
-    
-
-    
 }
+

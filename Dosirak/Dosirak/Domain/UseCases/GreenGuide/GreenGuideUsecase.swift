@@ -10,7 +10,8 @@ import RxSwift
 
 protocol GuideUseCaseType {
     func getAllStores() -> Single<[Store]>
-    func getStoreDetail(storeID: Int, accessToken: String) -> Single<Store>
+    func getStoreDetail(storeID: Int, accessToken: String) -> Single<StoreDetail>
+    func getCategoryStoreList(category: String) -> Single<[Store]>
 }
 
 
@@ -25,7 +26,10 @@ final class GuideUseCase: GuideUseCaseType {
         return repository.fetchAllStores()
     }
     
-    func getStoreDetail(storeID: Int, accessToken: String) -> Single<Store> {
+    func getStoreDetail(storeID: Int, accessToken: String) -> Single<StoreDetail> {
         return repository.fetchStoreDetail(storeID: storeID, accessToken: accessToken)
+    }
+    func getCategoryStoreList(category: String) -> Single<[Store]> {
+        return repository.fetchCategoryStoreList(category: category)
     }
 }

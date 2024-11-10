@@ -26,6 +26,7 @@ class UserRepository: UserRepositoryType {
     func loginWithKakao() -> Observable<String?> {
         return kakaoProvider.login()
             .do(onNext: { token in
+                
                 print("Kakao login token received: \(String(describing: token))")
             }, onError: { error in
                 print("Kakao login error: \(error)")

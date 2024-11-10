@@ -20,6 +20,7 @@ class KakaoProvider: KakaoProviderType {
             if UserApi.isKakaoTalkLoginAvailable() {
                 UserApi.shared.rx.loginWithKakaoTalk()
                     .subscribe(onNext: { oauthToken in
+                        
                         observer.onNext(oauthToken.accessToken)
                         observer.onCompleted()
                     }, onError: { error in

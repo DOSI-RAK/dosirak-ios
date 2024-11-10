@@ -14,6 +14,8 @@ class BottomSheetViewController: UIViewController, View {
    
     var disposeBag = DisposeBag()
     let tableView = UITableView()
+    let storeSelected = PublishSubject<Store>()
+    
     var reactor: GreenGuideReactor? {
         didSet {
             if let reactor = reactor {
@@ -21,7 +23,6 @@ class BottomSheetViewController: UIViewController, View {
             }
         }
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +34,6 @@ class BottomSheetViewController: UIViewController, View {
         view.addSubview(tableView)
         
         tableView.register(StoreTableViewCell.self, forCellReuseIdentifier: StoreTableViewCell.identifier)
-        
         tableView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(10)
         }
@@ -41,33 +41,22 @@ class BottomSheetViewController: UIViewController, View {
             .disposed(by: disposeBag)
     }
     
-    
     func bind(reactor: GreenGuideReactor) {
-       
         reactor.state
-            .map { $0.stores }
+            .map { state -> [Store] in
+                state.selectedCategory == "전체" ? state.stores : state.categoryStores
+            }
             .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
                 cell.configure(store: store)
             }
             .disposed(by: disposeBag)
         
-
-        reactor.state
-            .map { $0.isLoading }
-            .distinctUntilChanged()
-            .subscribe(onNext: { isLoading in
-                if isLoading {
-                    print("Loading...")
-                } else {
-                    print("Loading finished.")
-                }
-            })
+        tableView.rx
+            .modelSelected(Store.self)
+            .bind(to: storeSelected)
             .disposed(by: disposeBag)
     }
 }
-
-
-
 
 extension BottomSheetViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

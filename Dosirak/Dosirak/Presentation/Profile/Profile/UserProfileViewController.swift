@@ -30,6 +30,8 @@ class UserProfileViewController: BaseViewController {
         super.viewDidLoad()
         tableView.rx.setDelegate(self)
             .disposed(by: disposeBag)
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {

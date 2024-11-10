@@ -13,6 +13,8 @@ enum UserAPI {
     case registerNickName(accessToken: String, nickName: String)
     case isValidToken(accessToken: String)
     case reissueToken(refreshToken: String)
+    case withdraw(accessToken: String)
+    case logout(accessToken: String)
 }
 
 extension UserAPI: TargetType {
@@ -30,6 +32,10 @@ extension UserAPI: TargetType {
             return "valid-token"
         case .reissueToken:
             return "/token/reissue/access-token"
+        case .withdraw:
+            return "/user/withdraw"
+        case .logout:
+            return "/user/logout"
         }
     }
     
@@ -43,6 +49,10 @@ extension UserAPI: TargetType {
             return .get
         case .reissueToken:
             return .get
+        case .withdraw:
+            return .post
+        case .logout:
+            return .post
         }
     }
     
@@ -58,9 +68,11 @@ extension UserAPI: TargetType {
                 "nickName": nickName
             ]
             return .requestParameters(parameters: parameters.compactMapValues { $0 }, encoding: JSONEncoding.default)
-        case .isValidToken(accessToken: let accessToken):
+        case .isValidToken(accessToken: _):
             return .requestPlain
-        case .reissueToken(refreshToken: let refreshToken):
+        case .reissueToken(refreshToken: _):
+            return .requestPlain
+        case .withdraw, .logout:
             return .requestPlain
         }
     }
@@ -75,6 +87,10 @@ extension UserAPI: TargetType {
             return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
         case .reissueToken(let refreshToken):
             return ["Authorization": "Bearer \(refreshToken)", "Content-Type": "application/json"]
+        case .withdraw(let accessToken):
+            return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
+        case .logout(let accessToken):
+            return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
             
         }
     }

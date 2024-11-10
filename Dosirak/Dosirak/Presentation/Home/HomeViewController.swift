@@ -4,12 +4,13 @@
 //
 //  Created by 권민재 on 10/31/24.
 //
-
-import UIKit
-import SnapKit
-import RxSwift
 import CoreLocation
-
+import UIKit
+import RxSwift
+import RxCocoa
+import RxDataSources
+import SnapKit
+import RxGesture
 
 struct GuideData {
     let title: String
@@ -17,12 +18,6 @@ struct GuideData {
     let imageName: String
 }
 
-import UIKit
-import RxSwift
-import RxCocoa
-import RxDataSources
-import SnapKit
-import RxGesture
 
 
 struct GuideSection {
@@ -39,33 +34,33 @@ extension GuideSection: SectionModelType {
     }
 }
 
-class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout {
+class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout, CLLocationManagerDelegate {
     
     private let disposeBag = DisposeBag()
     var coordinator = HomeCoordinator()
-    private let locationManager = LocationManager.shared
+    private let locationManager = CLLocationManager()
+    private let geocoder = CLGeocoder()
     
-    
-    // Section별 데이터
     let guideSections = Observable.just([
-        GuideSection(header: "Large Section", items: [
-            GuideData(title: "Green Guide", subtitle: "내 주변 다회용기 포장\n가능 매장 찾기", imageName: "greenguide_bg")
-        ]),
-        GuideSection(header: "Grid Section", items: [
-            GuideData(title: "Green Club", subtitle: "내 주변 마감\n세일 확인하기", imageName: "greenclub_bg"),
-            GuideData(title: "Green Talk", subtitle: "내 주변 환경 지킴이들과\n이야기하기", imageName: "greentalk_bg")
-        ]),
-        GuideSection(header: "List Section", items: [
-            GuideData(title: "Green Elite", subtitle: "환경 문제 풀고 리워드 받자!", imageName: "greenelite"),
-            GuideData(title: "Green Heros", subtitle: "지구를 지키는 주역! 내 순위 보기", imageName: "greenheros"),
-            GuideData(title: "Green Auth", subtitle: "다회용기 사용 인증하기", imageName: "greenauth")
+            GuideSection(header: "Large Section", items: [
+                GuideData(title: "Green Guide", subtitle: "내 주변 다회용기 포장\n가능 매장 찾기", imageName: "greenguide_bg")
+            ]),
+            GuideSection(header: "Grid Section", items: [
+                GuideData(title: "Green Club", subtitle: "내 주변 마감\n세일 확인하기", imageName: "greenclub_bg"),
+                GuideData(title: "Green Talk", subtitle: "내 주변 환경 지킴이들과\n이야기하기", imageName: "greentalk_bg")
+            ]),
+            GuideSection(header: "List Section", items: [
+                GuideData(title: "Green Elite", subtitle: "환경 문제 풀고 리워드 받자!", imageName: "greenelite"),
+                GuideData(title: "Green Heros", subtitle: "지구를 지키는 주역! 내 순위 보기", imageName: "greenheros"),
+                GuideData(title: "Green Auth", subtitle: "다회용기 사용 인증하기", imageName: "greenauth")
+            ])
         ])
-    ])
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
-        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
     override func setupView() {
@@ -77,7 +72,6 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         
         collectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-        
     }
     
     override func setupLayout() {
@@ -89,7 +83,6 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     }
     
     override func bindRX() {
-        // RxCollectionViewSectionedReloadDataSource의 타입을 명확히 지정
         let dataSource = RxCollectionViewSectionedReloadDataSource<GuideSection>(
             configureCell: { dataSource, collectionView, indexPath, item in
                 let identifier: String
@@ -113,11 +106,8 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
                     listCell.configure(icon: UIImage(named: item.imageName), title: item.title, subTitle: item.subtitle)
                     listCell.backgroundColor = .white
                 }
-               
-                
                 return cell
             }
-            
         )
         
         guideSections
@@ -125,48 +115,45 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
             .disposed(by: disposeBag)
         
         collectionView.rx.itemSelected
-                .bind { [weak self] indexPath in
-                    print(indexPath.section)
-                    self?.coordinator.navigateToDetail(for: indexPath)
-                }
-                .disposed(by: disposeBag)
-        
-        locationButton.rx.tap
-            .bind { [weak self] in
-                self?.locationManager.requestLocationUpdate()
+            .bind { [weak self] indexPath in
+                self?.coordinator.navigateToDetail(for: indexPath)
             }
             .disposed(by: disposeBag)
         
-       
-        locationManager.address
-            .observe(on: MainScheduler.instance)
-            .bind(to: myLocationLabel.rx.text)
+        locationButton.rx.tap
+            .bind { [weak self] in
+                self?.requestLocationPermission()
+            }
             .disposed(by: disposeBag)
     }
+    
+    private func requestLocationPermission() {
+        guard CLLocationManager.locationServicesEnabled() else {
+            print("위치 서비스가 비활성화되었습니다.")
+            return
+        }
+        
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
     private func setupNavigationBar() {
         locationButton.setImage(UIImage(named: "mylocation"), for: .normal)
         locationButton.setTitleColor(.black, for: .normal)
         locationButton.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         locationButton.tintColor = .black
-        
-        // 버튼의 이미지와 텍스트 간 간격 설정
         locationButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -5, bottom: 0, right: 5)
         
-        // 스택 뷰에 버튼과 위치 라벨을 수평 배치
         let locationStackView = UIStackView(arrangedSubviews: [locationButton, myLocationLabel])
         locationStackView.axis = .horizontal
         locationStackView.spacing = 5
         locationStackView.alignment = .center
         
-        // 스택 뷰를 네비게이션 아이템으로 설정
         let locationItem = UIBarButtonItem(customView: locationStackView)
         navigationItem.leftBarButtonItem = locationItem
         
-        // 버튼 크기 설정
         locationButton.snp.makeConstraints { make in
             make.height.equalTo(30)
         }
-        
     }
     
     private let locationButton: UIButton = {
@@ -174,15 +161,58 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         button.setImage(UIImage(named: "mylocation"), for: .normal)
         return button
     }()
+    
     private let myLocationLabel: UILabel = {
         let label = UILabel()
         label.text = "위치 정보 설정이 필요합니다."
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-                label.textColor = .black
+        label.textColor = .black
         return label
     }()
-        
+
+
+
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        case .denied, .restricted:
+            print("위치 권한이 거부되었습니다. 설정에서 권한을 활성화해주세요.")
+        case .notDetermined:
+            print("위치 권한 요청 중입니다.")
+        @unknown default:
+            break
+        }
+    }
     
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        geocodeLocation(location)
+        locationManager.stopUpdatingLocation() // 위치 업데이트 후 멈춤
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("위치 업데이트 실패: \(error.localizedDescription)")
+    }
+    
+    // 위치 정보를 주소로 변환하는 메서드
+    private func geocodeLocation(_ location: CLLocation) {
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+            if let error = error {
+                print("역지오코딩 실패: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let placemark = placemarks?.first,
+                  let locality = placemark.locality,
+                  let subLocality = placemark.subLocality else {
+                return
+            }
+            
+            let address = "\(locality) \(subLocality)"
+            self?.myLocationLabel.text = address
+        }
+    }
     
     // MARK: - UICollectionView
     let collectionView: UICollectionView = {
@@ -191,7 +221,6 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         return UICollectionView(frame: .zero, collectionViewLayout: layout)
     }()
     
-   
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width
         switch indexPath.section {
@@ -204,6 +233,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
             return CGSize(width: width - 32, height: 60)
         }
     }
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         switch section {
         case 0:

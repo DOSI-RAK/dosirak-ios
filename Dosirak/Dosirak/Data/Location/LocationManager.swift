@@ -35,27 +35,30 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             return
         }
         
-        let status = locationManager.authorizationStatus
-        if status == .notDetermined {
-            // 권한 요청을 처음 한 번만 호출
-            locationManager.requestWhenInUseAuthorization()
-        } else if status == .authorizedWhenInUse || status == .authorizedAlways {
-            // 권한이 이미 허용된 경우 정확도 확인
-            checkLocationAccuracy()
-        } else {
-            print("위치 권한이 거부되었습니다. 설정에서 권한을 활성화해주세요.")
-        }
-    }
-    
-    // 권한이 허용되었는지 및 정확한 위치 권한 여부 확인 후 위치 업데이트 시작
-    private func checkLocationAccuracy() {
-        if #available(iOS 14.0, *), locationManager.accuracyAuthorization == .reducedAccuracy {
-            print("정확한 위치 권한이 거부됨. 대략적인 위치로만 업데이트합니다.")
-            locationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "PreciseLocation") { [weak self] _ in
-                self?.locationManager.startUpdatingLocation()
+        if #available(iOS 14.0, *) {
+            // iOS 14 이상에서는 locationManager의 authorizationStatus 사용
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .authorizedWhenInUse, .authorizedAlways:
+                checkLocationAccuracy()
+            case .denied, .restricted:
+                print("위치 권한이 거부되었습니다. 설정에서 권한을 활성화해주세요.")
+            @unknown default:
+                break
             }
         } else {
-            locationManager.startUpdatingLocation() // 정확한 위치 권한이 있거나 iOS 14 미만에서는 그대로 시작
+            // iOS 13 이하에서는 CLLocationManager의 클래스 메서드 사용
+            switch CLLocationManager.authorizationStatus() {
+            case .notDetermined:
+                locationManager.requestWhenInUseAuthorization()
+            case .authorizedWhenInUse, .authorizedAlways:
+                checkLocationAccuracy()
+            case .denied, .restricted:
+                print("위치 권한이 거부되었습니다. 설정에서 권한을 활성화해주세요.")
+            @unknown default:
+                break
+            }
         }
     }
     
@@ -71,6 +74,18 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
             print("위치 권한 요청 중입니다.")
         @unknown default:
             break
+        }
+    }
+    
+    // 권한이 허용되었는지 및 정확한 위치 권한 여부 확인 후 위치 업데이트 시작
+    private func checkLocationAccuracy() {
+        if #available(iOS 14.0, *), locationManager.accuracyAuthorization == .reducedAccuracy {
+            print("정확한 위치 권한이 거부됨. 대략적인 위치로만 업데이트합니다.")
+            locationManager.requestTemporaryFullAccuracyAuthorization(withPurposeKey: "PreciseLocation") { [weak self] _ in
+                self?.locationManager.startUpdatingLocation()
+            }
+        } else {
+            locationManager.startUpdatingLocation() // 정확한 위치 권한이 있거나 iOS 14 미만에서는 그대로 시작
         }
     }
     

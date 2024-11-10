@@ -18,6 +18,12 @@ class StoreTableViewCell: UITableViewCell {
     private let statusLabel = UILabel()
     private let benefitLabel = UILabel()
     
+    private let benefitImageView: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "reuse")
+        return view
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupView()
@@ -34,6 +40,7 @@ class StoreTableViewCell: UITableViewCell {
         contentView.addSubview(distanceLabel)
         contentView.addSubview(statusLabel)
         contentView.addSubview(benefitLabel)
+        contentView.addSubview(benefitImageView)
         
         
         iconImageView.image = UIImage(systemName: "building.2.fill")
@@ -52,13 +59,12 @@ class StoreTableViewCell: UITableViewCell {
         
       
         statusLabel.font = .systemFont(ofSize: 14)
-        statusLabel.textColor = .red  // 운영 종료일 경우 빨간색으로 표시
+        
         statusLabel.textAlignment = .right
         
    
         benefitLabel.font = .systemFont(ofSize: 12)
-        benefitLabel.textColor = .systemBlue
-        benefitLabel.text = "다회용기 혜택 제공 가게"
+        benefitLabel.textColor = .gray
     }
     
     private func setupLayout() {
@@ -68,11 +74,19 @@ class StoreTableViewCell: UITableViewCell {
             $0.leading.centerY.equalToSuperview().inset(10)
             $0.width.height.equalTo(90)
         }
+        benefitImageView.snp.makeConstraints {
+            $0.leading.equalTo(iconImageView.snp.trailing).offset(10)
+            $0.top.equalToSuperview().inset(20)
+            $0.width.equalTo(23)
+            $0.height.equalTo(12)
+        }
         
        
         benefitLabel.snp.makeConstraints {
-            $0.leading.equalTo(iconImageView.snp.trailing).offset(10)
-            $0.top.equalToSuperview().inset(10)
+            $0.leading.equalTo(benefitImageView.snp.trailing).offset(5)
+            $0.top.equalTo(benefitImageView)
+            $0.height.equalTo(12)
+       
         }
         
       
@@ -87,12 +101,14 @@ class StoreTableViewCell: UITableViewCell {
             $0.leading.equalTo(titleLabel)
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
             $0.bottom.equalToSuperview().inset(10)
+            $0.width.equalTo(82)
+            $0.height.equalTo(32)
         }
         
     
         statusLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(10)
-            $0.top.equalToSuperview().inset(10)
+            $0.centerY.equalToSuperview()
         }
     }
     
@@ -101,18 +117,30 @@ class StoreTableViewCell: UITableViewCell {
         titleLabel.text = store.storeName
         let url = URL(string: store.storeImg)
         iconImageView.kf.setImage(with: url)
-        distanceLabel.text = "500m"
-        if store.ifReward == " YES" {
-            benefitLabel.text = "다회용기 혜택 제공 가게"
-        }else {
-            benefitLabel.text = nil
+        distanceLabel.text = "500m" // 예시로 설정한 거리값
+        distanceLabel.backgroundColor = .bgColor
+        distanceLabel.layer.cornerRadius = 20
+        distanceLabel.textAlignment = .center
+
+        // `benefitLabel`의 특정 텍스트를 파란색으로 설정
+        let benefitText = store.ifValid
+        let highlightText = "다회용기 혜택"
+        
+        // `NSMutableAttributedString`을 사용하여 부분 색상 변경
+        let attributedText = NSMutableAttributedString(string: benefitText)
+        
+        // `highlightText` 부분에 파란색 적용
+        if let range = benefitText.range(of: highlightText) {
+            let nsRange = NSRange(range, in: benefitText)
+            attributedText.addAttribute(.foregroundColor, value: UIColor.systemBlue, range: nsRange)
         }
-        if store.ifValid == " YES" {
-            statusLabel.text = "운영중"
-            statusLabel.textColor = .red
-        } else {
-            statusLabel.text = "운영종료"
-            statusLabel.textColor = .lightGray
-        }
+        
+        // `benefitLabel`에 `attributedText` 설정
+        benefitLabel.attributedText = attributedText
+        benefitLabel.font = UIFont.systemFont(ofSize: 12)
+
+        // 운영 상태에 따른 statusLabel 설정
+        statusLabel.text = store.operating ? "운영중" : "운영종료"
+        statusLabel.textColor = store.operating ? .red : .lightGray
     }
 }

@@ -23,25 +23,23 @@ class StompClient: StompClientLibDelegate {
     func connect() {
         let headers = [
             "Authorization": "Bearer \(accessToken)",
-            "Content-Type": "application/json"
-            
+            "chatRoomId": "\(chatRoomId)"
         ]
         
-        stompClient.openSocketWithURLRequest(request: URLRequest(url: url) as NSURLRequest, delegate: self, connectionHeaders: headers)
+        stompClient.openSocketWithURLRequest(request: URLRequest(url: url) as NSURLRequest, delegate: self, connectionHeaders: nil)
     }
-
-    // 채팅방에 메시지 구독
+    
     func subscribe() {
         let destination = "/topic/chat-room/\(chatRoomId)"
         stompClient.subscribe(destination: destination)
         print("구독 요청: \(destination)")
     }
 
-    // 채팅방에 메시지 전송
+    
     func sendMessage(content: String, messageType: String) {
         let destination = "/app/chat-room/\(chatRoomId)/sendMessage"
         
-        // JSON 형식의 메시지 생성
+       
         let message: [String: Any] = [
             "content": content,
             "messageType": messageType
@@ -54,13 +52,12 @@ class StompClient: StompClientLibDelegate {
         }
     }
 
-    // WebSocket 연결 해제
+    
     func disconnect() {
         stompClient.disconnect()
         print("STOMP 연결 해제")
     }
 
-    // MARK: - StompClientLibDelegate 메서드
 
     func stompClientDidConnect(client: StompClientLib!) {
         print("STOMP 연결 성공")
