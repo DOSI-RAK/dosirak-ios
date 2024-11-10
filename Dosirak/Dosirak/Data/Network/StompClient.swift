@@ -9,7 +9,7 @@ import Foundation
 
 class StompClient: StompClientLibDelegate {
     private let stompClient = StompClientLib()
-    private let url = URL(string: "ws://dosirak.store/dosirak")!
+    private let url = URL(string: "ws://dosirak.store:80/dosirak")!
     private let accessToken: String
     private let chatRoomId: Int
 
@@ -22,11 +22,11 @@ class StompClient: StompClientLibDelegate {
     // WebSocket 연결
     func connect() {
         let headers = [
-            "Authorization": "Bearer \(accessToken)",
+            "Authorization":"Bearer \(accessToken)",
             "chatRoomId": "\(chatRoomId)"
         ]
         
-        stompClient.openSocketWithURLRequest(request: URLRequest(url: url) as NSURLRequest, delegate: self, connectionHeaders: nil)
+        stompClient.openSocketWithURLRequest(request: URLRequest(url: url) as NSURLRequest, delegate: self, connectionHeaders: headers)
     }
     
     func subscribe() {

@@ -139,7 +139,7 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
             let day = Calendar.current.component(.day, from: date)
             cell.configure(day: "\(day)", imageName: getImageName(for: date))
         } else {
-            cell.configure(day: "", imageName: nil)
+            cell.configure(day: " ", imageName: "0")
         }
         cell.titleLabel = nil
         
