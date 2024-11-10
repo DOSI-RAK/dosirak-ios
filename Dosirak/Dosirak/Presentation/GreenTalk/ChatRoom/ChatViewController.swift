@@ -153,12 +153,18 @@ class ChatViewController: UIViewController {
             .disposed(by: disposeBag)
         
         reactor.action.onNext(.loadChatRoomInfo)
+        
+        reactor.state
+            .map { $0.chatRoomInfo?.explanation }
+            .bind(to: noticeLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        
 
         reactor.state
             .map { $0.chatRoomInfo?.messageList ?? [] }
             .bind(to: tableView.rx.items(cellIdentifier: ChatMessageCell.identifier, cellType: ChatMessageCell.self)) { index, message, cell in
                 cell.configure(with: message)
-                self.noticeLabel.text = message.content
             }
             .disposed(by: disposeBag)
         
@@ -176,7 +182,7 @@ class ChatViewController: UIViewController {
                 
                 UIView.animate(withDuration: 0.3) {
                     self.noticeView.snp.updateConstraints { make in
-                        make.height.equalTo(self.isNoticeExpanded ? 100 : 40) // 펼친 높이와 접힌 높이 설정
+                        make.height.equalTo(self.isNoticeExpanded ? 80 : 40)
                     }
                     self.toggleButton.setImage(UIImage(systemName: self.isNoticeExpanded ? "chevron.up" : "chevron.down"), for: .normal)
                     self.noticeLabel.numberOfLines = self.isNoticeExpanded ? 0 : 1 // 줄 수 설정
