@@ -13,6 +13,9 @@ class GreenCommitViewController: UIViewController {
     
     private let collectionView: UICollectionView
     private var selectedDateRecords: [String] = []
+    
+    @UserDefault(key: "hasSeenPopup", defaultValue: false)
+    private var hasSeenPopup: Bool
    
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -36,6 +39,15 @@ class GreenCommitViewController: UIViewController {
         let today = Date()
         selectedDateRecords = fetchRecords(for: today)
         collectionView.reloadData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
+            present(CommitPopUpViewController(), animated: true)
+
+        
     }
     
     

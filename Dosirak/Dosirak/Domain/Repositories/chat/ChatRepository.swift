@@ -26,7 +26,7 @@ class ChatRepository: ChatRepositoryType {
         self.chatRoomId = chatRoomId
         self.accessToken = accessToken
         self.stompClient = StompClient(chatRoomId: chatRoomId, accessToken: accessToken)
-        
+         
         setupStompClient()
     }
     

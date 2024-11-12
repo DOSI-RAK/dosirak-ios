@@ -23,12 +23,12 @@ struct Message: Decodable {
     let chatRoomId: Int
 }
 
-
 struct UserChatRoomResponse: Decodable {
     let userId: Int
     let nickName: String?
     let profileImg: String
 }
+
 
 
 struct User: Decodable {
