@@ -10,7 +10,7 @@ protocol ChatUseCaseType {
     func connect()
     func disconnect()
     func sendMessage(content: String, messageType: String)
-    func observeMessages() -> Observable<String>
+    func observeMessages() -> Observable<Message>
     func fetchChatRoomInfo() -> Single<ChatRoomInfo>
 }
 
@@ -33,7 +33,7 @@ class ChatUseCase: ChatUseCaseType {
         repository.sendMessage(content, messageType: messageType)
     }
     
-    func observeMessages() -> Observable<String> {
+    func observeMessages() -> Observable<Message> {
         return repository.observeMessages()
     }
     

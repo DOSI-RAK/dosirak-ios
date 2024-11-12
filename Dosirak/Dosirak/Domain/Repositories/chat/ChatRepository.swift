@@ -12,13 +12,13 @@ protocol ChatRepositoryType {
     func connect()
     func disconnect()
     func sendMessage(_ content: String, messageType: String)
-    func observeMessages() -> Observable<String>
-    func fetchChatRoomInfo() -> Single<ChatRoomInfo> // 채팅방 정보 추가
+    func observeMessages() -> Observable<Message>
+    func fetchChatRoomInfo() -> Single<ChatRoomInfo>
 }
 
 class ChatRepository: ChatRepositoryType {
     private let stompClient: StompClient
-    private let messageSubject = PublishSubject<String>()
+    private let messageSubject = PublishSubject<Message>()
     private let chatRoomId: Int
     private let accessToken: String
 
@@ -54,7 +54,7 @@ class ChatRepository: ChatRepositoryType {
     }
 
     // 메시지 수신을 관찰
-    func observeMessages() -> Observable<String> {
+    func observeMessages() -> Observable<Message> {
         return messageSubject.asObservable()
     }
 

@@ -4,7 +4,6 @@
 //
 //  Created by 권민재 on 10/18/24.
 //
-
 import UIKit
 import SnapKit
 import RxSwift
@@ -15,7 +14,6 @@ class ChatViewController: UIViewController {
     var disposeBag = DisposeBag()
     var reactor: ChatReactor?
     
-    // 공지사항 뷰
     private let noticeView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor(hexCode: "e3f4ef")
@@ -25,7 +23,7 @@ class ChatViewController: UIViewController {
     
     private let noticeLabel: UILabel = {
         let label = UILabel()
-        label.text = "여기에 공지사항이 표시됩니다. 접을 수 있습니다."
+        label.text = "공지사항 표시"
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         label.font = UIFont.systemFont(ofSize: 14)
@@ -35,15 +33,14 @@ class ChatViewController: UIViewController {
     
     private let toggleButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setImage(UIImage(systemName: "chevron.down"), for: .normal) // 화살표 이미지 사용
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         button.tintColor = .gray
         return button
     }()
     
-    // 기존 UI 컴포넌트들
     private let messageInputField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "메시지를 입력하세요."
+        textField.placeholder = "메시지 입력"
         textField.borderStyle = .roundedRect
         return textField
     }()
@@ -64,7 +61,6 @@ class ChatViewController: UIViewController {
     
     private var isNoticeExpanded = false
 
-    // 초기화 메서드
     init(reactor: ChatReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
@@ -90,12 +86,10 @@ class ChatViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .bgColor
         
-        // 공지사항 뷰 구성
         view.addSubview(noticeView)
         noticeView.addSubview(noticeLabel)
         noticeView.addSubview(toggleButton)
         
-        // 채팅 테이블과 입력 필드 구성
         view.addSubview(tableView)
         view.addSubview(messageInputField)
         view.addSubview(sendButton)
@@ -104,11 +98,10 @@ class ChatViewController: UIViewController {
     }
 
     private func setupLayout() {
-        // 공지사항 레이아웃 설정
         noticeView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.left.right.equalToSuperview().inset(16)
-            make.height.equalTo(40) // 기본 접힌 높이
+            make.height.equalTo(40)
         }
         
         noticeLabel.snp.makeConstraints { make in
@@ -122,7 +115,6 @@ class ChatViewController: UIViewController {
             make.width.height.equalTo(20)
         }
         
-        // 테이블 및 입력 필드 레이아웃 설정
         tableView.snp.makeConstraints { make in
             make.top.equalTo(noticeView.snp.bottom).offset(10)
             make.left.right.equalToSuperview()
@@ -144,7 +136,6 @@ class ChatViewController: UIViewController {
     }
     
     func bind(reactor: ChatReactor) {
-        // 메시지 전송
         sendButton.rx.tap
             .withLatestFrom(messageInputField.rx.text.orEmpty)
             .filter { !$0.isEmpty }
@@ -158,11 +149,17 @@ class ChatViewController: UIViewController {
             .map { $0.chatRoomInfo?.explanation }
             .bind(to: noticeLabel.rx.text)
             .disposed(by: disposeBag)
-        
-        
 
         reactor.state
-            .map { $0.chatRoomInfo?.messageList ?? [] }
+            .map { $0.messageList }
+            .do(onNext: { [weak self] messages in
+                guard let self = self, !messages.isEmpty else { return }
+                
+                // 테이블 뷰가 데이터가 로드될 때 가장 아래로 스크롤
+                DispatchQueue.main.async {
+                    self.scrollToBottom()
+                }
+            })
             .bind(to: tableView.rx.items(cellIdentifier: ChatMessageCell.identifier, cellType: ChatMessageCell.self)) { index, message, cell in
                 cell.configure(with: message)
             }
@@ -174,7 +171,6 @@ class ChatViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // 공지사항 접기/펼치기 토글
         toggleButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
@@ -185,11 +181,21 @@ class ChatViewController: UIViewController {
                         make.height.equalTo(self.isNoticeExpanded ? 80 : 40)
                     }
                     self.toggleButton.setImage(UIImage(systemName: self.isNoticeExpanded ? "chevron.up" : "chevron.down"), for: .normal)
-                    self.noticeLabel.numberOfLines = self.isNoticeExpanded ? 0 : 1 // 줄 수 설정
+                    self.noticeLabel.numberOfLines = self.isNoticeExpanded ? 0 : 1
                     self.noticeLabel.lineBreakMode = self.isNoticeExpanded ? .byWordWrapping : .byTruncatingTail
                     self.view.layoutIfNeeded()
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func scrollToBottom() {
+        guard tableView.numberOfSections > 0 else { return }
+        let lastSectionIndex = tableView.numberOfSections - 1
+        let lastRowIndex = tableView.numberOfRows(inSection: lastSectionIndex) - 1
+        guard lastRowIndex >= 0 else { return }
+        
+        let indexPath = IndexPath(row: lastRowIndex, section: lastSectionIndex)
+        tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
     }
 }
