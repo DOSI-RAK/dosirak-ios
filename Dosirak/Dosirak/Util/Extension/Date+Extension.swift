@@ -38,4 +38,34 @@ extension Date {
         formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter.date(from: dateString)
     }
+    
+    static func formattedDateString(from serverDateString: String) -> String {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
+        dateFormatter.timeZone = TimeZone(abbreviation: "UTC")
+        
+        
+        guard let serverDate = dateFormatter.date(from: serverDateString) else {
+            return serverDateString
+        }
+        
+        let calendar = Calendar.current
+        let now = Date()
+        
+        
+        if calendar.isDateInToday(serverDate) {
+            dateFormatter.dateFormat = "HH:mm"
+            return dateFormatter.string(from: serverDate)
+            
+        } else if calendar.isDateInYesterday(serverDate) {
+            return "하루 전"
+            
+        } else {
+            
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.string(from: serverDate)
+        }
+    }
 }
+

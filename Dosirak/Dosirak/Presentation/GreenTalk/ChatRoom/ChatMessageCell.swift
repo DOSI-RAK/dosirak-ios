@@ -74,15 +74,13 @@ class ChatMessageCell: UITableViewCell {
             let imageURL = URL(string: message.userChatRoomResponse.profileImg)
             profileImageView.kf.setImage(with: imageURL)
             nicknameLabel.text = message.userChatRoomResponse.nickName
-            timeLabel.text = message.createdAt
+            timeLabel.text = Date.formattedDateString(from: message.createdAt)
             
             if message.userChatRoomResponse.nickName == "민재" {
-                // 내가 보낸 메시지: 오른쪽 정렬
+               
                 messageBubble.backgroundColor = .white
                 messageLabel.textColor = .black
                 
-                
-                // 오른쪽 정렬 레이아웃 설정
                 profileImageView.snp.remakeConstraints { make in
                     make.top.equalToSuperview().offset(10)
                     make.trailing.equalToSuperview().inset(10)
@@ -111,10 +109,9 @@ class ChatMessageCell: UITableViewCell {
                 }
                 
             } else {
-                // 상대방이 보낸 메시지: 왼쪽 정렬
                 messageBubble.backgroundColor = .white
                 messageLabel.textColor = .black
-                // 왼쪽 정렬 레이아웃 설정
+                
                 profileImageView.snp.remakeConstraints { make in
                     make.top.equalToSuperview().offset(10)
                     make.leading.equalToSuperview().offset(10)
