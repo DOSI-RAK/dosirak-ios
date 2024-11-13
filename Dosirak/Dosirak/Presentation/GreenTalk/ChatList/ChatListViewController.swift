@@ -57,9 +57,6 @@ class ChatListViewController: BaseViewController {
         view.addSubview(floatingButton)
         collectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-        
-        
-        
     }
     
     override func setupLayout() {
