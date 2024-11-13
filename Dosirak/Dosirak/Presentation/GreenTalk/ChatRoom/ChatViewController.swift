@@ -73,6 +73,7 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupNavigationBar()
         bind(reactor: reactor!)
         
         reactor?.action.onNext(.connect)
@@ -81,6 +82,24 @@ class ChatViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         reactor?.action.onNext(.disconnect)
+    }
+    
+    private func setupNavigationBar() {
+        // 네비게이션 바 오른쪽에 버튼 추가
+        let rightBarButton = UIBarButtonItem(
+            image: UIImage(named: "exit"),
+            style: .plain,
+            target: nil,
+            action: nil
+        )
+        
+        navigationItem.rightBarButtonItem = rightBarButton
+        //navigationController?.navigationBar.tintColor = .bgColor
+        // Reactor를 이용한 버튼 클릭 액션 바인딩
+//        rightBarButton.rx.tap
+//            .map { ChatReactor.Action.didTapOptionsButton }
+//            .bind(to: reactor!.action)
+//            .disposed(by: disposeBag)
     }
 
     private func setupUI() {

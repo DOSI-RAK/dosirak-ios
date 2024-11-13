@@ -34,6 +34,13 @@ class ChatListViewController: BaseViewController {
         popularButton.isSelected = true
         recentButton.isSelected = false
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //navigationController?.setNavigationBarHidden(true, animated: false)
+        reactor?.action.onNext(.loadChatRoomSummary)
+        reactor?.action.onNext(.loadNearbyChatRooms("청담동"))
+        
+    }
     override func setupView() {
         view.addSubview(headerView)
         view.addSubview(collectionView)
