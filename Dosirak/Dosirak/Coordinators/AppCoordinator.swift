@@ -41,15 +41,15 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     
     func start(window: UIWindow) {
         //moveHome(window: window)
-//        guard let accessToken = keychain["accessToken"],
-//              let refreshToken = keychain["refreshToken"]
-//        else {
-//            moveLogin(window: window)
-//            print("로그인 시작")
-//            return
-//        }
-//        validateAccessToken(accessToken, refreshToken: refreshToken, window: window)
-        window.rootViewController = UserAgreeViewController()
+        guard let accessToken = keychain["accessToken"],
+              let refreshToken = keychain["refreshToken"]
+        else {
+            moveLogin(window: window)
+            print("로그인 시작")
+            return
+        }
+        validateAccessToken(accessToken, refreshToken: refreshToken, window: window)
+//        window.rootViewController = UserInfoSettingViewController()
         
     }
     
