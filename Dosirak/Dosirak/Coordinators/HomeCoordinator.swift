@@ -34,7 +34,7 @@ class HomeCoordinator: Coordinator {
         
         case 1:
             if indexPath.row == 0 {
-                vc = UIViewController()
+                vc = GreenClubViewController()
                 vc.title = "Green Club Controller" // title 설정
             } else {
                 guard let reactor = DIContainer.shared.resolve(ChatListReactor.self) else {

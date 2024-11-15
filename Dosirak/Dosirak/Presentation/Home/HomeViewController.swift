@@ -60,7 +60,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         super.viewDidLoad()
         setupNavigationBar()
         setupLocationManager()
-        locationManager.requestWhenInUseAuthorization() // 위치 권한 요청
+        locationManager.requestWhenInUseAuthorization()
     }
     
     private func setupLocationManager() {

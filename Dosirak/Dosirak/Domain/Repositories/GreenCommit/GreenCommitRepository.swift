@@ -19,23 +19,56 @@ protocol CommitRepositoryType {
 
 class CommitRepository: CommitRepositoryType {
     
-    let provider: MoyaProvider<CommitAPI>
+    
+    private let provider: MoyaProvider<CommitAPI>
+    private let accessToken: String
     
     
     
-    init(provider: MoyaProvider<CommitAPI>) {
+    init(provider: MoyaProvider<CommitAPI>, accessToken: String) {
         
-        self.provider = provider   }
+        self.provider = provider
+        self.accessToken = accessToken
+    }
     
     func fetchMonthlyCommits(accessToken: String, month: String) -> Single<MonthCommit> {
-        
+        print("Calling fetchMonthlyCommits")
+        return provider.rx.request(.fetchMonthlyCommits(accessToken: accessToken, month: month))
+            .filterSuccessfulStatusCodes()
+            .map(APIResponse<MonthCommit>.self)
+            .flatMap { response in
+                if response.status == "SUCCESS" {
+                    return Single.just(response.data)
+                } else {
+                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"]))
+                }
+            }
     }
     
-    func fetchTodayCommit(accessToken: String) -> RxSwift.Single<[CommitActivity]> {
-        <#code#>
+    func fetchTodayCommit(accessToken: String) -> Single<[CommitActivity]> {
+        return provider.rx.request(.fetchTodayCommit(accessToken: accessToken))
+            .filterSuccessfulStatusCodes()
+            .map(APIResponse<[CommitActivity]>.self)
+            .flatMap { response in
+                if response.status == "SUCCESS" {
+                    return Single.just(response.data)
+                } else {
+                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"]))
+                }
+            }
     }
     
-    func fetchDayCommit(accessToken: String, date: String) -> RxSwift.Single<CommitActivity> {
-        <#code#>
+    func fetchDayCommit(accessToken: String, date: String) -> Single<CommitActivity> {
+        return provider.rx.request(.fetchDayCommit(accessToken: accessToken, date: date))
+            .filterSuccessfulStatusCodes()
+            .map(APIResponse<CommitActivity>.self)
+            .flatMap { response in
+                if response.status == "SUCCESS" {
+                    return Single.just(response.data)
+                } else {
+                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"]))
+                }
+            }
     }
+    
 }

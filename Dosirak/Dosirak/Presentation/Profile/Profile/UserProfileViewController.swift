@@ -183,7 +183,7 @@ class UserProfileViewController: BaseViewController {
         viewModel.fetchUserProfile(accessToken: token)
             .subscribe(onSuccess: { userProfile in
                 print(userProfile)
-                self.userNameLabel.text = "\(userProfile.nickName!)님"
+                self.userNameLabel.text = "\(userProfile.nickName ?? "test")님"
                 self.updateScore(userProfile.reward)
                 
                 self.editProfileButton.rx.tap

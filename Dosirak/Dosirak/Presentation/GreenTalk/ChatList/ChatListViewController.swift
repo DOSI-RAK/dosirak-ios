@@ -33,6 +33,9 @@ class ChatListViewController: BaseViewController {
         view.backgroundColor = .bgColor
         popularButton.isSelected = true
         recentButton.isSelected = false
+        
+        
+        print("=========>?ㅁㄴㅇㄹㅁㄴㅇㄹ,\(Keychain(service: "com.dosirak.user")["socialAccessToken"])")
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

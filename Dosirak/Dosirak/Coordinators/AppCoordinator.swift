@@ -43,6 +43,7 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         //moveHome(window: window)
         guard let accessToken = keychain["accessToken"],
               let refreshToken = keychain["refreshToken"]
+              //let nickname = keychain["nickname"]
         else {
             moveLogin(window: window)
             print("로그인 시작")
