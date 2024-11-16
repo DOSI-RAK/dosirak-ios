@@ -67,7 +67,7 @@ class BottomSheetViewController: UIViewController, View {
             .disposed(by: disposeBag)
     }
     func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
-        let radius: Double = 6371000 // 지구의 반지름 (미터)
+        let radius: Double = 6371000
         
         let dLat = degreesToRadians(lat2 - lat1)
         let dLon = degreesToRadians(lon2 - lon1)

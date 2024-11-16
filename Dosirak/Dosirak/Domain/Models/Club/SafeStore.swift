@@ -12,8 +12,15 @@ struct SaleStore: Decodable {
     let saleStoreName: String
     let saleStoreImg: String
     let saleStoreAddress: String
-    let saleMapX: Double
-    let saleMapY: Double
+    let saleMapX: String
+    let saleMapY: String
     let saleOperationTime: String
-    let saleDiscount: Int 
+    let saleDiscount: String
+    var distance: Double? = nil
+    
+    private enum CodingKeys: String, CodingKey {
+        case saleStoreId, saleStoreName, saleStoreImg, saleStoreAddress
+        case saleMapX, saleMapY, saleOperationTime
+        case saleDiscount = "saleDiscount"
+    }
 }
