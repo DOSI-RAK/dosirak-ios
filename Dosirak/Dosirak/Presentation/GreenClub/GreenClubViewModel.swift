@@ -69,10 +69,10 @@ class SaleStoresViewModel {
                     return decodedResponse.data.map { store in
                         var mutableStore = store
                         // 거리 계산 추가
-                        mutableStore.distance = self.calculateDistance(
+                        mutableStore.distance = Double(self.calculateDistance(
                             lat1: 37.497942, lon1: 127.027621,
-                            lat2: Double(store.saleMapX)!, lon2: Double(store.saleMapY)!
-                        )
+                            lat2: Double(store.saleMapY)!, lon2: Double(store.saleMapX)!
+                        ))
                         return mutableStore
                     }
                 } catch {
@@ -109,8 +109,8 @@ class SaleStoresViewModel {
         }
     }
 
-    private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
-        let earthRadius = 6371.0
+    private func calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Int {
+        let earthRadius = 6371.0 // 지구 반지름 (km)
         let dLat = (lat2 - lat1) * .pi / 180.0
         let dLon = (lon2 - lon1) * .pi / 180.0
 
@@ -119,6 +119,8 @@ class SaleStoresViewModel {
                 sin(dLon / 2) * sin(dLon / 2)
         let c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-        return earthRadius * c
+        let distanceInKm = earthRadius * c
+        let distanceInMeters = distanceInKm * 1000 // km to m
+        return Int(distanceInMeters) // 소수점 버림
     }
 }
