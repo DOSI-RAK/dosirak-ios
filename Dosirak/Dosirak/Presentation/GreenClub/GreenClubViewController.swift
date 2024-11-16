@@ -17,6 +17,7 @@ class GreenClubViewController: UIViewController {
     private let disposeBag = DisposeBag()
     private let filterSelection = BehaviorRelay(value: "가까운 순")
     private let storeItems = BehaviorRelay(value: [StoreItem]())
+    var reactor: GreenClubReactor?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -26,6 +27,17 @@ class GreenClubViewController: UIViewController {
         bindUI()
         loadStoreItems()
     }
+    
+    init(reactor: GreenClubReactor) {
+        super.init(nibName: nil, bundle: nil)
+        self.reactor = reactor
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     
     // MARK: - UI Setup
     private func setupUI() {

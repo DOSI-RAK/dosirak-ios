@@ -117,6 +117,28 @@ final class DIContainer {
             return GreenGuideReactor(useCase: useCase, accessToken: accessToken)
         }
         
+        //MARK: Green Club
+        container.register(GreenClubRepositoryType.self) { resolver in
+            let apiProvider = resolver.resolve(MoyaProvider<ClubAPI>.self)!
+            let accessToken = resolver.resolve(String.self, name: "AccessToken")!
+            return GreenClubRepository(apiProvider: apiProvider, accessToken: accessToken)
+        }
+
+        container.register(GreenClubUseCaseType.self) { resolver in
+            let repository = resolver.resolve(GreenClubRepositoryType.self)!
+            return GreenClubUseCase(repository: repository)
+        }
+
+        container.register(GreenClubReactor.self) { resolver in
+            let useCase = resolver.resolve(GreenClubUseCaseType.self)!
+            return GreenClubReactor(useCase: useCase)
+        }
+        container.register(GreenClubViewController.self) { resolver in
+            let reactor = resolver.resolve(GreenClubReactor.self)!
+            return GreenClubViewController(reactor: reactor)
+
+        }
+        
         
         
         
