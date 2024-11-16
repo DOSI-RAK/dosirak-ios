@@ -23,6 +23,8 @@ class BottomSheetViewController: UIViewController, View {
             }
         }
     }
+    let gangnamLatitude = 37.497942
+    let gangnamLongitude = 127.027621
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,7 +49,15 @@ class BottomSheetViewController: UIViewController, View {
                 state.selectedCategory == "전체" ? state.stores : state.categoryStores
             }
             .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
-                cell.configure(store: store)
+                // 강남역 기준 거리 계산
+                let distance = self.haversineDistance(
+                    lat1: self.gangnamLatitude,
+                    lon1: self.gangnamLongitude,
+                    lat2: store.mapY,
+                    lon2: store.mapX
+                ) / 1000.0
+                
+                cell.configure(store: store, distance: distance)
             }
             .disposed(by: disposeBag)
         
@@ -56,6 +66,25 @@ class BottomSheetViewController: UIViewController, View {
             .bind(to: storeSelected)
             .disposed(by: disposeBag)
     }
+    func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
+        let radius: Double = 6371000 // 지구의 반지름 (미터)
+        
+        let dLat = degreesToRadians(lat2 - lat1)
+        let dLon = degreesToRadians(lon2 - lon1)
+        
+        let a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(degreesToRadians(lat1)) * cos(degreesToRadians(lat2)) *
+                sin(dLon / 2) * sin(dLon / 2)
+        
+        let c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        
+        return radius * c
+    }
+
+    func degreesToRadians(_ degrees: Double) -> Double {
+        return degrees * .pi / 180
+    }
+    
 }
 
 extension BottomSheetViewController: UITableViewDelegate {

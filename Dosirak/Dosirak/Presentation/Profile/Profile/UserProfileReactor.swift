@@ -30,7 +30,7 @@ class UserProfileReactor: Reactor {
     
     let initialState = State()
     private let useCase: LoginUseCaseType
-    private let keychain = Keychain(service: "com.dosirak.user")
+    private let keychain = AppSettings.accessToken
     
     init(useCase: LoginUseCaseType) {
         self.useCase = useCase
@@ -43,7 +43,7 @@ class UserProfileReactor: Reactor {
             return Observable.just(.setNickName(nickName))
             
         case .saveNickName:
-            guard let accessToken = keychain["accessToken"] else {
+            guard let accessToken = AppSettings.accessToken else {
                 return Observable.just(.setSaveSuccess(false))
             }
             print("====>\(accessToken)")

@@ -121,7 +121,13 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         
         collectionView.rx.itemSelected
             .bind { [weak self] indexPath in
-                self?.coordinator.navigateToDetail(for: indexPath)
+                guard let self = self else { return }
+                
+                if indexPath.section != 0 && !self.isUserLoggedIn() {
+                    self.showLoginAlert()
+                } else {
+                    self.coordinator.navigateToDetail(for: indexPath)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -132,13 +138,84 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
             .disposed(by: disposeBag)
     }
     
+    private func isUserLoggedIn() -> Bool {
+        return UserDefaults.standard.string(forKey: "accessToken") != nil
+    }
+    
+    private func showLoginAlert() {
+        let alert = UIAlertController(
+            title: "로그인이 필요합니다",
+            message: "이 기능을 사용하려면 로그인이 필요합니다.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "로그인", style: .default) { [weak self] _ in
+            self?.navigateToLogin()
+        })
+        present(alert, animated: true)
+    }
+    
+    private func navigateToLogin() {
+        let loginVC = WhiteLoginViewController()
+        loginVC.modalPresentationStyle = .fullScreen
+        present(loginVC, animated: true)
+    }
+    
+    
     private func requestLocationPermission() {
-        guard CLLocationManager.locationServicesEnabled() else {
-            print("위치 서비스가 비활성화되었습니다.")
-            return
+        DispatchQueue.global().async {
+            guard CLLocationManager.locationServicesEnabled() else {
+                DispatchQueue.main.async {
+                    self.showPermissionDeniedAlert()
+                }
+                return
+            }
+
         }
         
-        locationManager.requestWhenInUseAuthorization()
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted, .denied:
+            DispatchQueue.main.async {
+                self.showPermissionDeniedAlert()
+            }
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        @unknown default:
+            break
+        }
+    }
+    
+    private func showPermissionDeniedAlert() {
+        let alert = UIAlertController(
+            title: "위치 권한 필요",
+            message: "위치 정보를 사용하려면 설정에서 위치 권한을 허용해주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+        alert.addAction(UIAlertAction(title: "설정", style: .default) { _ in
+            if let appSettings = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(appSettings)
+            }
+        })
+        present(alert, animated: true)
+    }
+    
+    // 위치 권한 상태 변경 시 호출
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+            print("위치 권한이 허용되었습니다.")
+        case .denied, .restricted:
+            myLocationLabel.text = "위치 권한을 허용해 주세요."
+            print("위치 권한이 거부되었습니다.")
+        case .notDetermined:
+            print("위치 권한 요청 중입니다.")
+        @unknown default:
+            break
+        }
     }
     
     private func setupNavigationBar() {
@@ -174,21 +251,8 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         label.textColor = .black
         return label
     }()
-
+    
     // 위치 권한 상태 변경 시 호출
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
-        case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.startUpdatingLocation()
-        case .denied, .restricted:
-            myLocationLabel.text = "위치 권한을 허용해 주세요."
-            print("위치 권한이 거부되었습니다. 설정에서 권한을 활성화해주세요.")
-        case .notDetermined:
-            print("위치 권한 요청 중입니다.")
-        @unknown default:
-            break
-        }
-    }
     
     // 위치 업데이트 성공 시 호출
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

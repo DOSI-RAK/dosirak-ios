@@ -15,28 +15,18 @@ import RxCocoa
 class WhiteLoginViewController: BaseViewController {
 
     private let disposeBag = DisposeBag()
-    private let appCoordinator: AppCoordinator
-    var reactor: LoginReactor?
-    
-    
-    
-    init(reactor: LoginReactor, appCoordinator: AppCoordinator) {
-            self.reactor = reactor
-            self.appCoordinator = appCoordinator
-            super.init(nibName: nil, bundle: nil)
-            bind(reactor: reactor)
-        }
-        
-    
-    @MainActor required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+
+    // ViewModel 외부에서 설정 (의존성 주입 없이 초기화)
+    private var viewModel: LoginViewModel = LoginViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        title = "Login"
+        setupView()
+        setupLayout()
+        bindViewModel()
     }
-    
+
     override func setupView() {
         view.backgroundColor = .white
         view.addSubview(logoImageView)
@@ -44,7 +34,7 @@ class WhiteLoginViewController: BaseViewController {
         view.addSubview(signUpImageView)
         view.addSubview(buttonStackView)
     }
-    
+
     override func setupLayout() {
         logoImageView.snp.makeConstraints {
             $0.centerX.equalTo(self.view)
@@ -68,29 +58,53 @@ class WhiteLoginViewController: BaseViewController {
             $0.height.equalTo(200)
         }
     }
-    
-    
-      func bind(reactor: LoginReactor) {
-          kakaoLoginButton.rx.tap
-              .map { LoginReactor.Action.tapKakaoLogin }
-              .bind(to: reactor.action)
-              .disposed(by: disposeBag)
-          
-          naverLoginButton.rx.tap
-              .map { LoginReactor.Action.tapNaverLogin }
-              .bind(to: reactor.action)
-              .disposed(by: disposeBag)
-          
-          reactor.state.map { $0.isLoginSuccess }
-              .filter { $0 }
-              .take(1)
-              .subscribe(onNext: { [weak self] _ in
-                  self?.navigateToHome() // 로그인 성공 시 navigateToHome 호출
-              })
-              .disposed(by: disposeBag)
-      }
 
-    // MARK: UI
+    private func bindViewModel() {
+           let input = LoginViewModel.Input(
+               tapKakaoLogin: kakaoLoginButton.rx.tap.asObservable(),
+               tapNaverLogin: naverLoginButton.rx.tap.asObservable()
+           )
+
+           let output = viewModel.transform(input: input)
+
+           output.isLoading
+               .drive(onNext: { isLoading in
+                   print("Loading state: \(isLoading)") // 로딩 상태를 콘솔에 출력
+               })
+               .disposed(by: disposeBag)
+
+           output.isLoginSuccess
+               .drive(onNext: { [weak self] isSuccess in
+                   if isSuccess {
+                       self?.navigateToHome()
+                   }
+               })
+               .disposed(by: disposeBag)
+
+           output.errorMessage
+               .drive(onNext: { message in
+                   print("Error: \(message)") // 에러 메시지를 콘솔에 출력
+               })
+               .disposed(by: disposeBag)
+       }
+
+    // MARK: - Navigation
+    private func navigateToHome() {
+        let tabBarController = TabbarViewController()
+        let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
+        tabBarCoordinator.start()
+        UIApplication.shared.windows.first?.rootViewController = tabBarController
+        UIApplication.shared.windows.first?.makeKeyAndVisible()
+    }
+
+    // MARK: - Error Handling
+    private func showErrorMessage() {
+        let alert = UIAlertController(title: "Error", message: "Login failed. Please try again.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+
+    // MARK: - UI Components
     let logoImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "logomint")
@@ -113,10 +127,10 @@ class WhiteLoginViewController: BaseViewController {
     
     lazy var buttonStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [appleLoginButton, kakaoLoginButton, naverLoginButton])
-        stackView.axis = .vertical // 버튼들을 세로로 나열
+        stackView.axis = .vertical
         stackView.spacing = 5
         stackView.alignment = .fill
-        stackView.distribution = .fillEqually // 모든 버튼들이 동일한 크기를 가지게 설정
+        stackView.distribution = .fillEqually
         return stackView
     }()
     
@@ -140,17 +154,4 @@ class WhiteLoginViewController: BaseViewController {
         button.contentMode = .scaleAspectFit
         return button
     }()
-    
-    // 네비게이션 처리
-    private func navigateToHome() {
-           print("Navigating to home screen...")
-           appCoordinator.moveHome(window: UIApplication.shared.windows.first!)
-       }
-
-    // 에러 메시지 보여주기
-    private func showErrorMessage() {
-        let alert = UIAlertController(title: "Error", message: "Login failed. Please try again.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
 }

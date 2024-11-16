@@ -21,6 +21,7 @@ class UserAgreeViewController: UIViewController, CLLocationManagerDelegate {
 
     private let allAgree = BehaviorRelay<Bool>(value: false)
     private let serviceAgree = BehaviorRelay<Bool>(value: false)
+    private let marketingAgree = BehaviorRelay<Bool>(value: false)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,40 +93,101 @@ class UserAgreeViewController: UIViewController, CLLocationManagerDelegate {
     }
 
     private func setupBindings() {
-        
+        // 전체 동의 버튼 로직
         allAgreeButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
                 let newValue = !self.allAgree.value
                 self.allAgree.accept(newValue)
-                self.serviceAgree.accept(newValue)
+                self.serviceAgree.accept(newValue) // 서비스 동의 상태 동기화
+                self.marketingAgree.accept(newValue) // 마케팅 동의 상태 동기화
+                self.updateAllAgreeButtonImage(isChecked: newValue) // 전체 동의 이미지 업데이트
+                self.updateButtonImage(
+                    button: self.serviceAgreeButton,
+                    isChecked: newValue,
+                    checkedImageName: "check02_hover",
+                    uncheckedImageName: "check02"
+                )
+                self.updateButtonImage(
+                    button: self.marketingAgreeButton,
+                    isChecked: newValue,
+                    checkedImageName: "check02_hover",
+                    uncheckedImageName: "check02"
+                )
                 print("All agree button tapped. New value for allAgree: \(newValue)")
             })
             .disposed(by: disposeBag)
-        
-        
+
+        // 개별 동의 버튼 로직 (서비스 약관 동의)
         serviceAgreeButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 guard let self = self else { return }
-                print("Service agree button tapped.")
-                self.handleServiceAgreeButtonTap()
+                let newValue = !self.serviceAgree.value
+                self.serviceAgree.accept(newValue)
+                self.updateAllAgreeState() // 전체 동의 상태 업데이트
+                self.updateButtonImage(
+                    button: self.serviceAgreeButton,
+                    isChecked: newValue,
+                    checkedImageName: "check02_hover",
+                    uncheckedImageName: "check02"
+                )
+                print("Service agree button tapped. New value for serviceAgree: \(newValue)")
             })
             .disposed(by: disposeBag)
 
-        
-        nextButton.rx.tap
-            .bind(to: nextButtonTapped)
+        // 개별 동의 버튼 로직 (마케팅 정보 동의)
+        marketingAgreeButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                let newValue = !self.marketingAgree.value
+                self.marketingAgree.accept(newValue)
+                self.updateAllAgreeState() // 전체 동의 상태 업데이트
+                self.updateButtonImage(
+                    button: self.marketingAgreeButton,
+                    isChecked: newValue,
+                    checkedImageName: "check02_hover",
+                    uncheckedImageName: "check02"
+                )
+                print("Marketing agree button tapped. New value for marketingAgree: \(newValue)")
+            })
             .disposed(by: disposeBag)
 
+        // "다음" 버튼 활성화 상태
         Observable.combineLatest(serviceAgree, allAgree) { $0 && $1 }
             .bind(to: nextButton.rx.isEnabled)
             .disposed(by: disposeBag)
-        
+
         Observable.combineLatest(serviceAgree, allAgree) { $0 && $1 }
             .map { $0 ? UIColor.mainColor : UIColor.lightGray }
             .bind(to: nextButton.rx.backgroundColor)
             .disposed(by: disposeBag)
+        
+        nextButton.rx.tap
+                .subscribe(onNext: { [weak self] in
+                    self?.navigationController?.pushViewController(AddressInputViewController(), animated: true)
+                    
+                })
+                .disposed(by: disposeBag)
     }
+    
+    
+    private func updateAllAgreeState() {
+        // 모든 개별 동의 버튼이 체크되었는지 확인
+        let isAllChecked = serviceAgree.value && marketingAgree.value
+        allAgree.accept(isAllChecked)
+        updateAllAgreeButtonImage(isChecked: isAllChecked)
+    }
+    private func updateAllAgreeButtonImage(isChecked: Bool) {
+        let imageName = isChecked ? "check01_hover" : "check01"
+        allAgreeButton.setImage(UIImage(named: imageName), for: .normal)
+    }
+
+    private func updateButtonImage(button: UIButton, isChecked: Bool, checkedImageName: String, uncheckedImageName: String) {
+        let imageName = isChecked ? checkedImageName : uncheckedImageName
+        button.setImage(UIImage(named: imageName), for: .normal)
+    }
+
+
     
     private func handleServiceAgreeButtonTap() {
         let status = locationManager.authorizationStatus

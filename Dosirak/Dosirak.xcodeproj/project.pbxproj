@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		71D827CBC4F06709BEBFD16F /* Pods_Dosirak.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36F576CA08E3B7D9E140B7FB /* Pods_Dosirak.framework */; };
+		B50D983D2CE8DD0C008BD4E7 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = B50D983C2CE8DD0C008BD4E7 /* KeychainAccess */; };
 		B5212EA22CCA5A04004A8EA2 /* RxKakaoSDK in Frameworks */ = {isa = PBXBuildFile; productRef = B5212EA12CCA5A04004A8EA2 /* RxKakaoSDK */; };
 		B5212EA42CCA5A04004A8EA2 /* RxKakaoSDKAuth in Frameworks */ = {isa = PBXBuildFile; productRef = B5212EA32CCA5A04004A8EA2 /* RxKakaoSDKAuth */; };
 		B5212EA62CCA5A04004A8EA2 /* RxKakaoSDKCert in Frameworks */ = {isa = PBXBuildFile; productRef = B5212EA52CCA5A04004A8EA2 /* RxKakaoSDKCert */; };
@@ -19,7 +20,6 @@
 		B52F77F02CCE1939008FBC91 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = B52F77EF2CCE1939008FBC91 /* Differentiator */; };
 		B52F77F22CCE1939008FBC91 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = B52F77F12CCE1939008FBC91 /* RxDataSources */; };
 		B52F78942CD0AED5008FBC91 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = B52F78932CD0AED5008FBC91 /* Swinject */; };
-		B52F789D2CD0F11D008FBC91 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = B52F789C2CD0F11D008FBC91 /* KeychainAccess */; };
 		B52F78DA2CD3A3AD008FBC91 /* RxGesture in Frameworks */ = {isa = PBXBuildFile; productRef = B52F78D92CD3A3AD008FBC91 /* RxGesture */; };
 		B541AE042CC12B0D00271910 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE032CC12B0D00271910 /* SnapKit */; };
 		B541AE122CC12B4100271910 /* KakaoMapsSDK-SPM in Frameworks */ = {isa = PBXBuildFile; productRef = B541AE112CC12B4100271910 /* KakaoMapsSDK-SPM */; };
@@ -72,7 +72,6 @@
 				B541AE042CC12B0D00271910 /* SnapKit in Frameworks */,
 				B52F77F02CCE1939008FBC91 /* Differentiator in Frameworks */,
 				B541AF0B2CC53C7800271910 /* NaverThirdPartyLogin in Frameworks */,
-				B52F789D2CD0F11D008FBC91 /* KeychainAccess in Frameworks */,
 				B5212EAA2CCA5A04004A8EA2 /* RxKakaoSDKShare in Frameworks */,
 				B5212EA42CCA5A04004A8EA2 /* RxKakaoSDKAuth in Frameworks */,
 				B541AE492CC1307400271910 /* ReactorKit in Frameworks */,
@@ -93,6 +92,7 @@
 				B57718472CDC9302004DB4B0 /* Starscream in Frameworks */,
 				B5212EB32CCD221C004A8EA2 /* Inject in Frameworks */,
 				B541AE772CC1694F00271910 /* SocketIO in Frameworks */,
+				B50D983D2CE8DD0C008BD4E7 /* KeychainAccess in Frameworks */,
 				B52F77F22CCE1939008FBC91 /* RxDataSources in Frameworks */,
 				B541AF062CC51A2700271910 /* ReactiveMoya in Frameworks */,
 				B5212EA62CCA5A04004A8EA2 /* RxKakaoSDKCert in Frameworks */,
@@ -185,12 +185,12 @@
 				B52F77EF2CCE1939008FBC91 /* Differentiator */,
 				B52F77F12CCE1939008FBC91 /* RxDataSources */,
 				B52F78932CD0AED5008FBC91 /* Swinject */,
-				B52F789C2CD0F11D008FBC91 /* KeychainAccess */,
 				B52F78D92CD3A3AD008FBC91 /* RxGesture */,
 				B5FF13C12CD4BBC7008A48DB /* NMapsMap */,
 				B5B9B3FF2CD52DB10081A0DA /* Kingfisher */,
 				B594EF032CD8491200484191 /* PanModal */,
 				B57718462CDC9302004DB4B0 /* Starscream */,
+				B50D983C2CE8DD0C008BD4E7 /* KeychainAccess */,
 			);
 			productName = Dosirak;
 			productReference = B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */;
@@ -233,12 +233,12 @@
 				B5212EB12CCD221C004A8EA2 /* XCRemoteSwiftPackageReference "Inject" */,
 				B52F77EE2CCE1939008FBC91 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 				B52F78922CD0AED5008FBC91 /* XCRemoteSwiftPackageReference "Swinject" */,
-				B52F789B2CD0F11D008FBC91 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				B52F78D82CD3A3AD008FBC91 /* XCRemoteSwiftPackageReference "RxGesture" */,
 				B5FF13C02CD4BBC7008A48DB /* XCRemoteSwiftPackageReference "SPM-NMapsMap" */,
 				B5B9B3FE2CD52DB10081A0DA /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				B594EF022CD8491200484191 /* XCRemoteSwiftPackageReference "PanModal" */,
 				B57718452CDC9302004DB4B0 /* XCRemoteSwiftPackageReference "Starscream" */,
+				B50D983B2CE8DD0C008BD4E7 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 			);
 			productRefGroup = B515F4FC2CC0FA4200AC64E9 /* Products */;
 			projectDirPath = "";
@@ -517,6 +517,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B50D983B2CE8DD0C008BD4E7 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B5212EA02CCA5A04004A8EA2 /* XCRemoteSwiftPackageReference "kakao-ios-sdk-rx" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kakao/kakao-ios-sdk-rx";
@@ -547,14 +555,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.9.1;
-			};
-		};
-		B52F789B2CD0F11D008FBC91 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
-			requirement = {
-				branch = master;
-				kind = branch;
 			};
 		};
 		B52F78D82CD3A3AD008FBC91 /* XCRemoteSwiftPackageReference "RxGesture" */ = {
@@ -664,6 +664,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B50D983C2CE8DD0C008BD4E7 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B50D983B2CE8DD0C008BD4E7 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
 		B5212EA12CCA5A04004A8EA2 /* RxKakaoSDK */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B5212EA02CCA5A04004A8EA2 /* XCRemoteSwiftPackageReference "kakao-ios-sdk-rx" */;
@@ -718,11 +723,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B52F78922CD0AED5008FBC91 /* XCRemoteSwiftPackageReference "Swinject" */;
 			productName = Swinject;
-		};
-		B52F789C2CD0F11D008FBC91 /* KeychainAccess */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B52F789B2CD0F11D008FBC91 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
-			productName = KeychainAccess;
 		};
 		B52F78D92CD3A3AD008FBC91 /* RxGesture */ = {
 			isa = XCSwiftPackageProductDependency;

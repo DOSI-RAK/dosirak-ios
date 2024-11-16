@@ -15,7 +15,7 @@ class UserProfileViewController: BaseViewController {
     
     weak var coordinator: UserProfileCoordinator?
     private let viewModel = ProfileViewModel()
-    let token = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+    let token = AppSettings.accessToken ?? ""
     
     let data: Observable<[(image: String, text: String)]> = Observable.just([
         ("contract", "서비스 이용약관"),

@@ -12,7 +12,8 @@ class GreenGuideReactor: Reactor {
     enum Action {
         case loadAllStores
         case loadStoreDetail(Int)
-        case loadStoresByCategory(String) // 새로운 액션 추가
+        case loadStoresByCategory(String)
+        case loadStoresNearMyLocation(Double, Double)
     }
     
     // Mutation 정의
@@ -22,6 +23,7 @@ class GreenGuideReactor: Reactor {
         case setCategoryStores([Store])
         case setLoading(Bool)
         case setSelectedCategory(String)
+        case setNearbyStores([Store])
     }
     
     // State 정의
@@ -30,7 +32,8 @@ class GreenGuideReactor: Reactor {
         var storeDetail: StoreDetail?
         var categoryStores: [Store] = []
         var isLoading: Bool = false
-        var selectedCategory: String = "전체" // 기본 카테고리
+        var selectedCategory: String = "전체"
+        var nearbyStores: [Store] = []
     }
     
     let initialState: State
@@ -81,9 +84,19 @@ class GreenGuideReactor: Reactor {
                     Observable.just(Mutation.setLoading(false))
                 ])
             }
+        case .loadStoresNearMyLocation(let mapX, let mapY): // 추가
+            return Observable.concat([
+                Observable.just(Mutation.setLoading(true)),
+                useCase.getNearbyStores(mapX: mapX, mapY: mapY)
+                    .asObservable()
+                    .do(onNext: { stores in
+                                    print("Nearby stores fetched: \(stores)") // 디버깅용 출력
+                                })
+                    .map { Mutation.setNearbyStores($0) },
+                Observable.just(Mutation.setLoading(false))
+            ])
         }
     }
-    
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         
@@ -97,6 +110,9 @@ class GreenGuideReactor: Reactor {
         case .setCategoryStores(let categoryStores):
             newState.categoryStores = categoryStores
             
+        case .setNearbyStores(let nearbyStores): // 추가
+            newState.nearbyStores = nearbyStores
+            
         case .setLoading(let isLoading):
             newState.isLoading = isLoading
             
@@ -105,5 +121,6 @@ class GreenGuideReactor: Reactor {
         }
         
         return newState
+        
     }
 }

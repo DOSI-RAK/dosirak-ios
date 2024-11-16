@@ -13,10 +13,13 @@ protocol GuideRepositoryType {
     func fetchAllStores() -> Single<[Store]>
     func fetchStoreDetail(storeID: Int, accessToken: String) -> Single<StoreDetail>
     func fetchCategoryStoreList(category: String) -> Single<[Store]>
+    func fetchNearbyStores(latitude: Double, longitude: Double) -> Single<[Store]>
     
 }
 
 final class GuideRepository: GuideRepositoryType {
+    
+    
     private let provider: MoyaProvider<GuideAPI>
     
     init(provider: MoyaProvider<GuideAPI> = MoyaProvider<GuideAPI>()) {
@@ -34,7 +37,7 @@ final class GuideRepository: GuideRepositoryType {
                     let decodedResponse = try JSONDecoder().decode(APIResponse<[Store]>.self, from: response.data)
                     if decodedResponse.status == "SUCCESS" {
                         print("=======>\(decodedResponse.status)")
-                        print("Fetched storelist Response:", decodedResponse.data) // 디버그용 출력
+                        //print("Fetched storelist Response:", decodedResponse.data) // 디버그용 출력
                         return decodedResponse.data
                     } else {
                         throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch chat room summary"])
@@ -92,6 +95,17 @@ final class GuideRepository: GuideRepositoryType {
                     print("Decoding error:", error)
                     throw error
                 }
+            }
+    }
+    func fetchNearbyStores(latitude mapX: Double, longitude mapY: Double) -> Single<[Store]> {
+        return provider.rx.request(.fetchNearMyLocation(mapX: mapX, mayY: mapY))
+            .filterSuccessfulStatusCodes()
+            .map { response in
+                let decodedResponse = try JSONDecoder().decode(APIResponse<[Store]>.self, from: response.data)
+                guard decodedResponse.status == "SUCCESS" else {
+                    throw NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to fetch nearby stores"])
+                }
+                return decodedResponse.data
             }
     }
 }

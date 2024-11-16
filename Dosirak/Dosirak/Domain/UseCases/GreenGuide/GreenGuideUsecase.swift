@@ -12,6 +12,7 @@ protocol GuideUseCaseType {
     func getAllStores() -> Single<[Store]>
     func getStoreDetail(storeID: Int, accessToken: String) -> Single<StoreDetail>
     func getCategoryStoreList(category: String) -> Single<[Store]>
+    func getNearbyStores(mapX: Double, mapY: Double) -> Single<[Store]>
 }
 
 
@@ -31,5 +32,8 @@ final class GuideUseCase: GuideUseCaseType {
     }
     func getCategoryStoreList(category: String) -> Single<[Store]> {
         return repository.fetchCategoryStoreList(category: category)
+    }
+    func getNearbyStores(mapX: Double, mapY: Double) -> Single<[Store]> {
+        return repository.fetchNearbyStores(latitude: mapX, longitude: mapY)
     }
 }

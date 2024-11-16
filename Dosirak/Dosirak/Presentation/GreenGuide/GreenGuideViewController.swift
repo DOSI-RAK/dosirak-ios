@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import ReactorKit
 import NMapsMap
+import CoreLocation
 
 // MARK: - GreenGuideViewController
 
@@ -23,6 +24,9 @@ class GreenGuideViewController: UIViewController {
 
     private let categoryTitles = ["전체", "한식", "일식", "양식", "분식", "카페", "디저트"]
     private var selectedCategoryButton: UIButton?
+    private var userLocation: CLLocation?
+    private let locationManager = CLLocationManager()
+    private var hasInitializedMapView = false
     
     
     init(reactor: GreenGuideReactor) {
@@ -42,9 +46,31 @@ class GreenGuideViewController: UIViewController {
         setupBottomSheet()
         bindReactor()
         navigationController?.delegate = self
+        setupLocationManager()
 
         
     }
+    //테스트
+    private func setupLocationManager() {
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        
+        // 강남역 기본 좌표 설정
+        let gangnamLocation = CLLocation(latitude: 37.497942, longitude: 127.027621)
+        initializeMapToUserLocation(location: gangnamLocation)
+        updateUserMarker(location: gangnamLocation)
+
+        // 실제 위치 권한 요청 및 업데이트
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+    }
+    //실제 사용
+//    private func setupLocationManager() {
+//        locationManager.delegate = self
+//        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+//        locationManager.requestWhenInUseAuthorization()
+//        locationManager.startUpdatingLocation()
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -161,7 +187,7 @@ class GreenGuideViewController: UIViewController {
             button.addTarget(self, action: #selector(categoryButtonTapped(_:)), for: .touchUpInside)
             
             if title == "전체" {
-                selectCategoryButton(button) // 기본 선택 버튼 설정
+                selectCategoryButton(button)
             }
             
             stackView.addArrangedSubview(button)
@@ -169,7 +195,7 @@ class GreenGuideViewController: UIViewController {
         
         overlayView.addSubview(stackView)
         
-        // 스택 뷰의 제약 조건 설정
+       
         stackView.snp.makeConstraints {
             $0.top.equalTo(searchTextField.snp.bottom).offset(10)
             $0.leading.trailing.equalTo(overlayView).inset(20)
@@ -177,7 +203,7 @@ class GreenGuideViewController: UIViewController {
         }
     }
     
-    // 카테고리 버튼 탭 시 액션
+    
     @objc private func categoryButtonTapped(_ sender: UIButton) {
            guard let category = sender.currentTitle else { return }
            print("\(category) 버튼이 탭되었습니다.")
@@ -229,6 +255,49 @@ class GreenGuideViewController: UIViewController {
                 self?.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.stores } // 내 주변 데이터
+            .subscribe(onNext: { [weak self] stores in
+                self?.updateMapMarkers(stores: stores)
+            })
+            .disposed(by: disposeBag)
+        
+        
+    }
+    
+    private func updateMapMarkers(stores: [Store]) {
+        
+        // 새로운 마커 추가
+        stores.forEach { store in
+            print("Store \(store.storeName): (\(store.mapX), \(store.mapY))") // 디버깅용 출력
+            let marker = NMFMarker(position: NMGLatLng(lat: store.mapY, lng: store.mapX))
+            marker.iconImage = NMFOverlayImage(name: "marker")
+            marker.captionText = store.storeName
+            marker.mapView = mapView
+        }
+    }
+    private var userMarker: NMFMarker?
+    
+    private func initializeMapToUserLocation(location: CLLocation) {
+        let cameraPosition = NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude)
+        mapView.moveCamera(NMFCameraUpdate(scrollTo: cameraPosition))
+        mapView.positionMode = .compass // 현재 위치 중심
+    }
+
+    private func updateUserMarker(location: CLLocation) {
+        // 기존 마커 제거
+        //userMarker?.mapView = nil
+
+        // 새로운 마커 추가
+        let marker = NMFMarker(position: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude))
+        marker.iconImage = NMFOverlayImage(name: "marker")
+        marker.iconTintColor = .blue
+        //marker.iconTintColor = .systemBlue // 마커 색상
+        marker.width = 30
+        marker.height = 30
+        marker.mapView = mapView // 지도에 마커 표시
+        userMarker = marker
     }
     
     // MARK: UI Components
@@ -294,5 +363,25 @@ extension GreenGuideViewController: UINavigationControllerDelegate {
         if viewController is GreenGuideViewController {
             bottomSheetVC?.view.isHidden = false
         }
+    }
+}
+
+
+extension GreenGuideViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.last else { return }
+        userLocation = location
+        
+        if !hasInitializedMapView {
+            // 지도 초기 위치 설정
+            initializeMapToUserLocation(location: location)
+            hasInitializedMapView = true
+        }
+        updateUserMarker(location: location) // 사용자 위치 마커 추가
+        reactor.action.onNext(.loadStoresNearMyLocation(location.coordinate.latitude, location.coordinate.longitude))
+    }
+
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to get user location: \(error.localizedDescription)")
     }
 }

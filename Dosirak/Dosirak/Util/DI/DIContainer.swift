@@ -6,7 +6,7 @@
 //
 import Swinject
 import Moya
-import KeychainAccess
+
 
 final class DIContainer {
     static let shared = DIContainer()
@@ -40,7 +40,7 @@ final class DIContainer {
         container.register(ChatListRepositoryType.self) { resolver in
             ChatListRepository(
                 provider: resolver.resolve(MoyaProvider<ChatAPI>.self)!,
-                accessToken: Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+                accessToken: AppSettings.accessToken ?? ""
             )
         }
         
@@ -58,10 +58,6 @@ final class DIContainer {
        
                 
         
-        // Reactor 등록
-        container.register(LoginReactor.self) { resolver in
-            LoginReactor(useCase: resolver.resolve(LoginUseCaseType.self)!)
-        }
         
         container.register(UserProfileReactor.self) { resolver in
             UserProfileReactor(useCase: resolver.resolve(LoginUseCaseType.self)!)
@@ -75,7 +71,7 @@ final class DIContainer {
         
         //MARK: CHAT
         container.register(ChatRepositoryType.self) { (resolver, chatRoomId: Int) in
-                let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+            let accessToken = AppSettings.accessToken ?? ""
             print("==========================>\(accessToken)")
                 return ChatRepository(chatRoomId: chatRoomId, accessToken: accessToken)
             }
@@ -113,7 +109,7 @@ final class DIContainer {
         // GuideReactor 등록
         container.register(GreenGuideReactor.self) { resolver in
             let useCase = resolver.resolve(GuideUseCaseType.self)!
-            let accessToken = Keychain(service: "com.dosirak.user")["accessToken"] ?? ""
+            let accessToken = AppSettings.accessToken ?? ""
             return GreenGuideReactor(useCase: useCase, accessToken: accessToken)
         }
         
@@ -123,22 +119,6 @@ final class DIContainer {
             let accessToken = resolver.resolve(String.self, name: "AccessToken")!
             return GreenClubRepository(apiProvider: apiProvider, accessToken: accessToken)
         }
-
-        container.register(GreenClubUseCaseType.self) { resolver in
-            let repository = resolver.resolve(GreenClubRepositoryType.self)!
-            return GreenClubUseCase(repository: repository)
-        }
-
-        container.register(GreenClubReactor.self) { resolver in
-            let useCase = resolver.resolve(GreenClubUseCaseType.self)!
-            return GreenClubReactor(useCase: useCase)
-        }
-        container.register(GreenClubViewController.self) { resolver in
-            let reactor = resolver.resolve(GreenClubReactor.self)!
-            return GreenClubViewController(reactor: reactor)
-
-        }
-        
         
         
         

@@ -81,6 +81,7 @@ class ChatRepository: ChatRepositoryType {
                 do {
                     let chatRoomInfoResponse = try JSONDecoder().decode(APIResponse<ChatRoomInfo?>.self, from: data)
                     if let chatRoomInfo = chatRoomInfoResponse.data {
+                        print("=============?\(chatRoomInfo.messageList)")
                         single(.success(chatRoomInfo))
                     } else {
                         single(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "No data in response"])))

@@ -113,11 +113,18 @@ class StoreTableViewCell: UITableViewCell {
     }
     
   
-    func configure(store: Store) {
+    func configure(store: Store, distance: Double?) {
         titleLabel.text = store.storeName
         let url = URL(string: store.storeImg)
         iconImageView.kf.setImage(with: url)
-        distanceLabel.text = "500m" // 예시로 설정한 거리값
+        
+        if let distance = distance {
+            distanceLabel.text = String(format: "%.2f km", distance)
+        } else {
+            distanceLabel.text = "Distance unavailable"
+        }
+        
+        
         distanceLabel.backgroundColor = .bgColor
         distanceLabel.layer.cornerRadius = 20
         distanceLabel.textAlignment = .center
