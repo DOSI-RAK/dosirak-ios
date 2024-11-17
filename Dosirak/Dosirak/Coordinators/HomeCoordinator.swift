@@ -51,8 +51,8 @@ class HomeCoordinator: Coordinator {
                     viewController = UIViewController()
                     viewController.title = "Green Elite Controller" // title 설정
                 case 1:
-                    viewController = UIViewController()
-                    viewController.title = "Green Heros Controller" // title 설정
+                    viewController = GreenHeroesViewController()
+                    viewController.title = "Green Heros" // title 설정
                 default:
                     viewController = UIViewController()
                     viewController.title = "Green Auth Controller" // title 설정

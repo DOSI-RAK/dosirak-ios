@@ -25,6 +25,7 @@ class GreenClubViewController: UIViewController {
         setupUI()
         setupConstraints()
         bindViewModel()
+        tableView.backgroundColor = .bgColor
         
         tableView.rx.setDelegate(self)
             .disposed(by: disposeBag)

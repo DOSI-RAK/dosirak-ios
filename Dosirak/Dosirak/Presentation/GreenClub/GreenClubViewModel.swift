@@ -3,8 +3,6 @@
 //  Dosirak
 //
 //  Created by 권민재 on 11/17/24.
-//
-
 import RxSwift
 import RxCocoa
 import Moya
@@ -120,7 +118,7 @@ class SaleStoresViewModel {
         let c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
         let distanceInKm = earthRadius * c
-        let distanceInMeters = distanceInKm * 1000 // km to m
-        return Int(distanceInMeters) // 소수점 버림
+        let distanceInMeters = distanceInKm * 1000
+        return Int(distanceInMeters)
     }
 }
