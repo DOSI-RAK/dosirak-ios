@@ -43,7 +43,7 @@ class StoreCell: UITableViewCell {
     }()
     private let percentLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .red
+        label.textColor = UIColor(hexCode: "#ff4949")
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         return label
     }()

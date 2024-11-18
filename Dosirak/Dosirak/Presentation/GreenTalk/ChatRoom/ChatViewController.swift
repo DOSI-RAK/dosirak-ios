@@ -9,6 +9,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import ReactorKit
+import RxKeyboard
 
 class ChatViewController: UIViewController {
     var disposeBag = DisposeBag()
@@ -206,6 +207,22 @@ class ChatViewController: UIViewController {
                 }
             })
             .disposed(by: disposeBag)
+        
+        RxKeyboard.instance.visibleHeight
+                    .drive(onNext: { [weak self] keyboardHeight in
+                        guard let self = self else { return }
+                        let isKeyboardVisible = keyboardHeight > 0
+                        UIView.animate(withDuration: 0.3) {
+                            self.messageInputField.snp.updateConstraints { make in
+                                make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom).offset(-keyboardHeight - (isKeyboardVisible ? 10 : 0))
+                            }
+                            self.view.layoutIfNeeded()
+                        }
+                    })
+                    .disposed(by: disposeBag)
+        
+        
+        
     }
     
     private func scrollToBottom() {
