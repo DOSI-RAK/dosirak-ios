@@ -176,6 +176,13 @@ class GreenClubViewController: UIViewController {
         
         // 초기 데이터 로드
         fetchTrigger.accept(())
+        
+        changeButton.rx.tap
+            .bind { [weak self] in
+                self?.navigationController?.pushViewController(AddressInputViewController(), animated: true)
+                
+            }
+            .disposed(by: disposeBag)
     }
     
     // MARK: - UI Components

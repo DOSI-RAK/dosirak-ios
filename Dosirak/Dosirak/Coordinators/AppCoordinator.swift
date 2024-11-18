@@ -9,24 +9,7 @@ import Moya
 import RxSwift
 import CoreLocation
 
-struct AppSettings {
-    @UserDefault(key: "accessToken", defaultValue: nil)
-    static var accessToken: String?
-    
-    @UserDefault(key: "refreshToken", defaultValue: nil)
-    static var refreshToken: String?
-    
-    @UserDefault(key: "isLoggedIn", defaultValue: false)
-    static var isLoggedIn: Bool
-    
-    @UserDefault(key: "isFirstLaunch", defaultValue: false)
-    static var isFitstLaunch: Bool
-    
-    @UserDefault(key: "userGeo", defaultValue: "강남구 역삼동")
-    static var userGeo: String
-    
-    
-}
+
 protocol Coordinator {
     var childCoordinators: [Coordinator] { get set }
 }

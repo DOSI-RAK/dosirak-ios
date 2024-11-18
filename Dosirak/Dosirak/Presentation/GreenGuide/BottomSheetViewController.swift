@@ -23,8 +23,6 @@ class BottomSheetViewController: UIViewController, View {
             }
         }
     }
-    let gangnamLatitude = 37.497942
-    let gangnamLongitude = 127.027621
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,9 +48,10 @@ class BottomSheetViewController: UIViewController, View {
             }
             .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
                 // 강남역 기준 거리 계산
+                let coordinate = AppSettings.userLocation
                 let distance = self.haversineDistance(
-                    lat1: self.gangnamLatitude,
-                    lon1: self.gangnamLongitude,
+                    lat1: coordinate.latitude,
+                    lon1: coordinate.longitude,
                     lat2: store.mapY,
                     lon2: store.mapX
                 ) / 1000.0

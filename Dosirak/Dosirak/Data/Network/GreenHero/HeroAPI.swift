@@ -15,7 +15,9 @@ enum HeroAPI {
 
 extension HeroAPI: TargetType {
     
-    var baseURL: URL { .init(string: "https://api.dosirak.com")! }
+    var baseURL: URL {
+        return URL(string: "http://dosirak.store")!
+    }
     var path: String {
         switch self {
         case .fetchTotalRank: return "/api/users/rank"

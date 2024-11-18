@@ -6,24 +6,60 @@
 //
 
 import UIKit
+import NMapsMap
+import CoreLocation
+import RxSwift
+import RxCocoa
+import SnapKit
+import RxKeyboard
+
+
 
 class GreenTrackViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        title = "Green Track"
+        
 
         // Do any additional setup after loading the view.
     }
     
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+   
+    
+    
+    
+    
+    //MARK: UI
+    let mapView: NMFMapView = {
+        let mapView = NMFMapView()
+        return mapView
+    }()
+    
+    let startPoingTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Start Point"
+        return textField
+    }()
+    
+    let endPointTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "End Point"
+        return textField
+    }()
+    
+    let walkTimeView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    let bicycleTimeView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    
+    
 
 }

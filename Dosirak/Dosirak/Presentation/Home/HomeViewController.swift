@@ -295,24 +295,27 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.bounds.width
         switch indexPath.section {
-        case 0:
+        case 0: // 첫 번째 섹션 (Large Section)
             return CGSize(width: width - 32, height: 200)
-        case 1:
+        case 1: // 두 번째 섹션 (Grid Section)
             let gridWidth = (width - 48) / 2 - 10
             return CGSize(width: gridWidth, height: 130)
-        default:
+        case 2: // 세 번째 섹션 (List Section)
             return CGSize(width: width - 32, height: 60)
+        default:
+            return CGSize(width: width - 32, height: 60) // 기본값
         }
     }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         switch section {
-        case 0:
+        case 0: // 첫 번째 섹션
             return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
-        case 1:
+        case 1: // 두 번째 섹션
             return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
+        case 2: // 세 번째 섹션 (List Section)
+            return UIEdgeInsets(top: 20, left: 16, bottom: 10, right: 16)
         default:
-            return UIEdgeInsets(top: 25, left: 20, bottom: 10, right: 20)
+            return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         }
     }
 }

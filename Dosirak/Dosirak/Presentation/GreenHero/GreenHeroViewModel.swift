@@ -89,36 +89,36 @@ class GreenHeroViewModel {
     }
     
     private func fetchTotalRanks() -> Single<[Rank]> {
-        print("[DEBUG] Sending request to fetchTotalRanks.")
         return provider.rx
             .request(.fetchTotalRank(accessToken: AppSettings.accessToken ?? ""))
-            .filterSuccessfulStatusCodes()
             .do(onSuccess: { response in
-                print("[DEBUG] Response received for fetchTotalRanks: StatusCode: \(response.statusCode), Data Length: \(response.data.count)")
+                print("[DEBUG] Response StatusCode: \(response.statusCode)")
                 if let jsonString = String(data: response.data, encoding: .utf8) {
-                    print("[DEBUG] Response JSON for fetchTotalRanks: \(jsonString)")
+                    print("[DEBUG] Raw JSON: \(jsonString)")
                 }
-            }, onError: { error in
-                print("[DEBUG] Error during fetchTotalRanks request: \(error.localizedDescription)")
             })
             .map(APIResponse<[Rank]>.self)
             .map { $0.data }
     }
-    
+
     private func fetchMyRank() -> Single<Rank> {
-        print("[DEBUG] Sending request to fetchMyRank.")
+        print("[DEBUG] fetchMyRank called.")
         return provider.rx
             .request(.fetchMyRank(accessToken: AppSettings.accessToken ?? ""))
-            .filterSuccessfulStatusCodes()
             .do(onSuccess: { response in
-                print("[DEBUG] Response received for fetchMyRank: StatusCode: \(response.statusCode), Data Length: \(response.data.count)")
+                print("[DEBUG] Response received for fetchMyRank:")
+                print("[DEBUG] StatusCode: \(response.statusCode)")
                 if let jsonString = String(data: response.data, encoding: .utf8) {
-                    print("[DEBUG] Response JSON for fetchMyRank: \(jsonString)")
+                    print("[DEBUG] Response JSON: \(jsonString)")
                 }
             }, onError: { error in
-                print("[DEBUG] Error during fetchMyRank request: \(error.localizedDescription)")
+                print("[DEBUG] fetchMyRank error: \(error)")
             })
+            .filterSuccessfulStatusCodes()
             .map(APIResponse<Rank>.self)
-            .map { $0.data }
+            .map { apiResponse in
+                print("[DEBUG] Parsed My Rank: \(apiResponse.data)")
+                return apiResponse.data
+            }
     }
 }

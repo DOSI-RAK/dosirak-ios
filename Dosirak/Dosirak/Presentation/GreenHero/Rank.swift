@@ -6,7 +6,7 @@
 //
 
 struct Rank: Decodable {
-    let userId: String
+    let userId: Int
     let profileImg: String
     let rank: Int
     let nickName: String

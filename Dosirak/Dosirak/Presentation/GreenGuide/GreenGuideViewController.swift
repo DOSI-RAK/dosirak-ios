@@ -56,7 +56,8 @@ class GreenGuideViewController: UIViewController {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
         // 강남역 기본 좌표 설정
-        let gangnamLocation = CLLocation(latitude: 37.497942, longitude: 127.027621)
+        let userLocation = AppSettings.userLocation
+        let gangnamLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
         initializeMapToUserLocation(location: gangnamLocation)
         updateUserMarker(location: gangnamLocation)
 
@@ -286,8 +287,6 @@ class GreenGuideViewController: UIViewController {
     }
 
     private func updateUserMarker(location: CLLocation) {
-        // 기존 마커 제거
-        //userMarker?.mapView = nil
 
         // 새로운 마커 추가
         let marker = NMFMarker(position: NMGLatLng(lat: location.coordinate.latitude, lng: location.coordinate.longitude))
