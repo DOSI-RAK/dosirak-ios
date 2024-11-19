@@ -3,184 +3,312 @@
 //  Dosirak
 //
 //  Created by 권민재 on 11/15/24.
+
 import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
-import RxDataSources
+import Kingfisher
 
-// MARK: - Section Model
-enum GreenHeroSection {
-    case rankCards(items: [Rank])  // Top 3 카드 섹션
-    case myRank(item: Rank)       // 내 등수 섹션
-    case rankList(items: [Rank])  // 나머지 랭킹 리스트 섹션
-}
-
-extension GreenHeroSection: SectionModelType {
-    typealias Item = Rank
-    
-    var items: [Item] {
-        switch self {
-        case .rankCards(let items): return items
-        case .myRank(let item): return [item]
-        case .rankList(let items): return items
-        }
-    }
-    
-    init(original: GreenHeroSection, items: [Item]) {
-        switch original {
-        case .rankCards: self = .rankCards(items: items)
-        case .myRank: self = .myRank(item: items.first!)
-        case .rankList: self = .rankList(items: items)
-        }
-    }
-}
-
-// MARK: - GreenHeroesViewController
 class GreenHeroesViewController: UIViewController {
-    private let collectionView: UICollectionView
-    private let layout = UICollectionViewFlowLayout()
     private let disposeBag = DisposeBag()
+    private let viewModel = GreenHeroViewModel()
 
-    private let fetchTotalRankTrigger = PublishRelay<Void>()
-    private let fetchMyRankTrigger = PublishRelay<Void>()
+    // MARK: - UI Components
+    private let top3View: UIView = UIView()
 
-    // Data Source
-    private let dataSource = RxCollectionViewSectionedReloadDataSource<GreenHeroSection>(
-        configureCell: { dataSource, collectionView, indexPath, item in
-            switch dataSource[indexPath.section] {
-            case .rankList:
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RankingCell.identifier, for: indexPath) as! RankingCell
-                cell.configure(with: item)
-                return cell
-            default:
-                // 빈 셀 처리
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmptyCell", for: indexPath)
-                return cell
-            }
-        },
-        configureSupplementaryView: { dataSource, collectionView, kind, indexPath in
-            guard kind == UICollectionView.elementKindSectionHeader else { return UICollectionReusableView() }
-            
-            switch dataSource[indexPath.section] {
-            case .rankCards(let ranks):
-                let header = collectionView.dequeueReusableSupplementaryView(
-                    ofKind: kind,
-                    withReuseIdentifier: RankingHeaderReusableView.identifier,
-                    for: indexPath
-                ) as! RankingHeaderReusableView
-                header.configure(with: ranks)
-                return header
-                
-            case .myRank(let rank):
-                let header = collectionView.dequeueReusableSupplementaryView(
-                    ofKind: kind,
-                    withReuseIdentifier: MyRankReusableView.identifier,
-                    for: indexPath
-                ) as! MyRankReusableView
-                header.configure(with: rank)
-                return header
-                
-            default:
-                return UICollectionReusableView()
-            }
-        }
-    )
-    
-    
-    init() {
-        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    private let firstPlaceImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "1등")
+        imageView.isUserInteractionEnabled = true
+        return imageView
+    }()
+
+    private let secondPlaceImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "2등")
+        imageView.isUserInteractionEnabled = true
+        return imageView
+    }()
+
+    private let thirdPlaceImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "3등")
+        imageView.isUserInteractionEnabled = true
+        return imageView
+    }()
+
+    private let myRankView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.borderColor = UIColor.lightGray.cgColor
+        view.layer.borderWidth = 1
+        view.layer.cornerRadius = 12
+        return view
+    }()
+
+    private let rankTableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .plain)
+        tableView.separatorStyle = .none
+        tableView.showsVerticalScrollIndicator = false
+        tableView.backgroundColor = .clear
+        return tableView
+    }()
+
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureCollectionView()
-        setupUI()
-        setupConstraints()
-        bindDummyData() // 더미 데이터로 테스트
+        view.backgroundColor = .bgColor
+        setupLayout()
+        bindViewModel()
+
+        rankTableView.register(RankingCell.self, forCellReuseIdentifier: RankingCell.identifier)
+        rankTableView.delegate = self
     }
-    
-    private func configureCollectionView() {
-        collectionView.register(
-            RankingHeaderReusableView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: RankingHeaderReusableView.identifier
-        )
-        
-        collectionView.register(
-            MyRankReusableView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: MyRankReusableView.identifier
-        )
-        
-        collectionView.register(
-            RankingCell.self,
-            forCellWithReuseIdentifier: RankingCell.identifier
-        )
-        
-        collectionView.register(
-            UICollectionViewCell.self,
-            forCellWithReuseIdentifier: "EmptyCell" // 빈 셀 등록
-        )
-        
-        layout.scrollDirection = .vertical
-        layout.minimumLineSpacing = 16
-        
-        collectionView.rx.setDelegate(self).disposed(by: disposeBag)
-    }
-    
-    private func setupUI() {
-        view.backgroundColor = .white
-        view.addSubview(collectionView)
-    }
-    
-    private func setupConstraints() {
-        collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+
+    // MARK: - Layout
+    private func setupLayout() {
+        view.addSubview(top3View)
+        top3View.addSubview(secondPlaceImageView)
+        top3View.addSubview(firstPlaceImageView)
+        top3View.addSubview(thirdPlaceImageView)
+
+        view.addSubview(myRankView)
+        view.addSubview(rankTableView)
+
+        top3View.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(25)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(150)
+        }
+
+        secondPlaceImageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview()
+            make.centerY.equalToSuperview().offset(10)
+            make.width.equalToSuperview().multipliedBy(0.3)
+            make.height.equalToSuperview()
+        }
+
+        firstPlaceImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-10)
+            make.width.equalToSuperview().multipliedBy(0.4)
+            make.height.equalToSuperview()
+        }
+
+        thirdPlaceImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview().offset(10)
+            make.width.equalToSuperview().multipliedBy(0.3)
+            make.height.equalToSuperview()
+        }
+
+        myRankView.snp.makeConstraints { make in
+            make.top.equalTo(top3View.snp.bottom).offset(20)
+            make.leading.trailing.equalToSuperview().inset(16)
+            make.height.equalTo(70)
+        }
+
+        rankTableView.snp.makeConstraints { make in
+            make.top.equalTo(myRankView.snp.bottom).offset(20)
+            make.leading.trailing.bottom.equalToSuperview()
         }
     }
-    
-    private func bindDummyData() {
-        // Dummy Data
-        let topThreeRanks = [
-            Rank(userId: 1, profileImg: "https://via.placeholder.com/40", rank: 1, nickName: "Top Hero 1", reward: 1000),
-            Rank(userId: 2, profileImg: "https://via.placeholder.com/40", rank: 2, nickName: "Top Hero 2", reward: 900),
-            Rank(userId: 3, profileImg: "https://via.placeholder.com/40", rank: 3, nickName: "Top Hero 3", reward: 800)
-        ]
-        
-        let myRank = Rank(userId: 4, profileImg: "https://via.placeholder.com/40", rank: 4, nickName: "My Hero", reward: 750)
-        
-        let rankingList = (5...50).map {
-            Rank(userId: $0, profileImg: "https://via.placeholder.com/40", rank: $0, nickName: "Hero \($0)", reward: 700 - $0 * 10)
+
+    private func setupMyRankView(rank: Rank) {
+        // 기존 뷰 내부의 서브뷰 제거
+        myRankView.subviews.forEach { $0.removeFromSuperview() }
+
+        // 순위 라벨
+        let rankLabel = UILabel()
+        rankLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        rankLabel.textColor = .black
+        rankLabel.textAlignment = .center
+        rankLabel.text = "\(rank.rank)"
+
+        // 프로필 이미지
+        let profileImageView = UIImageView()
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.layer.cornerRadius = 20
+        profileImageView.clipsToBounds = true
+        profileImageView.kf.setImage(
+            with: URL(string: rank.profileImg ?? ""),
+            placeholder: UIImage(named: "placeholder")
+        )
+
+        // 닉네임 라벨
+        let nameLabel = UILabel()
+        nameLabel.font = UIFont.systemFont(ofSize: 14)
+        nameLabel.textColor = .black
+        nameLabel.lineBreakMode = .byTruncatingTail
+        nameLabel.text = rank.nickName ?? "Unknown"
+
+        // 점수 라벨
+        let scoreLabel = UILabel()
+        scoreLabel.font = UIFont.systemFont(ofSize: 14)
+        scoreLabel.textColor = UIColor.gray
+        scoreLabel.textAlignment = .right
+        scoreLabel.text = "\(rank.reward)점"
+
+        // Add subviews
+        myRankView.addSubview(rankLabel)
+        myRankView.addSubview(profileImageView)
+        myRankView.addSubview(nameLabel)
+        myRankView.addSubview(scoreLabel)
+
+        // Layout constraints
+        rankLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(30) // 고정된 폭
         }
-        
-        let sections: [GreenHeroSection] = [
-            .rankCards(items: topThreeRanks),
-            .myRank(item: myRank),
-            .rankList(items: rankingList)
-        ]
-        
-        Observable.just(sections)
-            .bind(to: collectionView.rx.items(dataSource: dataSource))
+
+        profileImageView.snp.makeConstraints { make in
+            make.leading.equalTo(rankLabel.snp.trailing).offset(12)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(40) // 정사각형
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.leading.equalTo(profileImageView.snp.trailing).offset(12)
+            make.centerY.equalToSuperview()
+            make.trailing.lessThanOrEqualTo(scoreLabel.snp.leading).offset(-8)
+        }
+
+        scoreLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
+        }
+    }
+
+    // MARK: - Binding
+    private func bindViewModel() {
+        let input = GreenHeroViewModel.Input(
+            fetchTotalRankTrigger: PublishRelay<Void>(),
+            fetchMyRankTrigger: PublishRelay<Void>()
+        )
+        let output = viewModel.transform(input: input)
+
+        // Bind 1st Rank
+        output.firstRank
+            .drive(onNext: { [weak self] rank in
+                guard let self = self, let rank = rank else { return }
+                self.configurePlaceImageView(self.firstPlaceImageView, with: rank)
+            })
             .disposed(by: disposeBag)
+
+        // Bind 2nd Rank
+        output.secondRank
+            .drive(onNext: { [weak self] rank in
+                guard let self = self, let rank = rank else { return }
+                self.configurePlaceImageView(self.secondPlaceImageView, with: rank)
+            })
+            .disposed(by: disposeBag)
+
+        // Bind 3rd Rank
+        output.thirdRank
+            .drive(onNext: { [weak self] rank in
+                guard let self = self, let rank = rank else { return }
+                self.configurePlaceImageView(self.thirdPlaceImageView, with: rank)
+            })
+            .disposed(by: disposeBag)
+
+       
+        output.myRank
+            .drive(onNext: { [weak self] rank in
+                guard let self = self else { return }
+                if let rank = rank {
+                    self.setupMyRankView(rank: rank) // 업데이트
+                }
+            })
+            .disposed(by: disposeBag)
+
+       
+        output.rankList
+            .drive(rankTableView.rx.items(
+                cellIdentifier: RankingCell.identifier,
+                cellType: RankingCell.self
+            )) { _, rank, cell in
+                cell.configure(with: rank)
+            }
+            .disposed(by: disposeBag)
+
+        output.error
+            .drive(onNext: { errorMessage in
+                if !errorMessage.isEmpty {
+                    print("[ERROR] \(errorMessage)")
+                }
+            })
+            .disposed(by: disposeBag)
+
+        input.fetchTotalRankTrigger.accept(())
+        input.fetchMyRankTrigger.accept(())
+    }
+
+    // MARK: - Configure Place Image View
+    private func configurePlaceImageView(_ imageView: UIImageView, with rank: Rank) {
+        imageView.subviews.forEach { $0.removeFromSuperview() }
+
+        // Profile Image
+        let profileImageView = UIImageView()
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.layer.cornerRadius = 30
+        profileImageView.clipsToBounds = true
+        profileImageView.kf.setImage(
+            with: URL(string: rank.profileImg ?? ""),
+            placeholder: UIImage(named: "profile")
+        )
+
+        // Name Label
+        let nameLabel = UILabel()
+        nameLabel.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        nameLabel.textAlignment = .center
+        nameLabel.text = rank.nickName ?? "Unknown"
+
+        // Score Label
+        let scoreLabel = UILabel()
+        scoreLabel.font = UIFont.systemFont(ofSize: 12)
+        scoreLabel.textAlignment = .center
+        scoreLabel.textColor = .black
+        scoreLabel.text = "\(rank.reward)점"
+
+        imageView.addSubview(profileImageView)
+        imageView.addSubview(nameLabel)
+        imageView.addSubview(scoreLabel)
+
+        profileImageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().inset(30)
+            make.width.height.equalTo(60)
+        }
+
+        nameLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(profileImageView.snp.bottom).offset(8)
+        }
+
+        scoreLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(nameLabel.snp.bottom).offset(4)
+        }
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
-extension GreenHeroesViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        switch section {
-        case 0: // Rank Cards Header
-            return CGSize(width: collectionView.bounds.width, height: 200)
-        case 1: // My Rank Header
-            return CGSize(width: collectionView.bounds.width, height: 100)
-        default: // No Header for Other Sections
-            return .zero
-        }
+extension GreenHeroesViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let spacerView = UIView()
+        spacerView.backgroundColor = .clear
+        return spacerView
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 10
     }
 }

@@ -22,9 +22,21 @@ struct AppSettings {
     @UserDefault(key: "userGeo", defaultValue: "강남구 역삼동")
     static var userGeo: String
     
-    
     @UserDefault(key: "userLocation", defaultValue: Location(latitude: 37.497942, longitude: 127.027621))
     static var userLocation: Location
+    
+    
+}
+
+struct UserInfo {
+    @UserDefault(key: "socialToken", defaultValue: nil)
+    static var token: TokenData?
+    
+    @UserDefault(key: "socialType", defaultValue: nil)
+    static var socialType: LoginType?
+    
+    @UserDefault(key: "nickName", defaultValue: "민재")
+    static var nickName: String
     
     
 }

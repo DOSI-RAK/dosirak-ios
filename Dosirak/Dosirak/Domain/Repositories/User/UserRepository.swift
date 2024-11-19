@@ -35,7 +35,7 @@ class UserRepository: UserRepositoryType {
         return kakaoProvider.login()
             .do(onNext: { [weak self] token in
                 print("Kakao login token received: \(String(describing: token))")
-                self?.currentLoginType = .kakao // 카카오로 로그인한 경우 타입 설정
+                // 카카오로 로그인한 경우 타입 설정
             }, onError: { error in
                 print("Kakao login error: \(error)")
             })

@@ -7,8 +7,8 @@
 
 struct Rank: Decodable {
     let userId: Int
-    let profileImg: String
+    let profileImg: String?
     let rank: Int
-    let nickName: String
+    let nickName: String?
     let reward: Int
 }

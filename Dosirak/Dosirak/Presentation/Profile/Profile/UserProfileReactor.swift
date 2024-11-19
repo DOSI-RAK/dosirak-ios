@@ -40,6 +40,7 @@ class UserProfileReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .setNickName(let nickName):
+            UserInfo.nickName = nickName
             return Observable.just(.setNickName(nickName))
             
         case .saveNickName:

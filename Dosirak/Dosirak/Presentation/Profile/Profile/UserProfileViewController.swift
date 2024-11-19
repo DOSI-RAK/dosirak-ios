@@ -39,7 +39,7 @@ class UserProfileViewController: BaseViewController {
         viewModel.fetchUserProfile(accessToken: token)
             .subscribe(onSuccess: { userProfile in
                 print(userProfile)
-                self.userNameLabel.text = userProfile.nickName
+                self.userNameLabel.text = UserInfo.nickName
                 self.updateScore(userProfile.reward)
             }, onFailure: { error in
             })
@@ -183,7 +183,7 @@ class UserProfileViewController: BaseViewController {
         viewModel.fetchUserProfile(accessToken: token)
             .subscribe(onSuccess: { userProfile in
                 print(userProfile)
-                self.userNameLabel.text = "\(userProfile.nickName ?? "test")님"
+                self.userNameLabel.text = "\(UserInfo.nickName)님"
                 self.updateScore(userProfile.reward)
                 
                 self.editProfileButton.rx.tap

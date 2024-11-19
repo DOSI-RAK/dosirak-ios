@@ -10,12 +10,13 @@ import SnapKit
 class RankingHeaderReusableView: UICollectionReusableView {
     static let identifier = "RankingHeaderReusableView"
 
-    private let stackView = UIStackView()
+    private let firstPlaceView = RankCardView(rank: 1)
+    private let secondPlaceView = RankCardView(rank: 2)
+    private let thirdPlaceView = RankCardView(rank: 3)
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        backgroundColor = .bgColor
     }
 
     required init?(coder: NSCoder) {
@@ -23,29 +24,41 @@ class RankingHeaderReusableView: UICollectionReusableView {
     }
 
     private func setupUI() {
-        backgroundColor = UIColor(hexCode: "#F7F8FA") // Header background color
+        backgroundColor = UIColor(hexCode: "#F7F8FA")
 
-        // Setup stack view
-        stackView.axis = .horizontal
-        stackView.spacing = 16
-        stackView.alignment = .fill
-        stackView.distribution = .fillEqually
+        addSubview(secondPlaceView)
+        addSubview(firstPlaceView)
+        addSubview(thirdPlaceView)
 
-        addSubview(stackView)
-        stackView.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(16)
+        // 2등
+        secondPlaceView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview().offset(16)
+            make.width.equalTo(110)
+            make.height.equalTo(200)
+        }
+
+        // 1등
+        firstPlaceView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview().offset(8)
+            make.width.equalTo(110)
+            make.height.equalTo(200)
+        }
+
+        // 3등
+        thirdPlaceView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview().offset(16)
+            make.width.equalTo(110)
+            make.height.equalTo(200)
         }
     }
 
     func configure(with ranks: [Rank]) {
-        // Clear existing subviews
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-        // Add RankCardView for each rank
-        ranks.enumerated().forEach { index, rank in
-            let rankView = RankCardView(rank: rank.rank)
-            rankView.configure(with: rank)
-            stackView.addArrangedSubview(rankView)
-        }
+        guard ranks.count >= 3 else { return }
+        secondPlaceView.configure(with: ranks[1])
+        firstPlaceView.configure(with: ranks[0])
+        thirdPlaceView.configure(with: ranks[2])
     }
 }

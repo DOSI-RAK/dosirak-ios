@@ -6,85 +6,72 @@
 import Moya
 import RxSwift
 import RxCocoa
- 
-class GreenHeroViewModel {
-    
 
+class GreenHeroViewModel {
     struct Input {
         let fetchTotalRankTrigger: PublishRelay<Void>
         let fetchMyRankTrigger: PublishRelay<Void>
     }
     
-    
     struct Output {
-        let totalRanks: PublishRelay<[Rank]>
-        let myRank: PublishRelay<Rank?>
-        let isLoading: PublishRelay<Bool>
-        let error: PublishRelay<String>
+        let firstRank: Driver<Rank?>
+        let secondRank: Driver<Rank?>
+        let thirdRank: Driver<Rank?>
+        let myRank: Driver<Rank?>
+        let rankList: Driver<[Rank]>
+        let error: Driver<String>
     }
     
     private let disposeBag = DisposeBag()
     private let provider = MoyaProvider<HeroAPI>()
     
     func transform(input: Input) -> Output {
-        let totalRanks = PublishRelay<[Rank]>()
-        let myRank = PublishRelay<Rank?>()
-        let isLoading = PublishRelay<Bool>()
+        let rankCards = BehaviorRelay<[Rank]>(value: [])
+        let myRank = BehaviorRelay<Rank?>(value: nil)
+        let rankList = BehaviorRelay<[Rank]>(value: [])
         let error = PublishRelay<String>()
         
         input.fetchTotalRankTrigger
-            .flatMapLatest { [weak self] _ -> Observable<Event<[Rank]>> in
+            .flatMapLatest { [weak self] _ -> Observable<[Rank]> in
                 guard let self = self else { return Observable.empty() }
-                print("[DEBUG] fetchTotalRankTrigger triggered.")
-                isLoading.accept(true)
                 return self.fetchTotalRanks()
                     .asObservable()
-                    .materialize()
+                    .catch { err in
+                        error.accept(err.localizedDescription)
+                        return .empty()
+                    }
             }
-            .subscribe(onNext: { event in
-                isLoading.accept(false)
-                switch event {
-                case .next(let ranks):
-                    print("[DEBUG] Total ranks fetched successfully. Count: \(ranks.count)")
-                    totalRanks.accept(ranks)
-                case .error(let apiError):
-                    print("[DEBUG] Failed to fetch total ranks: \(apiError.localizedDescription)")
-                    error.accept("전체 랭킹 데이터를 가져오는 데 실패했습니다: \(apiError.localizedDescription)")
-                case .completed:
-                    print("[DEBUG] fetchTotalRankTrigger completed.")
-                }
+            .subscribe(onNext: { ranks in
+                print("[DEBUG] All Ranks: \(ranks)")
+                rankCards.accept(ranks)
+                rankList.accept(Array(ranks.dropFirst(3)))
             })
             .disposed(by: disposeBag)
-        
+
         input.fetchMyRankTrigger
-            .flatMapLatest { [weak self] _ -> Observable<Event<Rank>> in
+            .flatMapLatest { [weak self] _ -> Observable<Rank?> in
                 guard let self = self else { return Observable.empty() }
-                print("[DEBUG] fetchMyRankTrigger triggered.")
-                isLoading.accept(true)
                 return self.fetchMyRank()
                     .asObservable()
-                    .materialize()
+                    .catch { err in
+                        error.accept(err.localizedDescription)
+                        return .just(nil)
+                    }
             }
-            .subscribe(onNext: { event in
-                isLoading.accept(false)
-                switch event {
-                case .next(let rank):
-                    print("[DEBUG] My rank fetched successfully: \(rank)")
-                    myRank.accept(rank)
-                case .error(let apiError):
-                    print("[DEBUG] Failed to fetch my rank: \(apiError.localizedDescription)")
-                    error.accept("내 랭킹 데이터를 가져오는 데 실패했습니다: \(apiError.localizedDescription)")
-                case .completed:
-                    print("[DEBUG] fetchMyRankTrigger completed.")
-                }
-            })
+            .bind(to: myRank)
             .disposed(by: disposeBag)
-        
+
+        let firstRank = rankCards.map { $0.first }.asDriver(onErrorJustReturn: nil)
+        let secondRank = rankCards.map { $0.dropFirst().first }.asDriver(onErrorJustReturn: nil)
+        let thirdRank = rankCards.map { $0.dropFirst(2).first }.asDriver(onErrorJustReturn: nil)
+
         return Output(
-            totalRanks: totalRanks,
-            myRank: myRank,
-            isLoading: isLoading,
-            error: error
+            firstRank: firstRank,
+            secondRank: secondRank,
+            thirdRank: thirdRank,
+            myRank: myRank.asDriver(onErrorJustReturn: nil),
+            rankList: rankList.asDriver(onErrorJustReturn: []),
+            error: error.asDriver(onErrorJustReturn: "")
         )
     }
     
@@ -92,33 +79,25 @@ class GreenHeroViewModel {
         return provider.rx
             .request(.fetchTotalRank(accessToken: AppSettings.accessToken ?? ""))
             .do(onSuccess: { response in
-                print("[DEBUG] Response StatusCode: \(response.statusCode)")
+                print("[DEBUG] Total Ranks Response: \(response)")
                 if let jsonString = String(data: response.data, encoding: .utf8) {
-                    print("[DEBUG] Raw JSON: \(jsonString)")
+                    print("[DEBUG] Total Ranks JSON: \(jsonString)")
                 }
             })
             .map(APIResponse<[Rank]>.self)
             .map { $0.data }
     }
 
-    private func fetchMyRank() -> Single<Rank> {
-        print("[DEBUG] fetchMyRank called.")
+    private func fetchMyRank() -> Single<Rank?> {
         return provider.rx
             .request(.fetchMyRank(accessToken: AppSettings.accessToken ?? ""))
             .do(onSuccess: { response in
-                print("[DEBUG] Response received for fetchMyRank:")
-                print("[DEBUG] StatusCode: \(response.statusCode)")
+                print("[DEBUG] My Rank Response: \(response)")
                 if let jsonString = String(data: response.data, encoding: .utf8) {
-                    print("[DEBUG] Response JSON: \(jsonString)")
+                    print("[DEBUG] My Rank JSON: \(jsonString)")
                 }
-            }, onError: { error in
-                print("[DEBUG] fetchMyRank error: \(error)")
             })
-            .filterSuccessfulStatusCodes()
             .map(APIResponse<Rank>.self)
-            .map { apiResponse in
-                print("[DEBUG] Parsed My Rank: \(apiResponse.data)")
-                return apiResponse.data
-            }
+            .map { $0.data }
     }
 }

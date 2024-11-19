@@ -111,17 +111,18 @@ class KakaoProvider: KakaoProviderType {
     
     // Keychain에 AccessToken과 RefreshToken 저장
     private func storeTokens(accessToken: String, refreshToken: String?) {
-        do {
-            try keychain.set(accessToken, key: "socialAccessToken")
-            print("AccessToken 저장 완료")
-            
-            if let refreshToken = refreshToken {
-                try keychain.set(refreshToken, key: "socialRefreshToken")
-                print("RefreshToken 저장 완료")
-            }
-        } catch let error {
-            print("Keychain 저장 에러: \(error)")
-        }
+//        do {
+//            try keychain.set(accessToken, key: "socialAccessToken")
+//            print("AccessToken 저장 완료")
+//            
+//            if let refreshToken = refreshToken {
+//                try keychain.set(refreshToken, key: "socialRefreshToken")
+//                print("RefreshToken 저장 완료")
+//            }
+//        } catch let error {
+//            print("Keychain 저장 에러: \(error)")
+//        }
+        UserInfo.token = TokenData(accessToken: accessToken, refreshToken: refreshToken ?? "")
     }
     
     // Keychain에서 AccessToken과 RefreshToken 삭제

@@ -76,7 +76,9 @@ class ChatMessageCell: UITableViewCell {
             nicknameLabel.text = message.userChatRoomResponse.nickName
             timeLabel.text = Date.formattedDateString(from: message.createdAt)
             
-            if message.userChatRoomResponse.nickName == "민재" {
+            print("nickName ==========\(UserInfo.nickName)")
+            
+            if message.userChatRoomResponse.nickName == UserInfo.nickName {
                
                 messageBubble.backgroundColor = .white
                 messageLabel.textColor = .black

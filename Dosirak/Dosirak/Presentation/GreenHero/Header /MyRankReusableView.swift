@@ -42,7 +42,8 @@ class MyRankReusableView: UICollectionReusableView {
         
         // 내 등수 상세 뷰 레이아웃
         myRankView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().offset(16)
+            $0.trailing.equalToSuperview().inset(16)
             $0.top.equalTo(내등수라벨.snp.bottom).offset(10)
             $0.height.equalTo(60)
         }
@@ -52,33 +53,34 @@ class MyRankReusableView: UICollectionReusableView {
         myRankView.addSubview(nameLabel)
         myRankView.addSubview(scoreLabel)
         
-        rankLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(16)
-            $0.centerY.equalToSuperview()
+        rankLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(16)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(30)
         }
-        
-        profileImageView.snp.makeConstraints {
-            $0.leading.equalTo(rankLabel.snp.trailing).offset(12)
-            $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(40)
+
+        profileImageView.snp.makeConstraints { make in
+            make.leading.equalTo(rankLabel.snp.trailing).offset(12)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(40)
         }
-        
-        nameLabel.snp.makeConstraints {
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(12)
-            $0.centerY.equalToSuperview()
-            $0.trailing.lessThanOrEqualTo(scoreLabel.snp.leading).offset(-8)
+
+        nameLabel.snp.makeConstraints { make in
+            make.leading.equalTo(profileImageView.snp.trailing).offset(12)
+            make.centerY.equalToSuperview()
+            make.trailing.lessThanOrEqualTo(scoreLabel.snp.leading).offset(-8)
         }
-        
-        scoreLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.centerY.equalToSuperview()
+
+        scoreLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
+            make.centerY.equalToSuperview()
         }
     }
 
     func configure(with rank: Rank) {
         rankLabel.text = "\(rank.rank)"
         nameLabel.text = rank.nickName
-        profileImageView.kf.setImage(with: URL(string: rank.profileImg), placeholder: UIImage(named: "placeholder"))
+        profileImageView.kf.setImage(with: URL(string: rank.profileImg ?? ""), placeholder: UIImage(named: "placeholder"))
         scoreLabel.text = "\(rank.reward)점"
         
         // 날짜 설정

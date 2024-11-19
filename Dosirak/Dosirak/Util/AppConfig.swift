@@ -20,4 +20,5 @@ struct AppConfig {
     
     @InfoPlist("NAVER_MAP_SECRET")
     static var naverMapSecret: String?
+    
 }
