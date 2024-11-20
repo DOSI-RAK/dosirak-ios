@@ -33,25 +33,25 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     let geocoder = CLGeocoder()
 
     func start(window: UIWindow) {
-//        window.rootViewController = UINavigationController(rootViewController: EditNickNameViewController())
+        window.rootViewController = UINavigationController(rootViewController: GreenTrackViewController())
         
-        if !AppSettings.isFitstLaunch {
-            window.rootViewController = OnboardingViewController()
-            window.makeKeyAndVisible()
-        } else {
-            
-            
-            let tabBarController = TabbarViewController()
-            let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
-            childCoordinators.append(tabBarCoordinator)
-            
-            // TabBarCoordinator 시작
-            tabBarCoordinator.start()
-            
-            // TabBarController를 윈도우의 rootViewController로 설정
-            window.rootViewController = tabBarController
-            window.makeKeyAndVisible()
-        }
+//        if !AppSettings.isFitstLaunch {
+//            window.rootViewController = OnboardingViewController()
+//            window.makeKeyAndVisible()
+//        } else {
+//            
+//            
+//            let tabBarController = TabbarViewController()
+//            let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
+//            childCoordinators.append(tabBarCoordinator)
+//            
+//            // TabBarCoordinator 시작
+//            tabBarCoordinator.start()
+//            
+//            // TabBarController를 윈도우의 rootViewController로 설정
+//            window.rootViewController = tabBarController
+//            window.makeKeyAndVisible()
+//        }
         
     }
 
