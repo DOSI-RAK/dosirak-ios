@@ -64,6 +64,7 @@ class BottomSheetViewController: UIViewController, View {
             .modelSelected(Store.self)
             .bind(to: storeSelected)
             .disposed(by: disposeBag)
+        
     }
     func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
         let radius: Double = 6371000
@@ -79,7 +80,6 @@ class BottomSheetViewController: UIViewController, View {
         
         return radius * c
     }
-
     func degreesToRadians(_ degrees: Double) -> Double {
         return degrees * .pi / 180
     }

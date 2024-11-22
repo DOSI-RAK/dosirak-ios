@@ -14,6 +14,7 @@ class GreenGuideReactor: Reactor {
         case loadStoreDetail(Int)
         case loadStoresByCategory(String)
         case loadStoresNearMyLocation(Double, Double)
+        case searchStores(String) // 검색 액션 추가
     }
     
     // Mutation 정의
@@ -21,9 +22,10 @@ class GreenGuideReactor: Reactor {
         case setStores([Store])
         case setStoreDetail(StoreDetail)
         case setCategoryStores([Store])
+        case setNearbyStores([Store])
+        case setSearchResults([Store]) // 검색 결과 추가
         case setLoading(Bool)
         case setSelectedCategory(String)
-        case setNearbyStores([Store])
     }
     
     // State 정의
@@ -31,9 +33,13 @@ class GreenGuideReactor: Reactor {
         var stores: [Store] = []
         var storeDetail: StoreDetail?
         var categoryStores: [Store] = []
+        var searchResults: [Store] = [] // 검색 결과 추가
         var isLoading: Bool = false
         var selectedCategory: String = "전체"
         var nearbyStores: [Store] = []
+        var filteredStores: [Store] {
+                return searchResults.isEmpty ? stores : searchResults
+            }
     }
     
     let initialState: State
@@ -67,14 +73,12 @@ class GreenGuideReactor: Reactor {
             ])
             
         case .loadStoresByCategory(let category):
-            // 전체 카테고리인 경우 loadAllStores를 호출
             if category == "전체" {
                 return Observable.concat([
                     Observable.just(Mutation.setSelectedCategory(category)),
-                    mutate(action: .loadAllStores) // 전체 API를 호출
+                    mutate(action: .loadAllStores) // 전체 API 호출
                 ])
             } else {
-                // 다른 카테고리를 선택한 경우
                 return Observable.concat([
                     Observable.just(Mutation.setLoading(true)),
                     Observable.just(Mutation.setSelectedCategory(category)),
@@ -84,19 +88,30 @@ class GreenGuideReactor: Reactor {
                     Observable.just(Mutation.setLoading(false))
                 ])
             }
-        case .loadStoresNearMyLocation(let mapX, let mapY): // 추가
+            
+        case .loadStoresNearMyLocation(let mapX, let mapY):
             return Observable.concat([
                 Observable.just(Mutation.setLoading(true)),
                 useCase.getNearbyStores(mapX: mapX, mapY: mapY)
                     .asObservable()
                     .do(onNext: { stores in
-                                    print("Nearby stores fetched: \(stores)") // 디버깅용 출력
-                                })
+                        print("Nearby stores fetched: \(stores)") // 디버깅용
+                    })
                     .map { Mutation.setNearbyStores($0) },
+                Observable.just(Mutation.setLoading(false))
+            ])
+            
+        case .searchStores(let query): // 검색 로직 추가
+            return Observable.concat([
+                Observable.just(Mutation.setLoading(true)),
+                useCase.searchStores(query: query)
+                    .asObservable()
+                    .map { Mutation.setSearchResults($0) },
                 Observable.just(Mutation.setLoading(false))
             ])
         }
     }
+    
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
         
@@ -110,8 +125,11 @@ class GreenGuideReactor: Reactor {
         case .setCategoryStores(let categoryStores):
             newState.categoryStores = categoryStores
             
-        case .setNearbyStores(let nearbyStores): // 추가
+        case .setNearbyStores(let nearbyStores):
             newState.nearbyStores = nearbyStores
+            
+        case .setSearchResults(let searchResults): // 검색 결과 처리
+            newState.searchResults = searchResults
             
         case .setLoading(let isLoading):
             newState.isLoading = isLoading
@@ -121,6 +139,5 @@ class GreenGuideReactor: Reactor {
         }
         
         return newState
-        
     }
 }

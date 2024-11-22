@@ -61,6 +61,12 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         setupNavigationBar()
         setupLocationManager()
         locationManager.requestWhenInUseAuthorization()
+        if myLocationLabel.text != "위치 정보 설정이 필요합니다." {
+                print("위치 정보가 이미 설정되어 있습니다: \(myLocationLabel.text ?? "")")
+            } else {
+                // 위치 정보가 없을 경우 권한 확인 후 업데이트
+                requestLocationPermission()
+            }
     }
     
     private func setupLocationManager() {
@@ -163,6 +169,12 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     
     
     private func requestLocationPermission() {
+        guard myLocationLabel.text == "위치 정보 설정이 필요합니다." else {
+            // 이미 위치 정보가 설정되어 있다면 추가 요청하지 않음
+            print("현재 위치 정보: \(myLocationLabel.text ?? "")")
+            return
+        }
+
         DispatchQueue.global().async {
             guard CLLocationManager.locationServicesEnabled() else {
                 DispatchQueue.main.async {
@@ -170,9 +182,8 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
                 }
                 return
             }
-
         }
-        
+
         switch locationManager.authorizationStatus {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()

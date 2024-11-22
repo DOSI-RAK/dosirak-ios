@@ -140,6 +140,7 @@ class GreenGuideViewController: UIViewController {
         }
     }
     
+    
     private func setupBottomSheet() {
         bottomSheetVC = BottomSheetViewController()
         bottomSheetVC?.reactor = self.reactor
@@ -263,6 +264,15 @@ class GreenGuideViewController: UIViewController {
                 self?.updateMapMarkers(stores: stores)
             })
             .disposed(by: disposeBag)
+        
+        searchTextField.rx.text.orEmpty
+               .debounce(.milliseconds(300), scheduler: MainScheduler.instance) // 입력 후 300ms 대기
+               .distinctUntilChanged()
+               .filter { !$0.isEmpty } // 빈 입력 무시
+               .map { GreenGuideReactor.Action.searchStores($0) } // 구체적 타입 명시
+               .bind(to: reactor.action)
+               .disposed(by: disposeBag)
+        
         
         
     }

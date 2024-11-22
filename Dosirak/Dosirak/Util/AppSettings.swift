@@ -29,8 +29,10 @@ struct AppSettings {
 }
 
 struct UserInfo {
-    @UserDefault(key: "socialToken", defaultValue: nil)
-    static var token: TokenData?
+    @UserDefault(key: "socialAccessToken", defaultValue: nil)
+    static var accessToken: String?
+    @UserDefault(key: "socialRefreshToken", defaultValue: nil)
+    static var refreshToken: String?
     
     @UserDefault(key: "socialType", defaultValue: nil)
     static var socialType: LoginType?

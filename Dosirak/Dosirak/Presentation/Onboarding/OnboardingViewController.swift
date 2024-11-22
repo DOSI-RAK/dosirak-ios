@@ -93,21 +93,23 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
         print("Onboarding Completed")
         
         
-        AppSettings.isFitstLaunch = true
-        
+        AppSettings.isFitstLaunch = false
+        let vc = UINavigationController(rootViewController: UserInfoSettingViewController())
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
        
-        let tabBarController = TabbarViewController()
-        let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
-        tabBarCoordinator.start()
-        
-        // RootViewController 변경
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let window = windowScene.windows.first {
-            window.rootViewController = tabBarController
-            window.makeKeyAndVisible()
-        } else {
-            print("Error: Unable to fetch UIWindowScene or UIWindow.")
-        }
+//        let tabBarController = TabbarViewController()
+//        let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
+//        tabBarCoordinator.start()
+//        
+//        // RootViewController 변경
+//        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//           let window = windowScene.windows.first {
+//            window.rootViewController = tabBarController
+//            window.makeKeyAndVisible()
+//        } else {
+//            print("Error: Unable to fetch UIWindowScene or UIWindow.")
+//        }
     }
 
     // MARK: - UIPageViewController DataSource

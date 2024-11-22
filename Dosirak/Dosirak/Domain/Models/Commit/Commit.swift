@@ -6,12 +6,14 @@
 //
 import Foundation
 
+
+//월별 커밋
 struct MonthCommit: Decodable {
     
     let createdAt: String
     let commitCount: Int
 }
-
+//내 활동
 struct CommitActivity: Decodable {
     let createAt: String
     let activityMessage: String
