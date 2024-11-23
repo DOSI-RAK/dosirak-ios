@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 class GreenCommitCell: UICollectionViewCell {
     
@@ -67,8 +68,9 @@ class GreenCommitCell: UICollectionViewCell {
     }
     
     // MARK: - Configure Cell
-    func configure(title: String, imageName: String) {
-        titleLabel.text = title
-        activityImageView.image = UIImage(named: imageName)
+    func configure(commit: CommitActivity) {
+        titleLabel.text = commit.activityMessage
+        activityImageView.kf.setImage(with: URL(string: commit.iconImageUrl))
+        dateLabel.text = commit.createAtTime
     }
 }

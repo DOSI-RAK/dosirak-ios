@@ -10,8 +10,6 @@ import SnapKit
 import CoreLocation
 
 
-
-
 class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
 
     private let locationManager = CLLocationManager()

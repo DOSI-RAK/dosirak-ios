@@ -15,7 +15,7 @@ struct MonthCommit: Decodable {
 }
 //내 활동
 struct CommitActivity: Decodable {
-    let createAt: String
+    let createdAt: String
     let activityMessage: String
     let createAtTime: String
     let iconImageUrl: String

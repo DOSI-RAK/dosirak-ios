@@ -4,302 +4,149 @@
 //
 //  Created by 권민재 on 11/4/24.
 //
-//import UIKit
-//import FSCalendar
-//import SnapKit
-//
-//class GreenCommitViewController: UIViewController {
-//    
-//    
-//    private let collectionView: UICollectionView
-//    private var selectedDateRecords: [String] = []
-//    
-//    @UserDefault(key: "hasSeenPopup", defaultValue: false)
-//    private var hasSeenPopup: Bool
-//   
-//    init() {
-//        let layout = UICollectionViewFlowLayout()
-//        layout.scrollDirection = .vertical
-//        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        
-//        super.init(nibName: nil, bundle: nil)
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
-//    
-//    
-//    override func viewDidLoad() {
-//        super.viewDidLoad()
-//        title = "Green Commits"
-//        setupViews()
-//        setupConstraints()
-//        
-//        let today = Date()
-//        selectedDateRecords = fetchRecords(for: today)
-//        collectionView.reloadData()
-//    }
-//    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        
-//        
-//            present(CommitPopUpViewController(), animated: true)
-//
-//        
-//    }
-//    
-//    
-//    private func setupViews() {
-//        view.backgroundColor = .bgColor
-//        view.addSubview(collectionView)
-//        
-//        collectionView.backgroundColor = .clear
-//        collectionView.delegate = self
-//        collectionView.dataSource = self
-//        
-//    
-//        collectionView.register(GreenCommitHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: GreenCommitHeaderView.identifier)
-//        collectionView.register(GreenCommitCell.self, forCellWithReuseIdentifier: GreenCommitCell.reusableIdentifier)
-//    }
-//    
-//
-//    private func setupConstraints() {
-//        collectionView.snp.makeConstraints { make in
-//            make.edges.equalToSuperview()
-//        }
-//    }
-//    
-//    // 선택된 날짜에 대한 더미 데이터를 가져오는 메서드
-//    private func fetchRecords(for date: Date) -> [String] {
-//        // 예시 데이터 - 실제 데이터로 대체하세요.
-//        let records = [
-//            "다회용기 포장 인증",
-//            "저탄소 이동수단 인증",
-//            "플라스틱 없는 날 인증",
-//            "자전거 타기 인증",
-//            "다회용기 포장 인증",
-//            "저탄소 이동수단 인증",
-//            "플라스틱 없는 날 인증",
-//            "자전거 타기 인증",
-//            "다회용기 포장 인증",
-//            "저탄소 이동수단 인증",
-//            "플라스틱 없는 날 인증",
-//            "자전거 타기 인증",
-//            "다회용기 포장 인증",
-//            "저탄소 이동수단 인증",
-//            "플라스틱 없는 날 인증",
-//            "자전거 타기 인증",
-//            
-//        ]
-//        return records.shuffled()
-//    }
-//}
-//
-//// MARK: - UICollectionView DataSource & DelegateFlowLayout
-//extension GreenCommitViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-//    
-//    func numberOfSections(in collectionView: UICollectionView) -> Int {
-//        return 1
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return selectedDateRecords.count
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GreenCommitCell.reusableIdentifier, for: indexPath) as! GreenCommitCell
-//        let record = selectedDateRecords[indexPath.item]
-//        let imageName = Bool.random() ? "footprint" : "box"
-//        cell.configure(title: record, imageName: imageName)
-//        cell.backgroundColor = .white
-//        cell.layer.cornerRadius = 13
-//        return cell
-//    }
-//    
-//    
-//    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-//        if kind == UICollectionView.elementKindSectionHeader {
-//            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: GreenCommitHeaderView.identifier, for: indexPath) as! GreenCommitHeaderView
-//            headerView.calendar.delegate = self
-//            headerView.calendar.select(Date())
-//            return headerView
-//        }
-//        return UICollectionReusableView()
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        return CGSize(width: collectionView.frame.width, height: 400)    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        return CGSize(width: collectionView.frame.width - 40, height: 50)
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-//        return UIEdgeInsets(top: 10, left: 20, bottom: 20, right: 20)
-//    }
-//}
-//
-//// MARK: - FSCalendar Delegate
-//extension GreenCommitViewController: FSCalendarDelegate {
-//    
-//    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-//        
-//        selectedDateRecords = fetchRecords(for: date)
-//        collectionView.reloadData()
-//    }
-//}
 import UIKit
-import FSCalendar
 import SnapKit
-import RxSwift
-import RxCocoa
 
-class GreenCommitViewController: UIViewController {
+class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     private let collectionView: UICollectionView
+    private let headerView: GreenCommitHeaderView
     private let viewModel = GreenCommitViewModel()
-    private let disposeBag = DisposeBag()
-    
-    private let fetchMonthlyCommitsTrigger = PublishSubject<String>()
-    private let fetchTodayCommitTrigger = PublishSubject<Void>()
-    private let fetchDayCommitTrigger = PublishSubject<String>()
-    
-    private var selectedDateRecords: [String] = []
-    private var monthlyCommits: [MonthCommit] = []
+
+    private var todayCommits: [CommitActivity] = []
+    private var dayCommits: [CommitActivity] = []
+    private let accessToken = AppSettings.accessToken
 
     init() {
+        self.headerView = GreenCommitHeaderView()
+
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        
+        self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Green Commits"
+        title = "Green Commit"
         setupViews()
         setupConstraints()
-        bindViewModel()
+        setupHeaderCallbacks()
+        loadTodayCommits() // 기본적으로 오늘 데이터를 로드
     }
-    
+
     private func setupViews() {
-        view.backgroundColor = .bgColor
+        view.backgroundColor = .white
+        view.addSubview(headerView)
         view.addSubview(collectionView)
-        
+
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.register(GreenCommitHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: GreenCommitHeaderView.identifier)
         collectionView.register(GreenCommitCell.self, forCellWithReuseIdentifier: GreenCommitCell.reusableIdentifier)
     }
-    
+
     private func setupConstraints() {
+        headerView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(400)
+        }
+
         collectionView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.top.equalTo(headerView.snp.bottom)
+            make.leading.trailing.bottom.equalToSuperview()
         }
     }
-    
-    private func bindViewModel() {
-        let input = GreenCommitViewModel.Input(
-            fetchMonthlyCommitsTrigger: fetchMonthlyCommitsTrigger.asObservable(),
-            fetchTodayCommitTrigger: fetchTodayCommitTrigger.asObservable(),
-            fetchDayCommitTrigger: fetchDayCommitTrigger.asObservable()
-        )
-        
-        let output = viewModel.transform(input: input)
-        
-        // Monthly Commits 바인딩
-        output.monthlyCommits
-            .drive(onNext: { [weak self] monthlyCommits in
-                self?.monthlyCommits = [monthlyCommits]
-                self?.collectionView.reloadData()
-            })
-            .disposed(by: disposeBag)
-        
-        // Today Commits 바인딩
-        output.todayCommits
-            .drive(onNext: { [weak self] todayCommits in
-                print("오늘 커밋: \(todayCommits)")
-            })
-            .disposed(by: disposeBag)
-        
-        // Day Commit 바인딩
-        output.dayCommit
-            .drive(onNext: { [weak self] dayCommit in
-                print("특정 날짜 커밋: \(dayCommit)")
-            })
-            .disposed(by: disposeBag)
-        
-        // 에러 처리
-        output.error
-            .drive(onNext: { errorMessage in
-                print("에러: \(errorMessage)")
-            })
-            .disposed(by: disposeBag)
-        
-        // 초기 데이터 트리거
-        fetchMonthlyCommitsTrigger.onNext("2023-11")
-        fetchTodayCommitTrigger.onNext(())
-    }
-    
-    private func updateSelectedDateRecords(for date: Date) {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let dateString = dateFormatter.string(from: date)
-        
-        fetchDayCommitTrigger.onNext(dateString) // 특정 날짜 트리거
-    }
-}
 
-// MARK: - UICollectionView DataSource & DelegateFlowLayout
-extension GreenCommitViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    private func setupHeaderCallbacks() {
+        // 날짜 선택 이벤트
+        headerView.onDateSelected = { [weak self] date in
+            self?.loadDayCommits(for: date)
+        }
+
+        // 월 변경 이벤트
+        headerView.onPageChanged = { [weak self] month in
+            self?.loadMonthlyCommits(for: month)
+        }
+    }
+
+    // MARK: - Data Loading Methods
+
+    private func loadTodayCommits() {
+        viewModel.fetchTodayCommits(accessToken: accessToken ?? "") { [weak self] result in
+            switch result {
+            case .success(let commits):
+                self?.todayCommits = commits
+                self?.collectionView.reloadData()
+            case .failure(let error):
+                self?.showError(error)
+            }
+        }
+    }
+
+    private func loadDayCommits(for date: Date) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateString = formatter.string(from: date)
+
+        viewModel.fetchDayCommits(accessToken: accessToken ?? "", date: dateString) { [weak self] result in
+            switch result {
+            case .success(let commits):
+                self?.dayCommits = commits
+                self?.collectionView.reloadData()
+            case .failure(let error):
+                self?.showError(error)
+            }
+        }
+    }
+
+    private func loadMonthlyCommits(for month: Date) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        let monthString = formatter.string(from: month)
+
+        viewModel.fetchMonthlyCommits(accessToken: accessToken ?? "", month: monthString) { [weak self] result in
+            switch result {
+            case .success(let commits):
+                self?.headerView.monthlyCommits = commits
+            case .failure(let error):
+                self?.showError(error)
+            }
+        }
+    }
+
+    // MARK: - Error Handling
+
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+
+    // MARK: - UICollectionView DataSource & Delegate
+
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return selectedDateRecords.count
+        return dayCommits.isEmpty ? todayCommits.count : dayCommits.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GreenCommitCell.reusableIdentifier, for: indexPath) as! GreenCommitCell
-        let record = selectedDateRecords[indexPath.item]
-        let imageName = Bool.random() ? "footprint" : "box"
-        cell.configure(title: record, imageName: imageName)
-        cell.backgroundColor = .white
-        cell.layer.cornerRadius = 13
+        let commit = dayCommits.isEmpty ? todayCommits[indexPath.item] : dayCommits[indexPath.item]
+        print("Configuring cell with CommitActivity:", commit) // 데이터 디버깅
+        cell.configure(commit: commit)
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionHeader {
-            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: GreenCommitHeaderView.identifier, for: indexPath) as! GreenCommitHeaderView
-            headerView.calendar.delegate = self
-            headerView.calendar.select(Date())
-            headerView.monthlyCommits = monthlyCommits // 월간 커밋 데이터 전달
-            return headerView
-        }
-        return UICollectionReusableView()
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.frame.width, height: 400)
-    }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.frame.width - 40, height: 50)
-    }
-}
-
-// MARK: - FSCalendar Delegate
-extension GreenCommitViewController: FSCalendarDelegate {
-    func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        updateSelectedDateRecords(for: date) // 선택된 날짜 데이터 업데이트
     }
 }

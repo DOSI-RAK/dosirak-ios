@@ -48,7 +48,7 @@ class HomeCoordinator: Coordinator {
                 let viewController: UIViewController
                 switch indexPath.row {
                 case 0:
-                    viewController = UIViewController()
+                    viewController = GreenEliteViewController()
                     viewController.title = "Green Elite Controller" // title 설정
                 case 1:
                     viewController = GreenHeroesViewController()

@@ -30,25 +30,25 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
 
     func start(window: UIWindow) {
         
-        let vc = UINavigationController(rootViewController: GreenTrackViewController()
-                                        )
-        window.rootViewController = vc
-        window.makeKeyAndVisible()
+//        let vc = UINavigationController(rootViewController: GreenTrackViewController()
+//                                        )
+//        window.rootViewController = vc
+//        window.makeKeyAndVisible()
         
-//        if !AppSettings.isFitstLaunch {
-//            moveOnboarding(window: window)
-//        } else {
-//            
-//            guard let accessToken = AppSettings.accessToken,
-//                  let refreshToken = AppSettings.refreshToken else {
-//                // 토큰이 없으면 로그인 화면으로 이동
-//                moveLogin(window: window)
-//                return
-//            }
-//            
-//            // 액세스 토큰 유효성 검사
-//            validateAccessToken(accessToken, refreshToken: refreshToken, window: window)
-//        }
+        if !AppSettings.isFitstLaunch {
+            moveOnboarding(window: window)
+        } else {
+            
+            guard let accessToken = AppSettings.accessToken,
+                  let refreshToken = AppSettings.refreshToken else {
+                // 토큰이 없으면 로그인 화면으로 이동
+                moveLogin(window: window)
+                return
+            }
+            
+            // 액세스 토큰 유효성 검사
+            validateAccessToken(accessToken, refreshToken: refreshToken, window: window)
+        }
     }
 
     private func validateAccessToken(_ accessToken: String, refreshToken: String, window: UIWindow) {

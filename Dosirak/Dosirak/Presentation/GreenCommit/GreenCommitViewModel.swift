@@ -4,138 +4,107 @@
 //
 //  Created by 권민재 on 11/6/24.
 //
-import RxSwift
-import RxCocoa
+import UIKit
 import Moya
 
 class GreenCommitViewModel {
-    // Provider와 Access Token 설정
-    var provider = MoyaProvider<CommitAPI>(plugins: [NetworkLoggerPlugin()]) // 네트워크 로그 플러그인 추가
-    var accessToken = AppSettings.accessToken
+    private let provider = MoyaProvider<CommitAPI>()
 
-    // Input
-    struct Input {
-        let fetchMonthlyCommitsTrigger: Observable<String> // month
-        let fetchTodayCommitTrigger: Observable<Void>
-        let fetchDayCommitTrigger: Observable<String> // date
+    // Fetch Monthly Commits
+    func fetchMonthlyCommits(accessToken: String, month: String, completion: @escaping (Result<[MonthCommit], Error>) -> Void) {
+        print("Fetching Monthly Commits for month: \(month)")
+
+        provider.request(.fetchMonthlyCommits(accessToken: accessToken, month: month)) { result in
+            switch result {
+            case .success(let response):
+                print("Response Status Code: \(response.statusCode)")
+                if let responseString = String(data: response.data, encoding: .utf8) {
+                    print("Response Body: \(responseString)")
+                }
+                do {
+                    let decodedResponse = try JSONDecoder().decode(APIResponse<[MonthCommit]>.self, from: response.data)
+                    if decodedResponse.status == "SUCCESS" {
+                        print("Decoded Monthly Commits: \(decodedResponse.data)")
+                        completion(.success(decodedResponse.data))
+                    } else {
+                        print("API Error: \(decodedResponse.message)")
+                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: decodedResponse.message])))
+                    }
+                } catch {
+                    print("Decoding Error: \(error.localizedDescription)")
+                    if let responseString = String(data: response.data, encoding: .utf8) {
+                        print("Failed to decode: \(responseString)")
+                    }
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                print("Network Request Failed: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
     }
-    
-    // Output
-    struct Output {
-        let monthlyCommits: Driver<MonthCommit>
-        let todayCommits: Driver<[CommitActivity]>
-        let dayCommit: Driver<CommitActivity>
-        let error: Driver<String>
+
+    func fetchTodayCommits(accessToken: String, completion: @escaping (Result<[CommitActivity], Error>) -> Void) {
+        provider.request(.fetchTodayCommit(accessToken: accessToken)) { result in
+            switch result {
+            case .success(let response):
+                do {
+                    // JSON 출력 (디버깅)
+                    if let responseBody = String(data: response.data, encoding: .utf8) {
+                        print("Raw Response Body:", responseBody)
+                    }
+                    
+                    // 디코딩
+                    let decodedResponse = try JSONDecoder().decode(APIResponse<[CommitActivity]>.self, from: response.data)
+                    if decodedResponse.status == "SUCCESS" {
+                        print("Decoded Data:", decodedResponse.data)
+                        completion(.success(decodedResponse.data))
+                    } else {
+                        print("Decoding Failed: \(decodedResponse.message)")
+                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: decodedResponse.message])))
+                    }
+                } catch {
+                    print("Decoding Error:", error)
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                print("Network Error:", error)
+                completion(.failure(error))
+            }
+        }
     }
-    
-    private let disposeBag = DisposeBag()
-    
-    func transform(input: Input) -> Output {
-        let errorRelay = PublishRelay<String>()
-        
-        let monthlyCommits = input.fetchMonthlyCommitsTrigger
-            .map { month -> String in
-                // "2023-11" -> "2023-11-01"
-                return "\(month)-01"
-            }
-            .flatMapLatest { formattedMonth in
-                self.provider.rx.request(.fetchMonthlyCommits(accessToken: self.accessToken ?? "", month: formattedMonth))
-                    .do(onSuccess: { response in
-                        print("Monthly Commits Request Successful")
-                        print("Status Code: \(response.statusCode)")
-                        print("Response Body: \(String(data: response.data, encoding: .utf8) ?? "No data")")
-                    }, onError: { error in
-                        print("Monthly Commits Request Failed: \(error.localizedDescription)")
-                    })
-                    .filterSuccessfulStatusCodes()
-                    .map(APIResponse<MonthCommit>.self)
-                    .do(onSuccess: { response in
-                        print("Parsed Monthly Commits Response: \(response)")
-                    }, onError: { error in
-                        print("Error Parsing Monthly Commits: \(error.localizedDescription)")
-                    })
-                    .asObservable()
-                    .catch { error in
-                        errorRelay.accept(error.localizedDescription)
-                        return .empty()
+
+    // Fetch Day Commits
+    func fetchDayCommits(accessToken: String, date: String, completion: @escaping (Result<[CommitActivity], Error>) -> Void) {
+        print("Fetching Commits for Date: \(date)")
+
+        provider.request(.fetchDayCommit(accessToken: accessToken, date: date)) { result in
+            switch result {
+            case .success(let response):
+                print("Response Status Code: \(response.statusCode)")
+                if let responseString = String(data: response.data, encoding: .utf8) {
+                    print("Response Body: \(responseString)")
+                }
+                do {
+                    let decodedResponse = try JSONDecoder().decode(APIResponse<[CommitActivity]>.self, from: response.data)
+                    if decodedResponse.status == "SUCCESS" {
+                        print("Decoded Day Commits: \(decodedResponse.data)")
+                        completion(.success(decodedResponse.data))
+                    } else {
+                        print("API Error: \(decodedResponse.message)")
+                        completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: decodedResponse.message])))
                     }
-            }
-            .compactMap { response -> MonthCommit? in
-                response.status == "SUCCESS" ? response.data : nil
-            }
-            .asDriver(onErrorDriveWith: .empty())
-        
-        // Fetch today's commits
-        let todayCommits = input.fetchTodayCommitTrigger
-            .flatMapLatest {
-                self.provider.rx.request(.fetchTodayCommit(accessToken: self.accessToken ?? ""))
-                    .do(onSuccess: { response in
-                        print("Today's Commits Request Successful")
-                        print("Status Code: \(response.statusCode)")
-                        print("Response Body: \(String(data: response.data, encoding: .utf8) ?? "No data")")
-                    }, onError: { error in
-                        print("Today's Commits Request Failed: \(error.localizedDescription)")
-                    })
-                    .filterSuccessfulStatusCodes()
-                    .map(APIResponse<[CommitActivity]>.self)
-                    .do(onSuccess: { response in
-                        print("Parsed Today's Commits Response: \(response)")
-                    }, onError: { error in
-                        print("Error Parsing Today's Commits: \(error.localizedDescription)")
-                    })
-                    .asObservable()
-                    .catch { error in
-                        errorRelay.accept(error.localizedDescription)
-                        return .empty()
+                } catch {
+                    print("Decoding Error: \(error.localizedDescription)")
+                    if let responseString = String(data: response.data, encoding: .utf8) {
+                        print("Failed to decode: \(responseString)")
                     }
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                print("Network Request Failed: \(error.localizedDescription)")
+                completion(.failure(error))
             }
-            .compactMap { response -> [CommitActivity]? in
-                response.status == "SUCCESS" ? response.data : nil
-            }
-            .asDriver(onErrorDriveWith: .empty())
-        
-        // Fetch specific day's commit
-        let dayCommit = input.fetchDayCommitTrigger
-            .flatMapLatest { date in
-                self.provider.rx.request(.fetchDayCommit(accessToken: self.accessToken ?? "", date: date))
-                    .do(onSuccess: { response in
-                        print("Day Commit Request Successful")
-                        print("Status Code: \(response.statusCode)")
-                        print("Response Body: \(String(data: response.data, encoding: .utf8) ?? "No data")")
-                    }, onError: { error in
-                        print("Day Commit Request Failed: \(error.localizedDescription)")
-                    })
-                    .filterSuccessfulStatusCodes()
-                    .map(APIResponse<CommitActivity>.self)
-                    .do(onSuccess: { response in
-                        print("Parsed Day Commit Response: \(response)")
-                    }, onError: { error in
-                        print("Error Parsing Day Commit: \(error.localizedDescription)")
-                    })
-                    .asObservable()
-                    .catch { error in
-                        errorRelay.accept(error.localizedDescription)
-                        return .empty()
-                    }
-            }
-            .compactMap { response -> CommitActivity? in
-                response.status == "SUCCESS" ? response.data : nil
-            }
-            .asDriver(onErrorDriveWith: .empty())
-        
-        // 에러 로그 출력
-        errorRelay
-            .asDriver(onErrorDriveWith: .empty())
-            .drive(onNext: { error in
-                print("Error Occurred: \(error)")
-            })
-            .disposed(by: disposeBag)
-        
-        return Output(
-            monthlyCommits: monthlyCommits,
-            todayCommits: todayCommits,
-            dayCommit: dayCommit,
-            error: errorRelay.asDriver(onErrorDriveWith: .empty())
-        )
+        }
     }
 }
