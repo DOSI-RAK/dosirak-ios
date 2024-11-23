@@ -174,7 +174,12 @@ class AddressInputViewController: UIViewController, CLLocationManagerDelegate {
                 guard let window = self?.view.window else { return }
                 AppSettings.userGeo = "\(self?.districtTextField.text ?? "강남구") \(self?.neighborhoodTextField.text ?? "역삼동")"
                 print(AppSettings.userGeo)
-                //self?.coordinator?.moveHome(window: window)
+                AppSettings.isFitstLaunch = true
+                if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    AppCoordinator().moveHome(window: window)
+                }
+                
             })
             .disposed(by: disposeBag)
     }

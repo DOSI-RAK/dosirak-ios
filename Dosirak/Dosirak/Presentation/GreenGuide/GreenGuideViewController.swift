@@ -251,6 +251,26 @@ class GreenGuideViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
+        reactor.state
+               .map { $0.selectedCategory }
+               .distinctUntilChanged()
+               .subscribe(onNext: { category in
+                   print("Selected category updated to: \(category)")
+               })
+               .disposed(by: disposeBag)
+        
+           
+           reactor.state
+               .map { $0.isLoading }
+               .distinctUntilChanged()
+               .subscribe(onNext: { isLoading in
+                   print(isLoading ? "Loading..." : "Loading completed")
+               })
+               .disposed(by: disposeBag)
+        
+        
+        
+        
         homeButton.rx.tap
             .bind { [weak self] in
                 print("homeButton tapped")
