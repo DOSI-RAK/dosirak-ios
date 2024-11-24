@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         instance?.appName = "DosiRak"  // 애플리케이션 이름
         
         NMFAuthManager.shared().clientId = "kq6strtnog"
+    
         return true
     }
       

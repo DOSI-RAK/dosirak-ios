@@ -17,7 +17,7 @@ enum EliteAPI {
 }
 
 extension EliteAPI: TargetType {
-    var baseURL: URL { .init(string: "https://api.dosirak.com")! }
+    var baseURL: URL { .init(string: "http://dosirak.store")! }
     var path: String {
         switch self {
         case .fetchUserInfo: return "/api/elite-info/user"

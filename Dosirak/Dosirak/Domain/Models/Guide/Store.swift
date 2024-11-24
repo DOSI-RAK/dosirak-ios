@@ -10,8 +10,12 @@ struct APIResponse<T: Decodable>: Decodable {
     let status: String
     let message: String
     let data: T
+    let exception: APIException?
 }
-
+struct APIException: Decodable {
+    let errorCode: String?
+    let errorMessage: String?
+}
 
 struct Store: Decodable {
     let storeId: Int

@@ -12,6 +12,7 @@ import RxDataSources
 import SnapKit
 import RxGesture
 
+
 struct GuideData {
     let title: String
     let subtitle: String
@@ -55,6 +56,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
             GuideData(title: "Green Auth", subtitle: "다회용기 사용 인증하기", imageName: "greenauth")
         ])
     ])
+
     
     override func viewDidLoad() {
         super.viewDidLoad()

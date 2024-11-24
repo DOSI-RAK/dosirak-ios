@@ -11,14 +11,12 @@ import SnapKit
 class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSCalendarDelegate {
     static let identifier = "GreenCommitHeaderView"
 
-    // 외부에서 주입받을 월간 커밋 데이터
     var monthlyCommits: [MonthCommit] = [] {
         didSet {
-            calendar.reloadData() // 데이터 업데이트 시 캘린더 리로드
+            calendar.reloadData()
         }
     }
 
-    // 날짜 선택 콜백
     var onDateSelected: ((Date) -> Void)?
     var onPageChanged: ((Date) -> Void)?
 
@@ -33,7 +31,6 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         view.locale = Locale(identifier: "ko_KR")
         view.backgroundColor = .mainColor
         view.layer.cornerRadius = 20
-        //view.appearance.headerMinimumDissolvedAlpha = 0
         view.appearance.titleFont = UIFont.systemFont(ofSize: 14, weight: .medium)
         view.appearance.subtitleFont = UIFont.systemFont(ofSize: 12)
         view.appearance.todayColor = .clear
@@ -42,6 +39,9 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         view.appearance.titleDefaultColor = .white
         view.appearance.headerMinimumDissolvedAlpha = 0
         view.appearance.headerDateFormat = ""
+        view.appearance.titleOffset = CGPoint(x: 0, y: -7) // 날짜 텍스트 위로 이동
+        view.appearance.imageOffset = CGPoint(x: 0, y: -2)
+        view.headerHeight = 7
         return view
     }()
 
@@ -153,6 +153,11 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         formatter.dateFormat = "yyyy.MM"
         monthLabel.text = formatter.string(from: calendar.currentPage)
     }
+    func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
+        // 날짜를 텍스트로 출력
+        let day = Calendar.current.component(.day, from: date)
+        return "\(day)"
+    }
 
     func calendar(_ calendar: FSCalendar, imageFor date: Date) -> UIImage? {
         let formatter = DateFormatter()
@@ -174,7 +179,7 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
 
         // 기본 이미지를 반환
         return UIImage(named: "0")
-    } 
+    }
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         onDateSelected?(date)
     }

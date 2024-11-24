@@ -9,6 +9,8 @@ import Moya
 
 class GreenCommitViewModel {
     private let provider = MoyaProvider<CommitAPI>()
+    
+    var monthlyCommits: [MonthCommit] = []
 
     // Fetch Monthly Commits
     func fetchMonthlyCommits(accessToken: String, month: String, completion: @escaping (Result<[MonthCommit], Error>) -> Void) {
