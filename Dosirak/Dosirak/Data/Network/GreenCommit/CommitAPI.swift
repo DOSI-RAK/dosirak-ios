@@ -36,10 +36,9 @@ extension CommitAPI: TargetType {
     var method: Moya.Method {
         switch self {
         case .fetchMonthlyCommits, .fetchTodayCommit, .fetchDayCommit,.fetchFirstDayCommit:
-                .get
+                return .get
         }
     }
-    
     var task: Moya.Task {
         switch self {
         case .fetchMonthlyCommits(_, let month):

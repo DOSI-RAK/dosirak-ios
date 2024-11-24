@@ -16,6 +16,7 @@ class UserInfoSettingViewController: UIPageViewController, UIPageViewControllerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         
         let userAgreeVC = UserAgreeViewController()
         let addressInputVC = AddressInputViewController()

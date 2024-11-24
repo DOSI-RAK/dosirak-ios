@@ -24,7 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions:  [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-       
         //MARK: KAKAO
         RxKakaoSDK.initSDK(appKey: AppConfig.appkey!)
         
@@ -44,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         instance?.appName = "DosiRak"  // 애플리케이션 이름
         
         NMFAuthManager.shared().clientId = "kq6strtnog"
+    
         return true
     }
       

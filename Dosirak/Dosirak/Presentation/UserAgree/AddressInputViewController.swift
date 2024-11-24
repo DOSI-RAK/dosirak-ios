@@ -70,7 +70,8 @@ class AddressInputViewController: UIViewController, CLLocationManagerDelegate {
         super.viewDidLoad()
         setupUI()
         setupBindings()
-        
+        districtTextField.text = ""
+        neighborhoodTextField.text = ""
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
@@ -128,20 +129,21 @@ class AddressInputViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func setupBindings() {
+        // 현재 위치 버튼 탭 처리
         currentLocationButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.requestLocationPermission()
             })
             .disposed(by: disposeBag)
         
-        // districtTextField가 선택되면 AddressPicker를 구 선택으로 호출
+        // districtTextField 선택 시 AddressPicker 호출
         districtTextField.rx.controlEvent(.editingDidBegin)
             .subscribe(onNext: { [weak self] in
                 self?.showAddressPicker(isDistrictSelection: true)
             })
             .disposed(by: disposeBag)
         
-        // neighborhoodTextField가 선택되면 AddressPicker를 동 선택으로 호출
+        // neighborhoodTextField 선택 시 AddressPicker 호출
         neighborhoodTextField.rx.controlEvent(.editingDidBegin)
             .subscribe(onNext: { [weak self] in
                 guard let self = self, let selectedDistrict = self.districtTextField.text, !selectedDistrict.isEmpty else {
@@ -152,31 +154,32 @@ class AddressInputViewController: UIViewController, CLLocationManagerDelegate {
             })
             .disposed(by: disposeBag)
         
-        // 텍스트 필드의 값이 모두 채워지면 startButton을 즉시 활성화
+        // 두 텍스트 필드 값에 따라 startButton 활성화 및 색상 변경
         Observable.combineLatest(
             districtTextField.rx.text.orEmpty,
             neighborhoodTextField.rx.text.orEmpty
         )
-        .map { !$0.isEmpty && !$1.isEmpty } // 두 필드가 비어있지 않으면 true
+        .map { !$0.isEmpty && !$1.isEmpty } // 두 필드가 모두 비어있지 않으면 true
         .distinctUntilChanged() // 값이 변경될 때만 트리거
-        .bind(to: startButton.rx.isEnabled) // isEnabled 바인딩
-        .disposed(by: disposeBag)
-
-        // startButton의 배경색을 즉시 업데이트
-        Observable.combineLatest(
-            districtTextField.rx.text.orEmpty,
-            neighborhoodTextField.rx.text.orEmpty
-        )
-        .map { $0.isEmpty || $1.isEmpty ? UIColor.systemGreen.withAlphaComponent(0.5) : UIColor.systemGreen }
-        .bind(to: startButton.rx.backgroundColor) // backgroundColor 바인딩
+        .subscribe(onNext: { [weak self] isEnabled in
+            self?.startButton.isEnabled = true
+            self?.startButton.backgroundColor = isEnabled ? UIColor.mainColor : UIColor.mainColor
+        })
         .disposed(by: disposeBag)
         
-        // startButton이 눌렸을 때의 동작
+        // startButton의 동작
         startButton.rx.tap
             .subscribe(onNext: {[weak self] in
                 print("startButton Tapped")
                 guard let window = self?.view.window else { return }
-                self?.coordinator?.moveHome(window: window)
+                AppSettings.userGeo = "\(self?.districtTextField.text ?? "강남구") \(self?.neighborhoodTextField.text ?? "역삼동")"
+                print(AppSettings.userGeo)
+                AppSettings.isFitstLaunch = true
+                if let windowScene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene,
+                   let window = windowScene.windows.first {
+                    AppCoordinator().moveHome(window: window)
+                }
+                
             })
             .disposed(by: disposeBag)
     }

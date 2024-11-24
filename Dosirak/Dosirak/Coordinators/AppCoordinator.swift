@@ -6,9 +6,9 @@
 //
 import UIKit
 import Moya
+import RxMoya
 import RxSwift
 import CoreLocation
-
 
 protocol Coordinator {
     var childCoordinators: [Coordinator] { get set }
@@ -20,39 +20,35 @@ protocol AppCoordinatorBindable {
 }
 
 class AppCoordinator: Coordinator, AppCoordinatorBindable {
-  
-    
-
     private let provider = MoyaProvider<UserAPI>()
     private let disposeBag = DisposeBag()
 
     var childCoordinators: [Coordinator] = []
 
-  
     let locationManager = CLLocationManager()
     let geocoder = CLGeocoder()
 
     func start(window: UIWindow) {
-//        window.rootViewController = UINavigationController(rootViewController: EditNickNameViewController())
+        
+//        let vc = UINavigationController(rootViewController: GreenTrackViewController()
+//                                        )
+//        window.rootViewController = vc
+//        window.makeKeyAndVisible()
         
         if !AppSettings.isFitstLaunch {
-            window.rootViewController = OnboardingViewController()
-            window.makeKeyAndVisible()
+            moveOnboarding(window: window)
         } else {
             
+            guard let accessToken = AppSettings.accessToken,
+                  let refreshToken = AppSettings.refreshToken else {
+                // 토큰이 없으면 로그인 화면으로 이동
+                moveLogin(window: window)
+                return
+            }
             
-            let tabBarController = TabbarViewController()
-            let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
-            childCoordinators.append(tabBarCoordinator)
-            
-            // TabBarCoordinator 시작
-            tabBarCoordinator.start()
-            
-            // TabBarController를 윈도우의 rootViewController로 설정
-            window.rootViewController = tabBarController
-            window.makeKeyAndVisible()
+            // 액세스 토큰 유효성 검사
+            validateAccessToken(accessToken, refreshToken: refreshToken, window: window)
         }
-        
     }
 
     private func validateAccessToken(_ accessToken: String, refreshToken: String, window: UIWindow) {
@@ -62,7 +58,8 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
             }
             .subscribe(onSuccess: { [weak self] isValid in
                 if isValid {
-                    print("토큰 유효: 홈 유지")
+                    print("토큰 유효: 홈 화면으로 이동")
+                    self?.moveHome(window: window)
                 } else {
                     print("토큰 만료: 재발급 시도")
                     self?.reissueAccessToken(refreshToken: refreshToken, window: window)
@@ -88,6 +85,7 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
                 if let token = newAccessToken {
                     print("토큰 재발급 성공")
                     AppSettings.accessToken = token
+                    self?.moveHome(window: window)
                 } else {
                     print("토큰 재발급 실패: 로그인 필요")
                     self?.clearTokensAndMoveToLogin(window: window)
@@ -104,6 +102,14 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         AppSettings.refreshToken = nil
         moveLogin(window: window)
     }
+    
+    func moveOnboarding(window: UIWindow) {
+        let onboardingVC = OnboardingViewController()
+        window.rootViewController = onboardingVC
+        window.makeKeyAndVisible()
+    }
+    
+    
 
     func moveLogin(window: UIWindow) {
         let loginVC = LoginViewController()
@@ -113,9 +119,15 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
     }
 
     func moveHome(window: UIWindow) {
-        let homeVC = HomeViewController()
-        let navigationController = UINavigationController(rootViewController: homeVC)
-        window.rootViewController = navigationController
+        let tabBarController = TabbarViewController()
+        let tabBarCoordinator = TabBarCoordinator(tabBarController: tabBarController)
+        childCoordinators.append(tabBarCoordinator)
+
+        // TabBarCoordinator 시작
+        tabBarCoordinator.start()
+
+        // TabBarController를 윈도우의 rootViewController로 설정
+        window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
 }

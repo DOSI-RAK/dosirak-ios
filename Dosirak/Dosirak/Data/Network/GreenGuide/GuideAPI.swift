@@ -10,9 +10,9 @@ import UIKit
 enum GuideAPI {
     case fetchAllStores
     case fetchStoreDetail(accessToken: String, storeID: Int)
-    case searchStore(accessToken: String, query: String)
+    case searchStore(query: String) // accessToken 제거
     case fetchCategory(query: String)
-    case fetchNearMyLocation(mapX: Double, mayY: Double)
+    case fetchNearMyLocation(mapX: Double, mapY: Double)
 }
 
 extension GuideAPI: TargetType {
@@ -44,24 +44,23 @@ extension GuideAPI: TargetType {
         case .fetchAllStores, .fetchStoreDetail:
             return .requestPlain
             
-        case .searchStore(_, let query):
+        case .searchStore(let query):
             return .requestParameters(parameters: ["keyword": query], encoding: URLEncoding.queryString)
 
         case .fetchCategory(let query):
-            return .requestParameters(parameters: ["storeCategory" : query], encoding: URLEncoding.queryString)
+            return .requestParameters(parameters: ["storeCategory": query], encoding: URLEncoding.queryString)
+
         case .fetchNearMyLocation(let mapX, let mapY):
-            return .requestParameters(parameters: ["currentMapX": mapX, "currentMapY": mapY], encoding: URLEncoding.default)
+            return .requestParameters(parameters: ["currentMapX": mapX, "currentMapY": mapY], encoding: URLEncoding.queryString) // 수정
         }
-        
     }
     
     var headers: [String: String]? {
         switch self {
-        case .fetchAllStores, .fetchCategory, .fetchNearMyLocation:
-            return nil
+        case .fetchAllStores, .fetchCategory, .fetchNearMyLocation, .searchStore:
+            return ["Content-Type": "application/json"]
             
-        case .fetchStoreDetail(let accessToken, _),
-             .searchStore(let accessToken, _):
+        case .fetchStoreDetail(let accessToken, _):
             return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
         }
     }

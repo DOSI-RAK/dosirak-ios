@@ -19,7 +19,6 @@ class LoginViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Login"
         setupView()
         setupLayout()
         bindViewModel()
