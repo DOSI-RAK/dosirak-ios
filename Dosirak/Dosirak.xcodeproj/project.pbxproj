@@ -38,6 +38,7 @@
 		B57718472CDC9302004DB4B0 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = B57718462CDC9302004DB4B0 /* Starscream */; };
 		B594EF042CD8491200484191 /* PanModal in Frameworks */ = {isa = PBXBuildFile; productRef = B594EF032CD8491200484191 /* PanModal */; };
 		B5B9B4002CD52DB10081A0DA /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = B5B9B3FF2CD52DB10081A0DA /* Kingfisher */; };
+		B5E87F4C2CF3818E002A75F9 /* DisposableModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = B5E87F4B2CF3818E002A75F9 /* DisposableModel.mlmodel */; };
 		B5FF13C22CD4BBC7008A48DB /* NMapsMap in Frameworks */ = {isa = PBXBuildFile; productRef = B5FF13C12CD4BBC7008A48DB /* NMapsMap */; };
 /* End PBXBuildFile section */
 
@@ -45,6 +46,7 @@
 		36F576CA08E3B7D9E140B7FB /* Pods_Dosirak.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Dosirak.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		91004DBA4A329B691B887093 /* Pods-Dosirak.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dosirak.release.xcconfig"; path = "Target Support Files/Pods-Dosirak/Pods-Dosirak.release.xcconfig"; sourceTree = "<group>"; };
 		B515F4FB2CC0FA4200AC64E9 /* Dosirak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Dosirak.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5E87F4B2CF3818E002A75F9 /* DisposableModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = DisposableModel.mlmodel; sourceTree = "<group>"; };
 		FD7DB0371EDD1D8DB4570150 /* Pods-Dosirak.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Dosirak.debug.xcconfig"; path = "Target Support Files/Pods-Dosirak/Pods-Dosirak.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,7 +54,6 @@
 		B515F5262CC0FA4300AC64E9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Dosirak.xcdatamodeld,
 				Info.plist,
 			);
 			target = B515F4FA2CC0FA4200AC64E9 /* Dosirak */;
@@ -126,6 +127,7 @@
 		B515F4F22CC0FA4200AC64E9 = {
 			isa = PBXGroup;
 			children = (
+				B5E87F4B2CF3818E002A75F9 /* DisposableModel.mlmodel */,
 				B515F4FD2CC0FA4200AC64E9 /* Dosirak */,
 				B515F4FC2CC0FA4200AC64E9 /* Products */,
 				B32A7E86DDDD89FAE272B97E /* Pods */,
@@ -310,6 +312,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5E87F4C2CF3818E002A75F9 /* DisposableModel.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,7 +340,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -377,7 +380,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

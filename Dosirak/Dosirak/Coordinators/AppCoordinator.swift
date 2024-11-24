@@ -130,4 +130,13 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
     }
+    func moveToHomeFromAnyVC() {
+        guard let window = UIApplication.shared.connectedScenes
+            .compactMap({ ($0 as? UIWindowScene)?.keyWindow })
+            .first else {
+            print("윈도우를 찾을 수 없습니다.")
+            return
+        }
+        moveHome(window: window)
+    }
 }
