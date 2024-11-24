@@ -15,7 +15,7 @@ class GreenEliteViewModel {
     
     // Outputs
     let userProfile = BehaviorRelay<EliteUserInfo?>(value: nil)
-    let todayProblem = BehaviorRelay<Problem?>(value: nil)
+    let todayProblem = BehaviorRelay<TodayProblem?>(value: nil)
     let correctAnswers = BehaviorRelay<Int>(value: 0)
     let incorrectAnswers = BehaviorRelay<Int>(value: 0)
     
@@ -36,10 +36,10 @@ class GreenEliteViewModel {
     }
     
     // Fetch today's problem
-    func fetchTodayProblem(accessToken: String) -> Single<Problem> {
+    func fetchTodayProblem(accessToken: String) -> Single<TodayProblem> {
         return provider.rx.request(.fetchTodayProblem(accessToken: accessToken))
             .filterSuccessfulStatusCodes()
-            .map(APIResponse<Problem>.self)
+            .map(APIResponse<TodayProblem>.self)
             .flatMap { response in
                 if response.status == "SUCCESS" {
                     self.todayProblem.accept(response.data) // 직접 할당

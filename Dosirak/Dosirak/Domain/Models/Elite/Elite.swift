@@ -16,6 +16,12 @@ struct EliteUserInfo: Decodable {
     let totalAnswers: Int
 }
 
+struct TodayProblem: Decodable {
+    let id: Int
+    let description: String
+    let answer: String
+}
+
 struct Problem: Decodable {
     let id: Int
     let problemId: Int

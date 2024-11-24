@@ -7,8 +7,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class TodayProblemViewController: UIViewController {
+    
+    private let disposeBag = DisposeBag()
+    private let viewModel = GreenEliteViewModel()
+    
     
     private let problemContainerView: UIView = {
         let view = UIView()
@@ -68,6 +74,8 @@ class TodayProblemViewController: UIViewController {
         super.viewDidLoad()
         setupView()
         setupConstraints()
+        
+        bindViewModel()
     }
     
     private func setupView() {
@@ -114,4 +122,44 @@ class TodayProblemViewController: UIViewController {
             make.width.equalTo((UIScreen.main.bounds.width - 90) / 2)
         }
     }
+    
+    private func bindViewModel() {
+           // 문제 데이터 가져오기
+           viewModel.fetchTodayProblem(accessToken: AppSettings.accessToken ?? "")
+               .subscribe(onSuccess: { [weak self] problem in
+                   guard let self = self else { return }
+                   self.problemLabel.text = problem.description // 문제 텍스트 업데이트
+               }, onFailure: { error in
+                   print("Failed to fetch today's problem: \(error.localizedDescription)")
+               })
+               .disposed(by: disposeBag)
+           
+           // O 버튼 클릭 이벤트
+           correctButton.rx.tap
+               .bind { [weak self] in
+                   guard let self = self else { return }
+                   self.handleAnswer(isCorrect: true)
+               }
+               .disposed(by: disposeBag)
+           
+           // X 버튼 클릭 이벤트
+           wrongButton.rx.tap
+               .bind { [weak self] in
+                   guard let self = self else { return }
+                   self.handleAnswer(isCorrect: false)
+               }
+               .disposed(by: disposeBag)
+       }
+       
+       private func handleAnswer(isCorrect: Bool) {
+           // 예시: 정답 여부를 로깅
+           print(isCorrect ? "O 버튼 클릭됨 (정답)" : "X 버튼 클릭됨 (오답)")
+           
+           // 정답을 서버에 전송하거나 로직 처리 추가
+           let message = isCorrect ? "정답입니다!" : "오답입니다!"
+           let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+           alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+           present(alert, animated: true, completion: nil)
+       }
+    
 }
