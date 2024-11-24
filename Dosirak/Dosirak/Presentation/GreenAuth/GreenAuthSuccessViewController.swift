@@ -43,6 +43,7 @@ class GreenAuthSuccessViewController: UIViewController {
     private let imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "coin_animation"))
         imageView.contentMode = .scaleAspectFill
+        //imageView.backgroundColor = .lightGray
         return imageView
     }()
     
@@ -58,17 +59,20 @@ class GreenAuthSuccessViewController: UIViewController {
     private let expLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 36, weight: .bold)
-        label.textColor = .systemGreen
+        label.textColor = .mainColor
         label.textAlignment = .center
         return label
     }()
     
     private let rewardLabel: UILabel = {
         let label = UILabel()
-        label.text = "현재 리워드 : 000exp."
-        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
-        label.textColor = .darkGray
+        label.text = "현재 리워드: 000exp."
+        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        label.textColor = .black
         label.textAlignment = .center
+        label.backgroundColor = UIColor(hexCode: "ededed")
+        label.clipsToBounds = true
+        label.layer.cornerRadius = 15
         return label
     }()
     
@@ -76,9 +80,9 @@ class GreenAuthSuccessViewController: UIViewController {
         let button = UIButton()
         button.setTitle("확인", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = .mainColor
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 8
+        button.layer.cornerRadius = 12
         return button
     }()
 
@@ -93,6 +97,8 @@ class GreenAuthSuccessViewController: UIViewController {
             imageView.image = UIImage.gif(data: gifData)
         }
         confirmButton.addTarget(self, action: #selector(goToHome), for: .touchUpInside)
+        
+        navigationController?.navigationBar.isHidden = true
     }
     
     private func setupViews() {
@@ -108,12 +114,12 @@ class GreenAuthSuccessViewController: UIViewController {
     private func setupConstraints() {
         imageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
+            make.centerY.equalToSuperview().offset(-50)
             make.width.height.equalTo(400)
         }
         
         messageLabel.snp.makeConstraints { make in
-            make.top.equalTo(imageView.snp.bottom).offset(20)
+            make.top.equalTo(imageView.snp.bottom).inset(170)
             make.centerX.equalToSuperview()
         }
         
@@ -125,6 +131,8 @@ class GreenAuthSuccessViewController: UIViewController {
         rewardLabel.snp.makeConstraints { make in
             make.top.equalTo(expLabel.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
+            make.height.equalTo(30)
+            make.width.equalTo(130)
         }
         
         confirmButton.snp.makeConstraints { make in

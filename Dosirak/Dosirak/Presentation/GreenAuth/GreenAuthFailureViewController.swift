@@ -14,7 +14,7 @@ class GreenAuthFailureViewController: UIViewController {
     var reason: String?
 
     private let imageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "failure"))
+        let imageView = UIImageView(image: UIImage(named: "뻘쭘"))
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -23,15 +23,16 @@ class GreenAuthFailureViewController: UIViewController {
         let label = UILabel()
         label.text = "다회용기 사용이"
         label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        label.textColor = .systemGreen
+        label.textColor = .mainColor
         label.textAlignment = .center
         return label
     }()
     
     private let reasonLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        label.textColor = .darkGray
+        label.font = UIFont.systemFont(ofSize: 35, weight: .heavy)
+        label.text = "확인되지 않아요"
+        label.textColor = .mainColor
         label.textAlignment = .center
         label.numberOfLines = 0
         return label
@@ -41,9 +42,9 @@ class GreenAuthFailureViewController: UIViewController {
         let button = UIButton()
         button.setTitle("확인", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        button.backgroundColor = .systemGreen
+        button.backgroundColor = .mainColor
         button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 8
+        button.layer.cornerRadius = 13
         return button
     }()
 
@@ -52,8 +53,9 @@ class GreenAuthFailureViewController: UIViewController {
         view.backgroundColor = .white
         setupViews()
         setupConstraints()
-        reasonLabel.text = reason
+        //reasonLabel.text = reason
         confirmButton.addTarget(self, action: #selector(goToHome), for: .touchUpInside)
+        navigationController?.navigationBar.isHidden = true
     }
     
     private func setupViews() {
@@ -66,8 +68,9 @@ class GreenAuthFailureViewController: UIViewController {
     private func setupConstraints() {
         imageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
-            make.width.height.equalTo(100)
+            
+            make.centerY.equalToSuperview().offset(-80)
+            make.width.height.equalTo(158)
         }
         
         messageLabel.snp.makeConstraints { make in
@@ -76,8 +79,9 @@ class GreenAuthFailureViewController: UIViewController {
         }
         
         reasonLabel.snp.makeConstraints { make in
-            make.top.equalTo(messageLabel.snp.bottom).offset(10)
-            make.leading.trailing.equalToSuperview().inset(20)
+            make.top.equalTo(messageLabel.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+            
         }
         
         confirmButton.snp.makeConstraints { make in
