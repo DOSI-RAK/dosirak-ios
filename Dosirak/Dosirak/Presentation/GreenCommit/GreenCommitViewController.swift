@@ -40,7 +40,7 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
     }
 
     private func setupViews() {
-        view.backgroundColor = .white
+        view.backgroundColor = .bgColor
         view.addSubview(headerView)
         view.addSubview(collectionView)
 
@@ -84,7 +84,7 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
                 self?.todayCommits = commits
                 self?.collectionView.reloadData()
             case .failure(let error):
-                self?.showError(error)
+                print("데이터가 없스비다.")
             }
         }
     }
@@ -100,7 +100,7 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
                 self?.dayCommits = commits
                 self?.collectionView.reloadData()
             case .failure(let error):
-                self?.showError(error)
+                print("데이터가 없스비다.")
             }
         }
     }
@@ -115,18 +115,11 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
             case .success(let commits):
                 self?.headerView.monthlyCommits = commits
             case .failure(let error):
-                self?.showError(error)
+                print("데이터가 없스비다.")
             }
         }
     }
 
-    // MARK: - Error Handling
-
-    private func showError(_ error: Error) {
-        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
 
     // MARK: - UICollectionView DataSource & Delegate
 

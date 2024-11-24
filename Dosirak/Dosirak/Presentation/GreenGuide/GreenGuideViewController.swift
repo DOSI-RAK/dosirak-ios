@@ -294,6 +294,13 @@ class GreenGuideViewController: UIViewController {
                .disposed(by: disposeBag)
         
         
+        findRouteButton.rx.tap
+            .bind { [weak self] in
+                self?.navigationController?.pushViewController(GreenTrackViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        
         
     }
     

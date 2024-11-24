@@ -4,7 +4,6 @@
 //
 //  Created by 권민재 on 11/5/24.
 //
-
 import FSCalendar
 import UIKit
 import SnapKit
@@ -21,50 +20,29 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
 
     // 날짜 선택 콜백
     var onDateSelected: ((Date) -> Void)?
-    // 페이지 변경 콜백
     var onPageChanged: ((Date) -> Void)?
 
     // MARK: - UI Components
-    private let calendar: FSCalendar = {
+    private let headerView = UIView()
+    private let monthLabel = UILabel()
+    private let prevButton = UIButton()
+    private let nextButton = UIButton()
+
+    let calendar: FSCalendar = {
         let view = FSCalendar()
         view.locale = Locale(identifier: "ko_KR")
         view.backgroundColor = .mainColor
-        view.headerHeight = 0
         view.layer.cornerRadius = 20
-        view.appearance.weekdayTextColor = .white
-        view.appearance.titleFont = UIFont.systemFont(ofSize: 14)
+        //view.appearance.headerMinimumDissolvedAlpha = 0
+        view.appearance.titleFont = UIFont.systemFont(ofSize: 14, weight: .medium)
         view.appearance.subtitleFont = UIFont.systemFont(ofSize: 12)
         view.appearance.todayColor = .clear
         view.appearance.selectionColor = .clear
-        view.register(CalendarCell.self, forCellReuseIdentifier: "calendarCell")
+        view.appearance.weekdayTextColor = .white
+        view.appearance.titleDefaultColor = .white
+        view.appearance.headerMinimumDissolvedAlpha = 0
+        view.appearance.headerDateFormat = ""
         return view
-    }()
-
-    private let headerContainerView = UIView()
-
-    private let monthLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-        label.textAlignment = .center
-        label.textColor = .white
-        label.backgroundColor = .black
-        label.layer.cornerRadius = 17
-        label.clipsToBounds = true
-        return label
-    }()
-
-    private let prevButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "left"), for: .normal)
-        button.tintColor = .white
-        return button
-    }()
-
-    private let nextButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "right"), for: .normal)
-        button.tintColor = .white
-        return button
     }()
 
     // MARK: - Initializer
@@ -82,45 +60,69 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
 
     // MARK: - Setup Views
     private func setupViews() {
-        addSubview(headerContainerView)
+        addSubview(headerView)
+        headerView.addSubview(monthLabel)
+        headerView.addSubview(prevButton)
+        headerView.addSubview(nextButton)
         addSubview(calendar)
 
-        headerContainerView.addSubview(monthLabel)
-        headerContainerView.addSubview(prevButton)
-        headerContainerView.addSubview(nextButton)
+        // Month Label
+        monthLabel.textAlignment = .left
+        monthLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        monthLabel.textColor = .white
+        monthLabel.backgroundColor = .black
+        monthLabel.layer.cornerRadius = 14
+        monthLabel.textAlignment = .center
+        monthLabel.clipsToBounds = true
 
+        // Prev Button
+        prevButton.setImage(UIImage(named: "left"), for: .normal)
+        prevButton.tintColor = .black
+
+        // Next Button
+        nextButton.setImage(UIImage(named: "right"), for: .normal)
+        nextButton.tintColor = .black
+
+        // Calendar
         calendar.dataSource = self
         calendar.delegate = self
     }
 
     private func setupConstraints() {
-        headerContainerView.snp.makeConstraints { make in
+        // Header View
+        headerView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
         }
 
+        // Month Label
         monthLabel.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.width.equalTo(100)
+            make.centerY.equalTo(headerView)
+            make.leading.equalToSuperview()
+            make.width.equalTo(80)
             make.height.equalTo(34)
         }
 
+        // Prev Button
         prevButton.snp.makeConstraints { make in
-            make.centerY.equalTo(monthLabel)
-            make.trailing.equalTo(monthLabel.snp.leading).offset(-10)
+            make.centerY.equalTo(headerView)
+            make.trailing.equalTo(nextButton.snp.leading).offset(-10)
             make.width.height.equalTo(30)
         }
 
+        // Next Button
         nextButton.snp.makeConstraints { make in
-            make.centerY.equalTo(monthLabel)
-            make.leading.equalTo(monthLabel.snp.trailing).offset(10)
+            make.centerY.equalTo(headerView)
+            make.trailing.equalToSuperview()
             make.width.height.equalTo(30)
         }
 
+        // Calendar
         calendar.snp.makeConstraints { make in
-            make.top.equalTo(headerContainerView.snp.bottom).offset(10)
-            make.leading.trailing.bottom.equalToSuperview().inset(20)
+            make.top.equalTo(headerView.snp.bottom).offset(5)
+            make.leading.trailing.equalToSuperview().inset(20)
+            make.bottom.equalToSuperview()
         }
     }
 
@@ -146,14 +148,33 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
         }
     }
 
-    // MARK: - Update Month Label
     private func updateMonthLabel() {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy.MM"
         monthLabel.text = formatter.string(from: calendar.currentPage)
     }
 
-    // MARK: - FSCalendar DataSource & Delegate
+    func calendar(_ calendar: FSCalendar, imageFor date: Date) -> UIImage? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dateString = formatter.string(from: date)
+
+        if let commit = monthlyCommits.first(where: { $0.createdAt == dateString }) {
+            switch commit.commitCount {
+            case 0:
+                return UIImage(named: "0")
+            case 1:
+                return UIImage(named: "1")
+            case 2:
+                return UIImage(named: "2")
+            default:
+                return UIImage(named: "3")
+            }
+        }
+
+        // 기본 이미지를 반환
+        return UIImage(named: "0")
+    } 
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         onDateSelected?(date)
     }
@@ -161,53 +182,5 @@ class GreenCommitHeaderView: UICollectionReusableView, FSCalendarDataSource, FSC
     func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
         updateMonthLabel()
         onPageChanged?(calendar.currentPage)
-    }
-
-    func calendar(_ calendar: FSCalendar, cellFor date: Date, at monthPosition: FSCalendarMonthPosition) -> FSCalendarCell {
-        guard let cell = calendar.dequeueReusableCell(withIdentifier: "calendarCell", for: date, at: monthPosition) as? CalendarCell else {
-            return FSCalendarCell()
-        }
-
-        if monthPosition == .current {
-            let day = Calendar.current.component(.day, from: date)
-            let imageName = getImageName(for: date)
-            let commitCount = getCommitCount(for: date)
-            cell.configure(day: "\(day)", imageName: imageName, commitCount: commitCount)
-        } else {
-            cell.configure(day: "", imageName: nil, commitCount: nil)
-        }
-
-        return cell
-    }
-
-    // MARK: - Helpers
-    private func getImageName(for date: Date) -> String? {
-        if let commitCount = getCommitCount(for: date) {
-            switch commitCount {
-            case 0:
-                return "commit_0"
-            case 1...5:
-                return "commit_1"
-            case 6...10:
-                return "commit_2"
-            default:
-                return "commit_3"
-            }
-        }
-        return nil
-    }
-
-    private func getCommitCount(for date: Date) -> Int? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let dateString = dateFormatter.string(from: date)
-
-        return monthlyCommits.first(where: { $0.createdAt == dateString })?.commitCount
-    }
-}
-
-extension GreenCommitHeaderView: FSCalendarDelegateAppearance {
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, sizeFor date: Date) -> CGSize {
-        return CGSize(width: 40, height: 50)
     }
 }

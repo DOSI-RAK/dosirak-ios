@@ -316,8 +316,9 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     }()
 
     private let searchRouteButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("길찾기", for: .normal)
+        let button = UIButton()
+        //button.setTitle("길찾기", for: .normal)
+        button.setImage(UIImage(named: "goto"), for: .normal)
         button.backgroundColor = .mainColor
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 10

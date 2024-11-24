@@ -10,13 +10,14 @@ import UIKit
 class HomeCoordinator: Coordinator {
     var childCoordinators: [Coordinator] = []
     var nav: UINavigationController
-    
+
     init() {
+        // UINavigationController를 즉시 초기화
         self.nav = UINavigationController()
-        
     }
     
     func start() {
+        // 홈 화면으로 이동
         let homeVC = HomeViewController()
         homeVC.coordinator = self
         nav.pushViewController(homeVC, animated: false)
@@ -25,10 +26,11 @@ class HomeCoordinator: Coordinator {
     func navigateToDetail(for indexPath: IndexPath) {
         print("이동")
         let vc: UIViewController
+        
         switch indexPath.section {
         case 0:
             guard let reactor = DIContainer.shared.resolve(GreenGuideReactor.self) else {
-                fatalError()
+                fatalError("GreenGuideReactor를 생성할 수 없습니다.")
             }
             vc = GreenGuideViewController(reactor: reactor)
         
@@ -38,7 +40,7 @@ class HomeCoordinator: Coordinator {
                 vc.title = "Green Club" // title 설정
             } else {
                 guard let reactor = DIContainer.shared.resolve(ChatListReactor.self) else {
-                    fatalError()
+                    fatalError("ChatListReactor를 생성할 수 없습니다.")
                 }
                 vc = ChatListViewController(reactor: reactor)
                 vc.hidesBottomBarWhenPushed = true
@@ -52,7 +54,7 @@ class HomeCoordinator: Coordinator {
                     viewController.title = "Green Elite Controller" // title 설정
                 case 1:
                     viewController = GreenHeroesViewController()
-                    viewController.title = "Green Heros" // title 설정
+                    viewController.title = "Green Heroes" // title 설정
                 default:
                     viewController = UIViewController()
                     viewController.title = "Green Auth Controller" // title 설정
