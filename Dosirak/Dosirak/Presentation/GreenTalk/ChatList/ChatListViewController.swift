@@ -240,7 +240,7 @@ class ChatListViewController: BaseViewController {
     }()
     private let myLocationLabel: UILabel = {
         let label = UILabel()
-        label.text = "강남구 압구정동"
+        label.text = "강남구 청담동"
         label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
     }()

@@ -18,40 +18,34 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         window.overrideUserInterfaceStyle = .light
-        
-        
-        
+
         let appCoordinator = AppCoordinator()
         self.appCoordinator = appCoordinator
         self.window = window
         appCoordinator.start(window: window)
-        
-    
-        let navigationBarAppearance = UINavigationBar.appearance()
+
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().isTranslucent = false
+
         let backImage = UIImage(systemName: "chevron.left")
         UINavigationBar.appearance().backIndicatorImage = backImage
         UINavigationBar.appearance().backIndicatorTransitionMaskImage = backImage
         UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -1000, vertical: 0), for: .default)
-        // 배경색을 흰색으로 설정
-        navigationBarAppearance.barTintColor = .white
-        navigationBarAppearance.backgroundColor = .white
-        
-        // 텍스트 및 버튼 아이템 색상 설정
-        navigationBarAppearance.tintColor = .black
-        navigationBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.black]
-        
-        // 반투명 비활성화
-        navigationBarAppearance.isTranslucent = false
-        
-        
-        
+
         window.makeKeyAndVisible()
-        
     }
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             return AuthController.rx.handleOpenUrl(url: url)

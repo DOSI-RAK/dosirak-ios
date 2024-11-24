@@ -10,8 +10,12 @@ struct APIResponse<T: Decodable>: Decodable {
     let status: String
     let message: String
     let data: T
+    let exception: APIException?
 }
-
+struct APIException: Decodable {
+    let errorCode: String?
+    let errorMessage: String?
+}
 
 struct Store: Decodable {
     let storeId: Int
@@ -29,7 +33,7 @@ struct Store: Decodable {
 struct StoreDetail: Decodable {
     let storeId: Int
     let storeName: String
-    let storeCategory: String
+    let storeCategory: String?
     let storeImg: String
     let mapX: Double
     let mapY: Double
@@ -61,7 +65,7 @@ struct Menu: Codable {
     let menuName: String
     let menuImg: String
     let menuPrice: Int
-    let menuPackSize: String
+    let menuPackSize: String?
 }
 
 struct NearMyStore: Decodable {
