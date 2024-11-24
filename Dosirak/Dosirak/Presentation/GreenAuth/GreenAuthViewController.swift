@@ -37,7 +37,7 @@ class GreenAuthViewController: UIViewController, UIImagePickerControllerDelegate
             if let results = request.results as? [VNClassificationObservation],
                let topResult = results.first {
                 DispatchQueue.main.async {
-                    if topResult.identifier == "lunchbox" && topResult.confidence > 0.5 {
+                    if topResult.identifier == "lunchbox" && topResult.confidence > 0.7 {
                         self.showSuccessScreen(exp: Int(topResult.confidence * 100))
                     } else {
                         self.showFailureScreen(reason: "다회용기가 확인되지 않았습니다.")

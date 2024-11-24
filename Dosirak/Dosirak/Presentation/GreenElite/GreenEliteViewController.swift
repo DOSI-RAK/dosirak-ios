@@ -248,7 +248,8 @@ class GreenEliteViewController: UIViewController {
         scoreView.snp.makeConstraints { make in
             make.top.equalTo(sproutImageView.snp.bottom).offset(70)
             make.centerX.equalToSuperview()
-            make.width.equalTo(353)
+            make.leading.equalTo(view).inset(20)
+            make.trailing.equalTo(view).inset(20)
             make.height.equalTo(190)
         }
 
@@ -258,7 +259,7 @@ class GreenEliteViewController: UIViewController {
 
         correctWrongView.snp.makeConstraints { make in
             make.top.equalTo(scoreView.snp.bottom).offset(20)
-            make.leading.trailing.equalToSuperview().inset(30)
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(120)
         }
 
@@ -269,55 +270,6 @@ class GreenEliteViewController: UIViewController {
         }
     }
 
-//    private func setupHalfCircularProgressBar() {
-//        // 중앙 좌표 및 경로 설정
-//        let centerPoint = CGPoint(x: 140, y: 140)  // progressContainerView 안의 중심 좌표
-//        let circularPath = UIBezierPath(
-//            arcCenter: centerPoint,
-//            radius: 120,  // 반지름
-//            startAngle: CGFloat.pi,
-//            endAngle: 0,
-//            clockwise: true
-//        )
-//      
-//        // 배경 트랙 설정
-//        progressTrackLayer.path = circularPath.cgPath
-//        progressTrackLayer.strokeColor = UIColor(hexCode: "ededed").cgColor
-//        progressTrackLayer.lineWidth = 40
-//        progressTrackLayer.fillColor = UIColor.clear.cgColor
-//        progressTrackLayer.lineCap = .round
-//        progressContainerView.layer.addSublayer(progressTrackLayer)
-//
-//        // 프로그레스 레이어 설정
-//        progressBarLayer.path = circularPath.cgPath
-//        progressBarLayer.strokeColor = UIColor.black.cgColor
-//        progressBarLayer.lineWidth = 40
-//        progressBarLayer.fillColor = UIColor.clear.cgColor
-//        progressBarLayer.lineCap = .round
-//        progressBarLayer.strokeEnd = 0.0
-//        progressContainerView.layer.addSublayer(progressBarLayer)
-//
-//        // 그라데이션 레이어 설정
-//        let gradientLayer = CAGradientLayer()
-//        gradientLayer.frame = progressContainerView.bounds
-//        gradientLayer.colors = [
-//            UIColor(hexCode: "20b8c9").cgColor,
-//            UIColor(hexCode: "20c997").cgColor,
-//            UIColor(hexCode: "47c920").cgColor,
-//            
-//        ]
-//        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
-//        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
-//
-//        // 그라데이션과 프로그레스 레이어 결합
-//        gradientLayer.mask = progressBarLayer
-//        progressContainerView.layer.addSublayer(gradientLayer)
-//
-//        print("Progress Container Frame: \(progressContainerView.frame)")
-//        print(
-//            "Progress Bar Path Bounds: \(progressBarLayer.path?.boundingBox ?? .zero)"
-//        )
-//    }
     private func setupHalfCircularProgressBar() {
         // 중앙 좌표 및 반지름 설정
            let centerPoint = CGPoint(x: progressContainerView.bounds.width / 2, y: progressContainerView.bounds.height) // 중심은 아래쪽 중앙
