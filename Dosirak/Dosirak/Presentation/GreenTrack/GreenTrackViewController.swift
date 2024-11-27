@@ -18,6 +18,13 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     private var userCoordinates: [CLLocationCoordinate2D] = []
     private var userPathPolyline: MKPolyline?
     private var isMeasuring: Bool = false
+    
+    //MARK: ViewModel
+    private let viewModel = GreenTrackViewModel()
+    
+    
+    
+    
 
     // MARK: - Lifecycle
     override func viewDidLoad() {
