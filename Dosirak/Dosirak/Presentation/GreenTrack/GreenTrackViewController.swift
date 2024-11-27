@@ -339,7 +339,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     private let walkingButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "도보"), for: .normal) // 도보 이미지 설정
-        button.backgroundColor = .clear
+        button.backgroundColor = .white
         button.layer.cornerRadius = 10
         button.isEnabled = false
         return button
@@ -348,7 +348,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     private let cyclingButton: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "따릉이"), for: .normal) // 따릉이 이미지 설정
-        button.backgroundColor = .clear
+        button.backgroundColor = .white
         button.layer.cornerRadius = 10
         button.isEnabled = false
         return button
