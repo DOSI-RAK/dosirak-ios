@@ -22,6 +22,11 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     //MARK: ViewModel
     private let viewModel = GreenTrackViewModel()
     
+    private var calculatedRouteDistance: Double = 0.0
+    private var actualTravelDistance: Double = 0.0
+    
+    
+    
     
     
     
@@ -62,13 +67,13 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     }
 
     private func setupLayout() {
-        // 지도
+        
         mapView.snp.makeConstraints { make in
             make.top.equalTo(destinationField.snp.bottom).offset(10)
             make.leading.trailing.bottom.equalToSuperview()
         }
 
-        // 내 위치 텍스트 필드
+
         startLocationField.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(10)
             make.leading.equalToSuperview().inset(16)
@@ -76,7 +81,6 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             make.height.equalTo(40)
         }
 
-        // 도착지 텍스트 필드
         destinationField.snp.makeConstraints { make in
             make.top.equalTo(startLocationField.snp.bottom).offset(8)
             make.leading.equalToSuperview().inset(16)
@@ -84,15 +88,14 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             make.height.equalTo(40)
         }
 
-        // 길찾기 버튼
         searchRouteButton.snp.makeConstraints { make in
             make.top.equalTo(startLocationField)
             make.leading.equalTo(startLocationField.snp.trailing).offset(8)
             make.trailing.equalToSuperview().inset(16)
             make.height.equalTo(88)
         }
+        
 
-        // 도보 버튼
         walkingButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
             make.bottom.equalTo(startMeasurementButton.snp.top).offset(-16)
@@ -110,7 +113,6 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             make.top.equalTo(walkingLabel.snp.bottom).offset(5)
         }
 
-        // 따릉이 버튼
         cyclingButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().offset(-16)
             make.bottom.equalTo(startMeasurementButton.snp.top).offset(-16)
@@ -128,7 +130,6 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             make.top.equalTo(cyclingLabel.snp.bottom).offset(5)
         }
 
-        // 측정 시작 버튼
         startMeasurementButton.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-16)
@@ -197,7 +198,10 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
                 return
             }
 
-            // 지도에 경로 추가
+            // 경로 거리 저장
+            self.calculatedRouteDistance = route.distance
+            print("길찾기 경로 거리: \(self.calculatedRouteDistance) 미터")
+        
             self.mapView.addOverlay(route.polyline, level: .aboveRoads)
             self.mapView.setVisibleMapRect(
                 route.polyline.boundingMapRect,
@@ -205,27 +209,30 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
                 animated: true
             )
 
-            // 예상 시간을 분 단위로 업데이트
             let minutes = Int(route.expectedTravelTime / 60)
-            print("예상 도보 시간: \(minutes) 분")
             DispatchQueue.main.async {
                 self.walkingTimeLabel.text = "\(minutes) 분"
             }
         }
     }
     @objc private func toggleMeasurement() {
-        isMeasuring.toggle() // 측정 상태 토글
-
+        isMeasuring.toggle()
         if isMeasuring {
-            // 측정 시작
-            userCoordinates.removeAll() // 기존 경로 초기화
-            drawUserPath() // 초기화된 경로를 반영
+            // 트래킹 시작
+            userCoordinates.removeAll()
+            actualTravelDistance = 0.0 // 실제 이동 거리 초기화
+            previousLocation = nil    // 이전 위치 초기화
+            drawUserPath()
             startMeasurementButton.setTitle("측정 종료하기", for: .normal)
             print("측정 시작")
         } else {
-            // 측정 종료
+            // 트래킹 종료
             startMeasurementButton.setTitle("측정 시작하기", for: .normal)
-            print("측정 종료 - 기록된 경로: \(userCoordinates)")
+            print("최종 이동 거리: \(actualTravelDistance) 미터")
+
+            let vc = SuccessViewController()
+            vc.navigationController?.navigationBar.isHidden = true
+            navigationController?.pushViewController(vc, animated: true)
         }
     }
 
@@ -236,23 +243,32 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         mapView.addAnnotation(annotation)
     }
     private func drawUserPath() {
-        // 기존 Polyline 제거
+    
         if let existingPolyline = userPathPolyline {
             mapView.removeOverlay(existingPolyline)
         }
-
-        // 새로운 Polyline 생성
+     
         let polyline = MKPolyline(coordinates: userCoordinates, count: userCoordinates.count)
         userPathPolyline = polyline
 
-        // Polyline 지도에 추가
         mapView.addOverlay(polyline)
     }
+    
+    private var previousLocation: CLLocation?
 
     // MARK: - CLLocationManagerDelegate
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         userCoordinate = location.coordinate
+        
+        
+        if isMeasuring, let previousLocation = previousLocation {
+               let distance = previousLocation.distance(from: location) // 이전 위치와 현재 위치 간 거리 (미터 단위)
+               actualTravelDistance += distance
+               print("누적 이동 거리: \(actualTravelDistance) 미터")
+           }
+
+           previousLocation = location // 현재 위치를 이전 위치로 저장
 
         // 측정 중일 때 사용자 위치 저장 및 경로 그리기
         if isMeasuring {
@@ -302,9 +318,9 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             
             // 사용자 경로와 길찾기 경로를 구분
             if polyline === userPathPolyline {
-                renderer.strokeColor = UIColor.mainColor // 사용자 경로 색상
+                renderer.strokeColor = UIColor.mainColor
             } else {
-                renderer.strokeColor = .systemBlue // 길찾기 경로 색상
+                renderer.strokeColor = .systemBlue
             }
             
             renderer.lineWidth = 5
@@ -345,7 +361,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
 
     private let walkingButton: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "도보"), for: .normal) // 도보 이미지 설정
+        button.setBackgroundImage(UIImage(named: "도보"), for: .normal)
         button.backgroundColor = .white
         button.layer.cornerRadius = 10
         button.isEnabled = false
@@ -354,7 +370,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
 
     private let cyclingButton: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "따릉이"), for: .normal) // 따릉이 이미지 설정
+        button.setBackgroundImage(UIImage(named: "따릉이"), for: .normal) 
         button.backgroundColor = .white
         button.layer.cornerRadius = 10
         button.isEnabled = false
