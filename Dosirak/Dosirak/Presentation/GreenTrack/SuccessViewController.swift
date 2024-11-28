@@ -181,7 +181,7 @@ class SuccessViewController: BaseViewController {
         checkmarkImageView.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(20)
+            make.width.height.equalTo(25)
         }
 
         return container

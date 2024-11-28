@@ -140,5 +140,4 @@ class AppCoordinator: Coordinator, AppCoordinatorBindable {
         moveHome(window: window)
     }
     
-    
 }
