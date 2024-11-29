@@ -51,14 +51,12 @@ class GreenEliteViewModel {
             }
     }
     
-    // Fetch correct answers count
-    func fetchCorrectAnswers(accessToken: String) -> Single<Int> {
+    func fetchCorrectAnswers(accessToken: String) -> Single<[Problem]> {
         return provider.rx.request(.fetchCorrect(accessToken: accessToken))
             .filterSuccessfulStatusCodes()
-            .map(APIResponse<Int>.self)
+            .map(APIResponse<[Problem]>.self) // 배열로 디코딩
             .flatMap { response in
                 if response.status == "SUCCESS" {
-                    self.correctAnswers.accept(response.data) // 직접 할당
                     return Single.just(response.data)
                 } else {
                     let errorMessage = response.exception?.errorMessage ?? "Failed to fetch correct answers"
@@ -67,14 +65,12 @@ class GreenEliteViewModel {
             }
     }
     
-    // Fetch incorrect answers count
-    func fetchIncorrectAnswers(accessToken: String) -> Single<Int> {
+    func fetchIncorrectAnswers(accessToken: String) -> Single<[Problem]> {
         return provider.rx.request(.fetchIncorrect(accessToken: accessToken))
             .filterSuccessfulStatusCodes()
-            .map(APIResponse<Int>.self)
+            .map(APIResponse<[Problem]>.self) // 배열로 디코딩
             .flatMap { response in
                 if response.status == "SUCCESS" {
-                    self.incorrectAnswers.accept(response.data) // 직접 할당
                     return Single.just(response.data)
                 } else {
                     let errorMessage = response.exception?.errorMessage ?? "Failed to fetch incorrect answers"
@@ -97,4 +93,59 @@ class GreenEliteViewModel {
                 }
             }
     }
+    
+    func recordAnswer(accessToken: String, problemId: Int, isCorrect: Bool) -> Single<Void> {
+        // 요청 정보 출력
+        print("=== Record Answer Request ===")
+        print("Access Token: \(accessToken)")
+        print("Problem ID: \(problemId)")
+        print("Is Correct: \(isCorrect)")
+        
+        return provider.rx.request(.recordAnswer(accessToken: accessToken, problemId: problemId, isCorrect: isCorrect))
+            .do(onSuccess: { response in
+                // 응답 성공 시 디버깅 출력
+                print("=== Response ===")
+                print("Status Code: \(response.statusCode)")
+                if let responseString = String(data: response.data, encoding: .utf8) {
+                    print("Response Data: \(responseString)")
+                } else {
+                    print("Response Data: Unable to decode response data")
+                }
+            }, onError: { error in
+                // 요청 실패 시 디버깅 출력
+                if let moyaError = error as? MoyaError {
+                    switch moyaError {
+                    case .statusCode(let response):
+                        print("=== Error Response ===")
+                        print("Status Code: \(response.statusCode)")
+                        if let responseString = String(data: response.data, encoding: .utf8) {
+                            print("Error Data: \(responseString)")
+                        } else {
+                            print("Error Data: Unable to decode response data")
+                        }
+                    case .underlying(let nsError as NSError, _):
+                        print("Underlying Error: \(nsError.localizedDescription)")
+                    default:
+                        print("Moya Error: \(moyaError.localizedDescription)")
+                    }
+                } else {
+                    print("Unexpected Error: \(error.localizedDescription)")
+                }
+            })
+            .filterSuccessfulStatusCodes()
+            .map(APIResponse<Empty>.self)
+            .flatMap { response in
+                if response.status == "SUCCESS" {
+                    print("Answer recorded successfully: \(isCorrect ? "Correct" : "Incorrect")")
+                    return Single.just(())
+                } else {
+                    let errorMessage = response.exception?.errorMessage ?? "Failed to record answer"
+                    print("Server returned failure: \(errorMessage)")
+                    return Single.error(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: errorMessage]))
+                }
+            }
+    }
+
+    
+    
 }

@@ -368,6 +368,13 @@ class GreenEliteViewController: UIViewController {
                 }
             }
             .disposed(by: disposeBag)
+        
+        checkQuestionsButton.rx.tap
+            .bind { [weak self] in
+                let vc = ProblemListViewController()
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     private func updateUI(with userInfo: EliteUserInfo) {
