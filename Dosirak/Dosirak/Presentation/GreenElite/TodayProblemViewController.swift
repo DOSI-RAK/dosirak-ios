@@ -151,15 +151,39 @@ class TodayProblemViewController: UIViewController {
                .disposed(by: disposeBag)
        }
        
-       private func handleAnswer(isCorrect: Bool) {
-           // 예시: 정답 여부를 로깅
-           print(isCorrect ? "O 버튼 클릭됨 (정답)" : "X 버튼 클릭됨 (오답)")
-           
-           // 정답을 서버에 전송하거나 로직 처리 추가
-           let message = isCorrect ? "정답입니다!" : "오답입니다!"
-           let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-           alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-           present(alert, animated: true, completion: nil)
-       }
+    private func handleAnswer(isCorrect: Bool) {
+        guard let problem = viewModel.todayProblem.value else {
+            print("No problem data available")
+            return
+        }
+        
+        // 서버에서 받은 정답과 사용자의 답변 비교
+        let correctAnswer = problem.answer // "TRUE" 또는 "FALSE"
+        let isAnswerCorrect = isCorrect.description.uppercased() == correctAnswer
+        
+        // 서버로 정답 여부 기록
+        viewModel.recordAnswer(
+            accessToken: AppSettings.accessToken ?? "",
+            problemId: problem.id,
+            isCorrect: isAnswerCorrect // 서버로 전달할 값
+        )
+        .subscribe(onSuccess: { [weak self] in
+            guard let self = self else { return }
+            // 성공 시 메시지 표시
+            let message = isAnswerCorrect ? "정답입니다!" : "오답입니다!"
+            let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }, onFailure: { [weak self] error in
+            guard let self = self else { return }
+            // 실패 시 메시지 표시
+            print("Failed to record answer: \(error.localizedDescription)")
+            let alert = UIAlertController(title: "오류", message: "서버에 정답을 기록하지 못했습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        })
+        .disposed(by: disposeBag)
+    }
+
     
 }

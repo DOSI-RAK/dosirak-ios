@@ -17,6 +17,8 @@ struct APIException: Decodable {
     let errorMessage: String?
 }
 
+struct Empty: Decodable {}
+
 struct Store: Decodable {
     let storeId: Int
     let storeName: String
