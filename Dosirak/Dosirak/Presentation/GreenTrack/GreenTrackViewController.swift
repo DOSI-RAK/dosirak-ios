@@ -34,6 +34,9 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     private var userPathPolyline: MKPolyline?
     private var isMeasuring: Bool = false
     
+    
+    private var bicycles: [Track] = []
+    
     //MARK: ViewModel
     private let viewModel = GreenTrackViewModel()
     
@@ -275,29 +278,68 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    private func findClosestBicycle() -> Track? {
+        guard let userCoordinate = userCoordinate else { return nil }
+
+        return bicycles.min(by: { a, b in
+            let locationA = CLLocation(latitude: a.latitude, longitude: a.longitude)
+            let locationB = CLLocation(latitude: b.latitude, longitude: b.longitude)
+            let userLocation = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude)
+            return userLocation.distance(from: locationA) < userLocation.distance(from: locationB)
+        })
+    }
+    private func calculateWalkingTime(to bicycle: Track, completion: @escaping (Int?) -> Void) {
+        guard let userCoordinate = userCoordinate else {
+            completion(nil)
+            return
+        }
+
+        let userPlacemark = MKPlacemark(coordinate: userCoordinate)
+        let bicyclePlacemark = MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: bicycle.latitude, longitude: bicycle.longitude))
+
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: userPlacemark)
+        request.destination = MKMapItem(placemark: bicyclePlacemark)
+        request.transportType = .walking
+
+        let directions = MKDirections(request: request)
+        directions.calculate { response, error in
+            if let route = response?.routes.first {
+                let walkingTimeInMinutes = Int(route.expectedTravelTime / 60)
+                completion(walkingTimeInMinutes)
+            } else {
+                print("❌ 도보 경로 계산 실패: \(error?.localizedDescription ?? "Unknown error")")
+                completion(nil)
+            }
+        }
+    }
+    
+    private func updateBicycleButton() {
+        guard let closestBicycle = findClosestBicycle() else {
+            print("❌ 가까운 따릉이를 찾을 수 없습니다.")
+            return
+        }
+
+        calculateWalkingTime(to: closestBicycle) { [weak self] walkingTime in
+            guard let self = self, let walkingTime = walkingTime else { return }
+            DispatchQueue.main.async {
+                self.cyclingTimeLabel.text = "\(walkingTime) 분"
+            }
+        }
+    }
+    
+    
     private func fetchNearbyBicycles() {
         guard let userCoordinate = userCoordinate else { return }
 
-        print("🚀 Fetching nearby bicycles... Latitude: \(userCoordinate.latitude), Longitude: \(userCoordinate.longitude)")
-
-        viewModel.fetchBicycleData(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude) { [weak self] result in
+        viewModel.fetchBicycleData(accessToken: AppSettings.accessToken ?? "", latitude: userCoordinate.latitude, longitude: userCoordinate.longitude) { [weak self] result in
             switch result {
-            case .success(let json):
-                print("✅ Bicycle data response: \(json)")
-                guard let data = json["data"] as? [[String: Any]] else {
-                    print("⚠️ Invalid data format: \(json)")
-                    return
-                }
-
-                let decoder = JSONDecoder()
-                do {
-                    // Decoding the JSON response into Track models
-                    let bicycles = try data.map { try decoder.decode(Track.self, from: JSONSerialization.data(withJSONObject: $0)) }
-                    print("✅ Decoded bicycles: \(bicycles)")
-                    self?.addBicyclesToMap(bicycles: bicycles)
-                } catch {
-                    print("❌ Decoding error: \(error.localizedDescription)")
-                }
+            case .success(let bicycles):
+                print("✅ Fetched \(bicycles.count) bicycles.")
+                self?.bicycles = bicycles // 저장
+                self?.addBicyclesToMap(bicycles: bicycles)
+                self?.updateBicycleButton() // 도보 시간 업데이트
             case .failure(let error):
                 print("❌ Error fetching bicycles: \(error.localizedDescription)")
             }
@@ -512,7 +554,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         let label = UILabel()
         label.text = "00 분"
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        label.textColor = UIColor.systemGreen
+        label.textColor = UIColor.mainColor
         label.textAlignment = .center
         return label
     }()
@@ -521,7 +563,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         let label = UILabel()
         label.text = "00 분"
         label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        label.textColor = UIColor.systemGreen
+        label.textColor = UIColor.mainColor
         label.textAlignment = .center
         return label
     }()

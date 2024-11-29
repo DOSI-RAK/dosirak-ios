@@ -15,24 +15,29 @@ class GreenTrackViewModel {
         self.provider = provider
     }
     
-    func fetchBicycleData(latitude: Double, longitude: Double, completion: @escaping (Result<[String: Any], Error>) -> Void) {
+    func fetchBicycleData(accessToken: String,latitude: Double, longitude: Double, completion: @escaping (Result<[Track], Error>) -> Void) {
         print("🚀 [TrackAPI.fetchBicycle] Requesting bicycle data...")
         print("📍 Latitude: \(latitude), Longitude: \(longitude)")
         
-        provider.request(.fetchBicycle(latitude: latitude, longitude: longitude)) { result in
+        provider.request(.fetchBicycle(accessToken: accessToken, latitude: latitude, longitude: longitude)) { result in
             switch result {
             case .success(let response):
                 do {
                     print("✅ [TrackAPI.fetchBicycle] Response received with status code: \(response.statusCode)")
-                    if let json = try response.mapJSON() as? [String: Any] {
-                        print("🔍 [TrackAPI.fetchBicycle] Response JSON: \(json)")
-                        completion(.success(json))
-                    } else {
-                        print("⚠️ [TrackAPI.fetchBicycle] Response JSON is empty or invalid.")
-                        completion(.success([:]))
+
+                    // Raw Response 디버깅용 출력
+                    if let rawResponse = String(data: response.data, encoding: .utf8) {
+                        print("📋 [TrackAPI.fetchBicycle] Raw Response Data: \(rawResponse)")
                     }
+
+                    // APIResponse 디코딩
+                    let apiResponse = try JSONDecoder().decode(APIResponse<[Track]>.self, from: response.data)
+                    print("✅ [TrackAPI.fetchBicycle] Decoded APIResponse: \(apiResponse)")
+
+                    // 성공 시 데이터 반환
+                    completion(.success(apiResponse.data))
                 } catch {
-                    print("❌ [TrackAPI.fetchBicycle] Failed to parse JSON: \(error.localizedDescription)")
+                    print("❌ [TrackAPI.fetchBicycle] Failed to decode JSON: \(error.localizedDescription)")
                     completion(.failure(error))
                 }
             case .failure(let error):

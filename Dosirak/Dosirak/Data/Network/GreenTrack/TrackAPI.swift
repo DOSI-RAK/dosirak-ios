@@ -9,7 +9,7 @@ import Moya
 import UIKit
 
 enum TrackAPI {
-    case fetchBicycle( latitude: Double,longitude: Double)
+    case fetchBicycle(accessToken: String, latitude: Double,longitude: Double)
     case recordTrackData(accessToken: String, shortestDistance: Double, moveDistance: Double, storeName: String)
 }
 
@@ -40,7 +40,7 @@ extension TrackAPI: TargetType {
     
     var task: Moya.Task {
         switch self {
-        case .fetchBicycle(let latitude, let longitude):
+        case .fetchBicycle(_,let latitude, let longitude):
             return .requestParameters(parameters: ["myLatitude":latitude, "myLongitude": longitude], encoding: URLEncoding.queryString)
         case .recordTrackData(_,let shortestDistance, let moveDistance,let storeName):
             let parameters: [String: Any] = [
@@ -55,8 +55,8 @@ extension TrackAPI: TargetType {
     
     var headers: [String: String]? {
         switch self {
-        case .fetchBicycle(_, _):
-            return ["Content-Type": "application/json"]
+        case .fetchBicycle(let accessToken,_, _):
+            return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
         case .recordTrackData(let accessToken,_,_,_):
             return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
         }
