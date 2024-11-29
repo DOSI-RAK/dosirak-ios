@@ -105,14 +105,14 @@ class CreateChatRoomViewController: BaseViewController {
     }
     
     override func bindRX() {
-        // 프로필 편집 버튼 클릭 시 바텀 시트 표시
+      
         editProfileButton.rx.tap
             .bind { [weak self] in
                 self?.showBottomSheet()
             }
             .disposed(by: disposeBag)
         
-        // 채팅방 생성 버튼 클릭 시 API 호출
+       
         createChatRoomButton.rx.tap
             .bind { [weak self] in
                 self?.createChatRoom()
@@ -126,7 +126,7 @@ class CreateChatRoomViewController: BaseViewController {
             self?.chatProfileImageView.image = selectedImage
         }
         
-        presentPanModal(bottomSheetVC) // PanModal을 통해 표시
+        presentPanModal(bottomSheetVC)
     }
     
     func resizeAndCompressImage(_ image: UIImage, to maxSizeInKB: Int, maxWidth: CGFloat = 300) -> Data? {

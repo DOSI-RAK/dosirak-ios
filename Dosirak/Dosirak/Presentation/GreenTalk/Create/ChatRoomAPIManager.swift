@@ -84,30 +84,35 @@ extension ChatRoomAPI: TargetType {
         case .createChatRoom(let title, let explanation, let zoneCategoryName, let defaultImage, let file):
             var formData: [MultipartFormData] = []
             
-            // JSON 데이터
+            // JSON 데이터 추가
             let chatRoomData = [
                 "title": title,
                 "explanation": explanation,
                 "zoneCategoryName": zoneCategoryName,
-                "defaultImage": "https://dosirakbucket.s3.ap-northeast-2.amazonaws.com/profile01.png" ?? ""
+                "defaultImage": defaultImage ?? ""
             ]
             
             if let jsonData = try? JSONSerialization.data(withJSONObject: chatRoomData) {
+                print("🛠️ JSON Data: \(String(data: jsonData, encoding: .utf8) ?? "")")
                 formData.append(MultipartFormData(provider: .data(jsonData), name: "chatRoom"))
             }
             
-            // 파일 추가
+            // 파일 추가 디버깅
             if let file = file {
+                print("🛠️ Adding File - Size: \(file.count) bytes")
                 formData.append(MultipartFormData(
                     provider: .data(file),
                     name: "file",
                     fileName: "profile_image.png",
                     mimeType: "image/png"
                 ))
+            } else {
+                print("🛠️ No File Added")
             }
             
             return .uploadMultipart(formData)
         }
+
     }
     
     var headers: [String: String]? {
