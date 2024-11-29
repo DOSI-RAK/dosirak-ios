@@ -273,9 +273,9 @@ class GreenEliteViewController: UIViewController {
     private func setupHalfCircularProgressBar() {
         // 중앙 좌표 및 반지름 설정
            let centerPoint = CGPoint(x: progressContainerView.bounds.width / 2, y: progressContainerView.bounds.height) // 중심은 아래쪽 중앙
-           let radius: CGFloat = progressContainerView.bounds.width / 2 - 20 // 패딩을 고려한 반지름
+           let radius: CGFloat = progressContainerView.bounds.width / 2 - 20
 
-           // 반원 경로 설정
+         
            let circularPath = UIBezierPath(
                arcCenter: centerPoint,
                radius: radius,
@@ -283,7 +283,7 @@ class GreenEliteViewController: UIViewController {
                endAngle: -0.15,
                clockwise: true
            )
-        // 배경 트랙 설정
+       
         progressTrackLayer.path = circularPath.cgPath
         progressTrackLayer.strokeColor = UIColor(hexCode: "ededed").cgColor
         progressTrackLayer.lineWidth = 40
@@ -291,7 +291,7 @@ class GreenEliteViewController: UIViewController {
         progressTrackLayer.lineCap = .round
         progressContainerView.layer.addSublayer(progressTrackLayer)
 
-        // 프로그레스 레이어 설정
+        
         progressBarLayer.path = circularPath.cgPath
         progressBarLayer.strokeColor = UIColor.black.cgColor
         progressBarLayer.lineWidth = 40
@@ -300,18 +300,18 @@ class GreenEliteViewController: UIViewController {
         progressBarLayer.strokeEnd = 0.0
         progressContainerView.layer.addSublayer(progressBarLayer)
 
-        // 그라데이션 레이어 설정
+       
         let gradientLayer = CAGradientLayer()
         gradientLayer.frame = progressContainerView.bounds
         gradientLayer.colors = [
-            UIColor(hexCode: "20b8c9").cgColor, // 파란색
-            UIColor(hexCode: "20c997").cgColor, // 청록색
-            UIColor(hexCode: "47c920").cgColor  // 녹색
+            UIColor(hexCode: "20b8c9").cgColor,
+            UIColor(hexCode: "20c997").cgColor,
+            UIColor(hexCode: "47c920").cgColor
         ]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
 
-        // 그라데이션과 프로그레스 레이어 결합
+        
         gradientLayer.mask = progressBarLayer
         progressContainerView.layer.addSublayer(gradientLayer)
 
@@ -322,7 +322,7 @@ class GreenEliteViewController: UIViewController {
 
 
     private func updateProgress(to value: CGFloat, animated: Bool = true) {
-        let clampedValue = max(0.0, min(value, 1.0))  // 0.0 ~ 1.0 사이로 제한
+        let clampedValue = max(0.0, min(value, 1.0))
         print("Updating Progress to: \(clampedValue)")
 
         if animated {
@@ -385,15 +385,14 @@ class GreenEliteViewController: UIViewController {
             totalAnswers > 0
             ? (Double(correctAnswers) / Double(totalAnswers)) * 100 : 0.0
 
-        // `scoreLabel` 업데이트
+    
         let attributedText = NSMutableAttributedString()
 
-        // 줄 간격 및 중앙 정렬 설정
+      
         let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 16  // 줄 간격 16
-        paragraphStyle.alignment = .center  // 텍스트 중앙 정렬
+        paragraphStyle.lineSpacing = 16
+        paragraphStyle.alignment = .center
 
-        // 첫 번째 줄: "총 X문제 중"
         let totalQuestions = NSAttributedString(
             string: "총 \(totalAnswers)문제 중\n",
             attributes: [
@@ -404,7 +403,7 @@ class GreenEliteViewController: UIViewController {
         )
         attributedText.append(totalQuestions)
 
-        // 두 번째 줄: 숫자와 % 크기 조정
+
         let percentageValue = NSAttributedString(
             string: "\(Int(correctPercentage))",
             attributes: [
@@ -416,16 +415,15 @@ class GreenEliteViewController: UIViewController {
         let percentageSymbol = NSAttributedString(
             string: "%",
             attributes: [
-                .font: UIFont.systemFont(ofSize: 18, weight: .medium),  // 상대적으로 작은 크기
+                .font: UIFont.systemFont(ofSize: 18, weight: .medium),
                 .foregroundColor: UIColor.black,
                 .paragraphStyle: paragraphStyle,
             ]
         )
         attributedText.append(percentageValue)
         attributedText.append(percentageSymbol)
-        attributedText.append(NSAttributedString(string: "\n"))  // 줄바꿈 추가
+        attributedText.append(NSAttributedString(string: "\n"))
 
-        // 세 번째 줄: "정답"
         let correctText = NSAttributedString(
             string: "정답",
             attributes: [
@@ -438,7 +436,6 @@ class GreenEliteViewController: UIViewController {
 
         self.scoreLabel.attributedText = attributedText
 
-        // `correctWrongView` 업데이트
         if let correctLabel = self.correctWrongView.arrangedSubviews.first
             as? UILabel
         {
@@ -485,7 +482,7 @@ class GreenEliteViewController: UIViewController {
             wrongLabel.attributedText = wrongAttributedText
         }
         var value = correctPercentage / 100
-        value = floor(value * 10) / 10  // 소수점 첫째 자리까지만 남기기
+        value = floor(value * 10) / 10
         print("============> \(value)")
         self.updateProgress(to: value, animated: true)
     }

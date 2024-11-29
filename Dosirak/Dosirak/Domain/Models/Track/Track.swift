@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Track {
+struct Track: Decodable {
     let id: String
     let addressLevelOne: String
     let addressLevelTwo: String
@@ -15,6 +15,6 @@ struct Track {
     let longitude: Double
 }
 
-struct Distance {
+struct Distance: Decodable {
     let moveTrackDistance: Double
 }
