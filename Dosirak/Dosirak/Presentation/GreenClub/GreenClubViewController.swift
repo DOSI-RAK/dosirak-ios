@@ -36,12 +36,10 @@ class GreenClubViewController: UIViewController {
         view.backgroundColor = .bgColor
         
         // Title Label
-        titleLabel.text = "강남구 역삼동"
+        titleLabel.text = AppSettings.userGeo
         titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
         
-        // Change Button
-        changeButton.setTitle("변경하기", for: .normal)
-        changeButton.setTitleColor(.gray, for: .normal)
+     
         
         // Filter Buttons
         setupFilterButton(nearbyButton, title: "가까운 순", isSelected: true)
@@ -68,7 +66,6 @@ class GreenClubViewController: UIViewController {
         
         // Add Subviews
         view.addSubview(titleLabel)
-        view.addSubview(changeButton)
         view.addSubview(filterStackView)
         view.addSubview(tableView)
         view.addSubview(applyButton)
@@ -106,16 +103,12 @@ class GreenClubViewController: UIViewController {
             make.leading.equalToSuperview().offset(16)
         }
         
-        changeButton.snp.makeConstraints { make in
-            make.centerY.equalTo(titleLabel)
-            make.trailing.equalToSuperview().offset(-16)
-        }
-        
+     
         filterStackView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.width.equalTo(148)
-            make.height.equalTo(35)
+            make.height.equalTo(30)
         }
         
         tableView.snp.makeConstraints { make in
@@ -177,19 +170,12 @@ class GreenClubViewController: UIViewController {
         // 초기 데이터 로드
         fetchTrigger.accept(())
         
-        changeButton.rx.tap
-            .bind { [weak self] in
-                self?.navigationController?.pushViewController(AddressInputViewController(), animated: true)
-                
-            }
-            .disposed(by: disposeBag)
     }
     
     // MARK: - UI Components
     private let tableView = UITableView()
     private let applyButton = UIButton()
     private let titleLabel = UILabel()
-    private let changeButton = UIButton()
     private let nearbyButton = UIButton()
     private let discountButton = UIButton()
     private lazy var filterStackView = UIStackView(arrangedSubviews: [nearbyButton, discountButton])

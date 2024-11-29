@@ -9,7 +9,7 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
-class ProblemListViewController: UIViewController {
+class ProblemListViewController: UIViewController, UITableViewDelegate {
     
     private let disposeBag = DisposeBag()
     private let viewModel = GreenEliteViewModel()
@@ -23,7 +23,7 @@ class ProblemListViewController: UIViewController {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .black
         button.layer.cornerRadius = 20
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         return button
     }()
     
@@ -33,9 +33,7 @@ class ProblemListViewController: UIViewController {
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.layer.cornerRadius = 20
-        button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.black.cgColor
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 13)
         return button
     }()
     
@@ -56,20 +54,24 @@ class ProblemListViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         bindViewModel()
+        setupTableViewDelegate()
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .bgColor
+        
         title = "문제 확인"
         
         view.addSubview(buttonStackView)
         view.addSubview(tableView)
         
+        tableView.backgroundColor = .bgColor
+        
         buttonStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
-            make.leading.equalToSuperview().offset(16)
-            make.trailing.equalToSuperview().offset(-16)
-            make.height.equalTo(50)
+            make.leading.equalToSuperview().offset(20)
+            make.width.equalTo(150)
+            make.height.equalTo(40)
         }
         
         tableView.snp.makeConstraints { make in
@@ -125,7 +127,37 @@ class ProblemListViewController: UIViewController {
         deselectedButton?.backgroundColor = .white
         deselectedButton?.setTitleColor(.black, for: .normal)
     }
+    
+    private func setupTableViewDelegate() {
+        tableView.delegate = self // Assigning the delegate
+        
+        tableView.rx.modelSelected(Problem.self)
+            .subscribe(onNext: { [weak self] selectedProblem in
+                print("tapped")
+                self?.navigationController?.pushViewController(ProblemDetailViewController(), animated: true)
+            })
+            .disposed(by: disposeBag)
+    }
+  
+    // MARK: - UITableViewDelegate
+    
+    // Setting cell height
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 64
+    }
+    
+    // Adding space between cells
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        footerView.backgroundColor = .clear
+        return footerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 15 // Space between cells
+    }
 }
+
 
 class CustomProblemCell: UITableViewCell {
     
@@ -133,7 +165,7 @@ class CustomProblemCell: UITableViewCell {
         let label = UILabel()
         label.text = "Q."
         label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.textColor = .black
+        label.textColor = .mainColor
         return label
     }()
     
@@ -144,6 +176,7 @@ class CustomProblemCell: UITableViewCell {
         label.numberOfLines = 2
         return label
     }()
+  
     
     private let separatorLine: UIView = {
         let view = UIView()
@@ -154,6 +187,7 @@ class CustomProblemCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
+        selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
@@ -164,6 +198,8 @@ class CustomProblemCell: UITableViewCell {
         contentView.addSubview(problemIndicator)
         contentView.addSubview(problemLabel)
         contentView.addSubview(separatorLine)
+        
+        
         
         problemIndicator.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
@@ -179,7 +215,7 @@ class CustomProblemCell: UITableViewCell {
         
         separatorLine.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
-            make.height.equalTo(1)
+            make.height.equalTo(0.5)
         }
     }
     

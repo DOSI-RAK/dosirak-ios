@@ -54,8 +54,8 @@ extension RewardAPI: TargetType {
     
 }
 
-final class GreenAuthAPIManager {
-    static let shared = GreenAuthAPIManager()
+final class GreenRewardAPIManager {
+    static let shared = GreenRewardAPIManager()
 
     private let provider: MoyaProvider<RewardAPI>
 

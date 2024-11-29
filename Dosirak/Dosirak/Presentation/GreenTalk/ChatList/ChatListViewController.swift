@@ -35,7 +35,7 @@ class ChatListViewController: BaseViewController {
         recentButton.isSelected = false
         
         
-        print("=========>?ㅁㄴㅇㄹㅁㄴㅇㄹ,\(Keychain(service: "com.dosirak.user")["socialAccessToken"])")
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -99,8 +99,8 @@ class ChatListViewController: BaseViewController {
         
         
         chatroomSearchBar.snp.makeConstraints {
-            $0.leading.equalTo(baseView)
-            $0.trailing.equalTo(view)
+            $0.leading.equalTo(baseView).inset(25)
+            $0.trailing.equalTo(view).inset(25)
             $0.height.equalTo(50)
             $0.top.equalTo(myLocationLabel.snp.bottom).offset(10)
         }
@@ -240,7 +240,7 @@ class ChatListViewController: BaseViewController {
     }()
     private let myLocationLabel: UILabel = {
         let label = UILabel()
-        label.text = "강남구 청담동"
+        label.text = AppSettings.userGeo
         label.font = .systemFont(ofSize: 18, weight: .bold)
         return label
     }()

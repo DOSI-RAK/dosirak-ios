@@ -241,8 +241,13 @@ class UserProfileViewController: BaseViewController {
     }
     
     private func updateScore(_ score: Int) {
-        let scoreString = String(format: "%03d", score) // 3자리 포맷으로 점수 변환
-        updateDigitLabels(with: scoreString) // 자릿수별 애니메이션 적용
+        if(score > 999) {
+            let scoreString = String(format: "%03d", 999)
+            updateDigitLabels(with: scoreString)
+        }else {
+            let scoreString = String(format: "%03d", score) // 3자리 포맷으로 점수 변환
+            updateDigitLabels(with: scoreString) // 자릿수별 애니메이션 적용
+        }
         
     }
     

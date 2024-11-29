@@ -143,6 +143,16 @@ class GreenAuthSuccessViewController: UIViewController {
     }
     
     @objc private func goToHome() {
+        
+        GreenRewardAPIManager.shared.saveDosirak { result in
+            switch result {
+            case .success:
+                print("🎉 Dosirak reward saved successfully!")
+            case .failure(let error):
+                print("❌ Failed to save dosirak reward: \(error.localizedDescription)")
+            }
+        }
+        
         guard let sceneDelegate = UIApplication.shared.connectedScenes
             .first(where: { $0.activationState == .foregroundActive })?.delegate as? SceneDelegate else {
             print("SceneDelegate를 찾을 수 없습니다.")

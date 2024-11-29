@@ -53,7 +53,7 @@ class GreenEliteViewController: UIViewController {
 
         // 두 번째 줄: "0%"
         let percentage = NSAttributedString(
-            string: "0%\n",
+            string: "0 %\n",
             attributes: [
                 .font: UIFont.systemFont(ofSize: 36, weight: .bold),
                 .foregroundColor: UIColor.black,
@@ -200,6 +200,13 @@ class GreenEliteViewController: UIViewController {
         setupHalfCircularProgressBar()
         updateProgress(to: 0.0, animated: true)
         bindRX()
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        view.layoutIfNeeded()
+
+    
+        
     }
 
     private func setupNavigation() {
