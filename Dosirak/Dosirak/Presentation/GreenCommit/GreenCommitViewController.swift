@@ -8,6 +8,7 @@ import UIKit
 import SnapKit
 
 class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     private let collectionView: UICollectionView
     private let viewModel = GreenCommitViewModel()
 
@@ -18,7 +19,7 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
     init() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 460) // 헤더 크기 설정
+        layout.headerReferenceSize = CGSize(width: UIScreen.main.bounds.width, height: 460)
         self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
 
         super.init(nibName: nil, bundle: nil)
@@ -41,9 +42,6 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         }
         
     }
-    
-
-
     private func setupViews() {
         view.backgroundColor = .bgColor
         view.addSubview(collectionView)
@@ -62,9 +60,8 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         }
     }
 
-    // MARK: - Data Loading Methods
-
     private func loadTodayCommits() {
+        
         viewModel.fetchTodayCommits(accessToken: accessToken ?? "") { [weak self] result in
             switch result {
             case .success(let commits):
@@ -74,6 +71,7 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
                 print("오늘 데이터 로드 실패:", error)
             }
         }
+        
     }
 
     private func loadDayCommits(for date: Date) {
@@ -104,7 +102,6 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
                     print("월별 데이터 로드 성공: \(commits.count)개")
                     self?.viewModel.monthlyCommits = commits
 
-                    // 헤더 갱신을 위해 FSCalendar 리로드
                     if let headerView = self?.collectionView.supplementaryView(
                         forElementKind: UICollectionView.elementKindSectionHeader,
                         at: IndexPath(item: 0, section: 0)
@@ -117,18 +114,16 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
             }
         }
     }
-
-
+    
 
     // MARK: - UICollectionView DataSource & Delegate
-
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if todayCommits.isEmpty && dayCommits.isEmpty {
-            return 1 // "데이터 없음" 셀 표시
+            return 1
         }
         return dayCommits.isEmpty ? todayCommits.count : dayCommits.count
     }
@@ -157,17 +152,17 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         if kind == UICollectionView.elementKindSectionHeader {
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: GreenCommitHeaderView.identifier, for: indexPath) as! GreenCommitHeaderView
             
-            // 달 변경 이벤트
+         
             headerView.onPageChanged = { [weak self] month in
                 self?.loadMonthlyCommits(for: month)
             }
 
-            // 날짜 선택 이벤트
+         
             headerView.onDateSelected = { [weak self] date in
                 self?.loadDayCommits(for: date)
             }
 
-            // 헤더 데이터 설정
+        
             headerView.monthlyCommits = viewModel.monthlyCommits
             return headerView
         }

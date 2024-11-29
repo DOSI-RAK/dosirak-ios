@@ -36,6 +36,8 @@
 		<string>naversearchapp</string>
 		<string>naversearchthirdlogin</string>
 	</array>
+	<key>Instagram-stories</key>
+	<array/>
 	<key>NAVER_CLIENT_ID</key>
 	<string>RofRaqjYRCQ7jBPmLPLc</string>
 	<key>NAVER_CLIENT_SECRET</key>

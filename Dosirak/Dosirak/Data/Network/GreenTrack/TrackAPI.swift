@@ -10,7 +10,7 @@ import UIKit
 
 enum TrackAPI {
     case fetchBicycle( latitude: Double,longitude: Double)
-    case recordTrackData(accessToken: String, shortestDistance: Double, moveDistance: Double)
+    case recordTrackData(accessToken: String, shortestDistance: Double, moveDistance: Double, storeName: String)
 }
 
 
@@ -25,7 +25,7 @@ extension TrackAPI: TargetType {
         case .fetchBicycle:
             return "/api/seoul-bike-info"
         case .recordTrackData:
-            return "/api/users/rank/my"
+            return "/api/track"
         }
     }
     
@@ -42,10 +42,12 @@ extension TrackAPI: TargetType {
         switch self {
         case .fetchBicycle(let latitude, let longitude):
             return .requestParameters(parameters: ["myLatitude":latitude, "myLongitude": longitude], encoding: URLEncoding.queryString)
-        case .recordTrackData(_,let shortestDistance, let moveDistance):
-            let parameters: [String: Double] = [
+        case .recordTrackData(_,let shortestDistance, let moveDistance,let storeName):
+            let parameters: [String: Any] = [
                 "shortestDistance": shortestDistance,
-                "moveDistance": moveDistance
+                "moveDistance": moveDistance,
+                "saleStoreName": storeName
+                
             ]
             return .requestParameters(parameters: parameters, encoding: JSONEncoding.default)
         }
@@ -55,7 +57,7 @@ extension TrackAPI: TargetType {
         switch self {
         case .fetchBicycle(_, _):
             return ["Content-Type": "application/json"]
-        case .recordTrackData(let accessToken,_,_):
+        case .recordTrackData(let accessToken,_,_,_):
             return ["Authorization": "Bearer \(accessToken)", "Content-Type": "application/json"]
         }
     }

@@ -8,6 +8,21 @@ import UIKit
 import MapKit
 import SnapKit
 import CoreLocation
+import RxSwift
+import RxCocoa
+
+
+extension CLPlacemark {
+    var compactAddress: String? {
+        if let name = name {
+            return name
+        } else if let thoroughfare = thoroughfare, let subThoroughfare = subThoroughfare {
+            return "\(subThoroughfare) \(thoroughfare)"
+        } else {
+            return nil
+        }
+    }
+}
 
 
 class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
@@ -26,11 +41,11 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     private var actualTravelDistance: Double = 0.0
     
     
+    private let disposeBag = DisposeBag()
     
     
     
     
-
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -136,7 +151,6 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             make.height.equalTo(50)
         }
     }
-
     private func setupLocationManager() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -152,6 +166,10 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         }
 
         searchDestination(query: destination)
+    }
+    private func formatDistanceInKM(_ distanceInMeters: Double) -> String {
+        let distanceInKM = distanceInMeters / 1000.0
+        return String(format: "%.2f km", distanceInKM)
     }
 
 
@@ -172,6 +190,26 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             self.drawWalkingRoute()
         }
     }
+    private func updateUserLocationPlaceholder() {
+        guard let userCoordinate = userCoordinate else { return }
+
+        let geocoder = CLGeocoder()
+        let location = CLLocation(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude)
+
+        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+            guard let placemark = placemarks?.first, error == nil else {
+                print("주소를 가져올 수 없습니다: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+
+            if let address = placemark.compactAddress {
+                DispatchQueue.main.async {
+                    self?.startLocationField.placeholder = "내 위치: \(address)"
+                }
+            }
+        }
+    }
+
 
     private func drawWalkingRoute() {
         guard let userCoordinate = userCoordinate, let destinationCoordinate = destinationCoordinate else { return }
@@ -198,10 +236,11 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
                 return
             }
 
-            // 경로 거리 저장
+            // 경로 거리 저장 (km 단위로 변환 및 표시)
             self.calculatedRouteDistance = route.distance
-            print("길찾기 경로 거리: \(self.calculatedRouteDistance) 미터")
-        
+            let distanceText = self.formatDistanceInKM(self.calculatedRouteDistance)
+            print("길찾기 경로 거리: \(distanceText)")
+
             self.mapView.addOverlay(route.polyline, level: .aboveRoads)
             self.mapView.setVisibleMapRect(
                 route.polyline.boundingMapRect,
@@ -211,14 +250,14 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
 
             let minutes = Int(route.expectedTravelTime / 60)
             DispatchQueue.main.async {
-                self.walkingTimeLabel.text = "\(minutes) 분"
+                self.walkingTimeLabel.text = "\(minutes) 분 (\(distanceText))"
             }
         }
     }
+
     @objc private func toggleMeasurement() {
         isMeasuring.toggle()
         if isMeasuring {
-            // 트래킹 시작
             userCoordinates.removeAll()
             actualTravelDistance = 0.0 // 실제 이동 거리 초기화
             previousLocation = nil    // 이전 위치 초기화
@@ -226,13 +265,55 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             startMeasurementButton.setTitle("측정 종료하기", for: .normal)
             print("측정 시작")
         } else {
-            // 트래킹 종료
             startMeasurementButton.setTitle("측정 시작하기", for: .normal)
-            print("최종 이동 거리: \(actualTravelDistance) 미터")
+            let distanceText = formatDistanceInKM(actualTravelDistance)
+            print("최종 이동 거리: \(distanceText)")
 
+            recordTrackData()
             let vc = SuccessViewController()
             vc.navigationController?.navigationBar.isHidden = true
             navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    private func fetchNearbyBicycles() {
+        guard let userCoordinate = userCoordinate else { return }
+
+        print("🚀 Fetching nearby bicycles... Latitude: \(userCoordinate.latitude), Longitude: \(userCoordinate.longitude)")
+
+        viewModel.fetchBicycleData(latitude: userCoordinate.latitude, longitude: userCoordinate.longitude) { [weak self] result in
+            switch result {
+            case .success(let json):
+                print("✅ Bicycle data response: \(json)")
+                guard let data = json["data"] as? [[String: Any]] else {
+                    print("⚠️ Invalid data format: \(json)")
+                    return
+                }
+
+                let decoder = JSONDecoder()
+                do {
+                    // Decoding the JSON response into Track models
+                    let bicycles = try data.map { try decoder.decode(Track.self, from: JSONSerialization.data(withJSONObject: $0)) }
+                    print("✅ Decoded bicycles: \(bicycles)")
+                    self?.addBicyclesToMap(bicycles: bicycles)
+                } catch {
+                    print("❌ Decoding error: \(error.localizedDescription)")
+                }
+            case .failure(let error):
+                print("❌ Error fetching bicycles: \(error.localizedDescription)")
+            }
+        }
+    }
+    private func addBicyclesToMap(bicycles: [Track]) {
+        print("🚴 Adding \(bicycles.count) bicycles to the map...")
+        
+        for bicycle in bicycles {
+            print("📍 Adding bicycle at (\(bicycle.latitude), \(bicycle.longitude)) - \(bicycle.addressLevelOne) \(bicycle.addressLevelTwo)")
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = CLLocationCoordinate2D(latitude: bicycle.latitude, longitude: bicycle.longitude)
+            annotation.title = "\(bicycle.addressLevelOne) \(bicycle.addressLevelTwo)"
+            annotation.subtitle = "따릉이 ID: \(bicycle.id)"
+            mapView.addAnnotation(annotation)
         }
     }
 
@@ -253,6 +334,32 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
 
         mapView.addOverlay(polyline)
     }
+    private func recordTrackData() {
+        guard let accessToken = AppSettings.accessToken else {
+            showAlert(message: "Access token이 필요합니다.")
+            return
+        }
+
+        viewModel.recordTrackData(
+            accessToken: accessToken,
+            shortestDistance: calculatedRouteDistance,
+            moveDistance: actualTravelDistance,
+            storeName: destinationField.text ?? ""
+        ) { [weak self] result in
+            switch result {
+            case .success(let success):
+                if success {
+                    self?.showAlert(message: "이동 거리 기록 완료")
+                } else {
+                    self?.showAlert(message: "이동 거리 기록 실패")
+                }
+            case .failure(let error):
+                self?.showAlert(message: "오류 발생: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    
     
     private var previousLocation: CLLocation?
 
@@ -260,12 +367,14 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         userCoordinate = location.coordinate
+        updateUserLocationPlaceholder()
         
         
         if isMeasuring, let previousLocation = previousLocation {
                let distance = previousLocation.distance(from: location) // 이전 위치와 현재 위치 간 거리 (미터 단위)
+               let distanceText = formatDistanceInKM(actualTravelDistance)
                actualTravelDistance += distance
-               print("누적 이동 거리: \(actualTravelDistance) 미터")
+               print("누적 이동 거리: \(distanceText)키로미터")
            }
 
            previousLocation = location // 현재 위치를 이전 위치로 저장
@@ -300,6 +409,8 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
                 }
             }
         }
+        fetchNearbyBicycles()
+    
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

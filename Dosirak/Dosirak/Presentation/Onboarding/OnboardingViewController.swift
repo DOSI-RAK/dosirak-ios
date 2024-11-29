@@ -18,7 +18,7 @@ extension NSObject {
 }
 
 
-// Extension for NSMutableParagraphStyle
+
 extension NSMutableParagraphStyle {
     func apply(_ block: (NSMutableParagraphStyle) -> Void) -> NSMutableParagraphStyle {
         block(self)
@@ -26,7 +26,7 @@ extension NSMutableParagraphStyle {
     }
 }
 
-// OnboardingPageViewController: 개별 페이지
+
 class OnboardingPageViewController: UIViewController {
     private let imageView = UIImageView()
     private let titleLabel = UILabel()
@@ -44,7 +44,6 @@ class OnboardingPageViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -53,47 +52,46 @@ class OnboardingPageViewController: UIViewController {
     }
     
     private func setupUI() {
-        // ImageView
+       
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         view.addSubview(imageView)
         
-        // Title Label
+      
         titleLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
         titleLabel.textAlignment = .left
         titleLabel.numberOfLines = 0
         view.addSubview(titleLabel)
         
-        // Description Label 1
+       
         descriptionLabel1.numberOfLines = 0
         descriptionLabel1.textAlignment = .left
         view.addSubview(descriptionLabel1)
         
-        // Description Label 2
+    
         descriptionLabel2.numberOfLines = 0
         descriptionLabel2.textAlignment = .left
         view.addSubview(descriptionLabel2)
     }
     
     private func setupConstraints() {
-        // Image View
+      
         imageView.snp.makeConstraints { make in
-            make.edges.equalToSuperview() // 화면 전체에 배치
+            make.edges.equalToSuperview()
         }
         
-        // Title Label
+        
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         
-        // Description Label 1
+       
         descriptionLabel1.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(20)
         }
         
-        // Description Label 2
         descriptionLabel2.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel1.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(20)
@@ -101,14 +99,13 @@ class OnboardingPageViewController: UIViewController {
     }
 }
 
-// OnboardingViewController: 전체 온보딩 관리
 class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
     private let pages: [UIViewController]
     private let pageControl = UIPageControl()
     private let startButton = UIButton()
     
     init() {
-        // Configure pages
+    
         let page1 = OnboardingPageViewController(
             imageName: "onboarding1",
             title: "그거\n아시나요?",
@@ -117,9 +114,13 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
                     .font: UIFont.systemFont(ofSize: 16),
                     .foregroundColor: UIColor.darkGray
                 ])
-                .apply(text: "약 50% 감소했어요.", attributes: [
+                .apply(text: "약 50% ", attributes: [
                     .font: UIFont.boldSystemFont(ofSize: 16),
                     .foregroundColor: UIColor.mainColor
+                ])
+                .apply(text: "감소했어요", attributes: [
+                .font: UIFont.systemFont(ofSize: 16),
+                .foregroundColor: UIColor.darkGray
                 ]),
             description2: NSMutableAttributedString()
         )
@@ -197,7 +198,7 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
         startButton.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .bold)
         startButton.setTitleColor(.white, for: .normal)
         startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
-        startButton.isHidden = true // 마지막 페이지에서만 보임
+        startButton.isHidden = true
         
         view.addSubview(startButton)
         startButton.snp.makeConstraints { make in
@@ -209,7 +210,7 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
     
     @objc private func startButtonTapped() {
         print("Onboarding Completed")
-        // Onboarding 완료 후 화면 전환
+    
         let vc = UINavigationController(rootViewController: UserInfoSettingViewController())
         vc.modalPresentationStyle = .fullScreen
         vc.navigationBar.isTranslucent = false
@@ -217,7 +218,6 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
         present(vc, animated: true)
     }
     
-    // MARK: - UIPageViewController DataSource
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let currentIndex = pages.firstIndex(of: viewController), currentIndex > 0 else { return nil }
         return pages[currentIndex - 1]
@@ -228,20 +228,19 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
         return pages[currentIndex + 1]
     }
     
-    // MARK: - UIPageViewController Delegate
+   
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if let currentViewController = pageViewController.viewControllers?.first,
            let currentIndex = pages.firstIndex(of: currentViewController) {
             pageControl.currentPage = currentIndex
             startButton.isHidden = currentIndex != pages.count - 1
             
-            // 마지막 페이지에서는 페이지 컨트롤 숨김
+           
             pageControl.isHidden = currentIndex == pages.count - 1
         }
     }
 }
 
-// MARK: - NSMutableAttributedString Helper
 extension NSMutableAttributedString {
     func apply(text: String, attributes: [NSAttributedString.Key: Any]) -> NSMutableAttributedString {
         let attributedString = NSAttributedString(string: text, attributes: attributes)

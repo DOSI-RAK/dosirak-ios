@@ -140,7 +140,7 @@ class GreenClubViewController: UIViewController {
         
         let output = viewModel.transform(input: input)
         
-        // 초기 상태 설정: 기본 필터 "가까운 순"
+
         updateFilterButtons(selectedFilter: "가까운 순")
         
         // 가까운 순 버튼 클릭

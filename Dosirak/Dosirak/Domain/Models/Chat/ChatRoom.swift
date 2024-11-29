@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-// 채팅방 목록에 사용되는 채팅방 정보 기본 구조체
 struct ChatRoom: Decodable {
     let id: Int
     let title: String
@@ -24,7 +22,6 @@ struct MyChatRoom: Decodable {
     let lastMessageTime: String?
 }
 
-// 요약된 채팅방 정보 구조체
 struct ChatRoomSummary: Decodable {
     let id: Int
     let title: String
