@@ -53,22 +53,13 @@ class GreenClubViewController: UIViewController {
         tableView.register(StoreCell.self, forCellReuseIdentifier: StoreCell.identifier)
         tableView.rowHeight = 100  // 셀 높이 고정
         tableView.separatorStyle = .none
-        
-        // Apply Button (Floating)
-        applyButton.setTitle("입점 신청하기", for: .normal)
-        applyButton.backgroundColor = UIColor.mainColor
-        applyButton.setTitleColor(.white, for: .normal)
-        applyButton.layer.cornerRadius = 14
-        applyButton.layer.shadowColor = UIColor.black.cgColor
-        applyButton.layer.shadowOpacity = 0.3
-        applyButton.layer.shadowOffset = CGSize(width: 0, height: 4)
-        applyButton.layer.shadowRadius = 6
+     
+   
         
         // Add Subviews
         view.addSubview(titleLabel)
         view.addSubview(filterStackView)
         view.addSubview(tableView)
-        view.addSubview(applyButton)
     }
     
     private func setupFilterButton(_ button: UIButton, title: String, isSelected: Bool) {
@@ -117,12 +108,6 @@ class GreenClubViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-70) // 아래 플로팅 버튼 공간 확보
         }
         
-        applyButton.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-10)
-            make.leading.trailing.equalTo(view).inset(40)
-            make.height.equalTo(50)
-        }
     }
     
     private func bindViewModel() {
@@ -174,7 +159,6 @@ class GreenClubViewController: UIViewController {
     
     // MARK: - UI Components
     private let tableView = UITableView()
-    private let applyButton = UIButton()
     private let titleLabel = UILabel()
     private let nearbyButton = UIButton()
     private let discountButton = UIButton()

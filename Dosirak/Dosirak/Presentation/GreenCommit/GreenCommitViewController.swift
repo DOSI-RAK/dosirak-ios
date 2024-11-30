@@ -115,6 +115,47 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         }
     }
     
+    
+    func captureView(view: UIView) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(view.bounds.size, false, 0.0)
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
+        view.layer.render(in: context)
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return image
+    }
+    
+    func shareToInstagramStory(image: UIImage) {
+        let pasteboardItems: [[String: Any]] = [
+            [
+                "com.instagram.sharedSticker.backgroundImage": image.pngData()!,
+                "com.instagram.sharedSticker.appID": "YOUR_APP_ID" // 앱 ID (Facebook 개발자 콘솔에서 생성)
+            ]
+        ]
+        
+        let pasteboardOptions: [UIPasteboard.OptionsKey: Any] = [
+            .expirationDate: Date().addingTimeInterval(60 * 5) // 5분간 유효
+        ]
+        
+        // Pasteboard에 데이터 추가
+        UIPasteboard.general.setItems(pasteboardItems, options: pasteboardOptions)
+        
+        // Instagram 스토리 열기
+        let instagramURL = URL(string: "instagram-stories://share")!
+        if UIApplication.shared.canOpenURL(instagramURL) {
+            UIApplication.shared.open(instagramURL, options: [:], completionHandler: nil)
+        } else {
+            print("Instagram이 설치되어 있지 않습니다.")
+        }
+    }
+
+
+    
+    
+    
+    
+    
+    
 
     // MARK: - UICollectionView DataSource & Delegate
     func numberOfSections(in collectionView: UICollectionView) -> Int {
