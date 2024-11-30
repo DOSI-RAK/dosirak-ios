@@ -272,9 +272,10 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             let distanceText = formatDistanceInKM(actualTravelDistance)
             print("최종 이동 거리: \(distanceText)")
 
-            recordTrackData()
+            //recordTrackData()
             let vc = SuccessViewController()
-            vc.navigationController?.navigationBar.isHidden = true
+            //vc.navigationController?.navigationBar.isHidden = true
+            vc.modalPresentationStyle = .fullScreen
             navigationController?.pushViewController(vc, animated: true)
         }
     }

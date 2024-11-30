@@ -170,6 +170,8 @@ class GreenGuideViewController: UIViewController {
         }
     }
     
+
+    
     private func setupCategoryButtons() {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -387,10 +389,10 @@ extension GreenGuideViewController: UISheetPresentationControllerDelegate {
         }
     }
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        if let sheet = presentationController as? UISheetPresentationController {
-            sheet.selectedDetentIdentifier = .medium
-        }
-    }
+           if let sheet = presentationController as? UISheetPresentationController {
+               sheet.selectedDetentIdentifier = .medium
+           }
+       }
 }
 
 extension GreenGuideViewController: UINavigationControllerDelegate {

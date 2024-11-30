@@ -8,72 +8,74 @@ import UIKit
 import SnapKit
 import ImageIO
 
-
-
 class SuccessViewController: BaseViewController {
     
     let coordinator = AppCoordinator()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .mainColor
+        self.navigationController?.navigationBar.isHidden = true
         
+        // GIF 파일 로드 및 설정
         if let gifUrl = Bundle.main.url(forResource: "success", withExtension: "gif"),
            let gifData = try? Data(contentsOf: gifUrl) {
-            backgroundGIF.image = UIImage.gif(data: gifData)
+            backgroundGIF.image = UIImage.gif(data: gifData) // GIF를 UIImageView에 설정
+        } else {
+            print("GIF 파일을 찾을 수 없거나 로드할 수 없습니다.")
         }
     }
 
     override func setupView() {
         view.addSubview(backgroundGIF)
+        view.addSubview(homeButton)
         view.addSubview(earthLabel)
         view.addSubview(emitLabel)
         view.addSubview(carbonContainerView)
         view.addSubview(stepInfoContainerView)
         
-        view.addSubview(homeButton)
         homeButton.addTarget(self, action: #selector(goHome), for: .touchUpInside)
     }
 
     override func setupLayout() {
-       
+        // GIF 백그라운드 설정
         backgroundGIF.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
-
-
+        
+        // 홈 버튼 설정
+        homeButton.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.height.equalTo(40)
+        }
+        
+        // 지구를 위해 절약된 텍스트
         earthLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(40)
+            $0.top.equalTo(homeButton.snp.bottom).offset(20)
             $0.centerX.equalToSuperview()
         }
 
-     
+        // 탄소배출량 텍스트
         emitLabel.snp.makeConstraints {
-            $0.top.equalTo(earthLabel.snp.bottom).offset(8)
+            $0.top.equalTo(earthLabel.snp.bottom).offset(10)
             $0.centerX.equalToSuperview()
         }
 
-
+        // 중앙 탄소 배출량 디지털 카운터
         carbonContainerView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(emitLabel.snp.bottom).offset(24)
-            $0.height.equalTo(80)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(210)
+            $0.height.equalTo(100)
         }
 
-    
+        // 하단 스텝 정보 컨테이너
         stepInfoContainerView.snp.makeConstraints {
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-40)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(40)
         }
-        
-        homeButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.trailing.equalTo(view).inset(20)
-            $0.width.height.equalTo(60)
-        }
     }
+
     @objc func goHome() {
         coordinator.moveToHomeFromAnyVC()
     }
@@ -87,11 +89,9 @@ class SuccessViewController: BaseViewController {
         return button
     }()
     
-    
-    
     let backgroundGIF: UIImageView = {
         let view = UIImageView()
-        view.contentMode = .scaleToFill
+        view.contentMode = .scaleAspectFill
         return view
     }()
 
@@ -100,6 +100,7 @@ class SuccessViewController: BaseViewController {
         label.text = "지구를 위해 절약된"
         label.textColor = UIColor(hexCode: "464b4a")
         label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.textAlignment = .center
         return label
     }()
 
@@ -108,27 +109,47 @@ class SuccessViewController: BaseViewController {
         label.text = "탄소배출량"
         label.textColor = .white
         label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.textAlignment = .center
         return label
     }()
-    
 
     let carbonContainerView: UIView = {
         let container = UIView()
+        container.snp.makeConstraints { make in
+            make.height.equalTo(80)
+        }
 
+        // 첫 번째 숫자
         let firstDigitLabel = UILabel()
         firstDigitLabel.text = "9"
         firstDigitLabel.font = UIFont.boldSystemFont(ofSize: 40)
-        firstDigitLabel.textColor = .white
+        firstDigitLabel.textColor = .black
         firstDigitLabel.textAlignment = .center
+        firstDigitLabel.backgroundColor = .white
+        firstDigitLabel.layer.cornerRadius = 10
+        firstDigitLabel.layer.masksToBounds = true
         container.addSubview(firstDigitLabel)
 
+        // 두 번째 숫자
         let secondDigitLabel = UILabel()
         secondDigitLabel.text = "9"
         secondDigitLabel.font = UIFont.boldSystemFont(ofSize: 40)
-        secondDigitLabel.textColor = .white
+        secondDigitLabel.textColor = .black
         secondDigitLabel.textAlignment = .center
+        secondDigitLabel.backgroundColor = .white
+        secondDigitLabel.layer.cornerRadius = 10
+        secondDigitLabel.layer.masksToBounds = true
         container.addSubview(secondDigitLabel)
 
+        // 소수점
+        let decimalLabel = UILabel()
+        decimalLabel.text = "."
+        decimalLabel.font = UIFont.boldSystemFont(ofSize: 40)
+        decimalLabel.textColor = .black
+        decimalLabel.textAlignment = .center
+        container.addSubview(decimalLabel)
+
+        // kg 단위
         let unitLabel = UILabel()
         unitLabel.text = "kg"
         unitLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
@@ -136,16 +157,22 @@ class SuccessViewController: BaseViewController {
         unitLabel.textAlignment = .center
         container.addSubview(unitLabel)
 
+        // 레이아웃
         firstDigitLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.centerY.equalToSuperview()
-            make.width.equalTo(40)
+            make.width.height.equalTo(50)
+        }
+
+        decimalLabel.snp.makeConstraints { make in
+            make.leading.equalTo(firstDigitLabel.snp.trailing).offset(4)
+            make.centerY.equalToSuperview()
         }
 
         secondDigitLabel.snp.makeConstraints { make in
-            make.leading.equalTo(firstDigitLabel.snp.trailing).offset(8)
+            make.leading.equalTo(decimalLabel.snp.trailing).offset(4)
             make.centerY.equalToSuperview()
-            make.width.equalTo(40)
+            make.width.height.equalTo(50)
         }
 
         unitLabel.snp.makeConstraints { make in
@@ -160,7 +187,12 @@ class SuccessViewController: BaseViewController {
     let stepInfoContainerView: UIView = {
         let container = UIView()
         container.backgroundColor = UIColor.systemGray5
-        container.layer.cornerRadius = 8
+        container.layer.cornerRadius = 14
+        
+        let footprintView = UIImageView()
+        footprintView.image = UIImage(named: "footprint")
+        container.addSubview(footprintView)
+        
 
         let stepLabel = UILabel()
         stepLabel.text = "총 NKm 측정되었습니다."
@@ -169,19 +201,26 @@ class SuccessViewController: BaseViewController {
         container.addSubview(stepLabel)
 
         let checkmarkImageView = UIImageView()
-        checkmarkImageView.image = UIImage(systemName: "checkmark.circle.fill")
+        checkmarkImageView.image = UIImage(named: "check")
         checkmarkImageView.tintColor = UIColor.green
         container.addSubview(checkmarkImageView)
+        
+        
+        footprintView.snp.makeConstraints {
+            $0.leading.equalTo(container.snp.leading).inset(20)
+            $0.centerY.equalToSuperview()
+        }
+        
+        
 
         stepLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(12)
+            make.leading.equalTo(footprintView.snp.trailing).offset(12)
             make.centerY.equalToSuperview()
         }
 
         checkmarkImageView.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(12)
             make.centerY.equalToSuperview()
-            make.width.height.equalTo(25)
         }
 
         return container

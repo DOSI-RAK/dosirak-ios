@@ -174,22 +174,22 @@ class CreateChatRoomViewController: BaseViewController {
         }
 
         // API 호출
-        ChatRoomAPIManager.shared.createChatRoom(
-            title: title,
-            explanation: explanation,
-            zoneCategoryName: zoneCategoryName,
-            defaultImage: nil, // base64 이미지는 사용하지 않음
-            file: compressedImageData // 압축된 파일 데이터 전달
-        ) { [weak self] result in
-            switch result {
-            case .success(let response):
-                print("채팅방 생성 성공: \(response)")
-                self?.showAlert(message: "채팅방이 생성되었습니다.")
-            case .failure(let error):
-                print("채팅방 생성 실패: \(error.localizedDescription)")
-                self?.showAlert(message: "채팅방 생성에 실패했습니다.")
-            }
-        }
+//        ChatRoomAPIManager.shared.createChatRoom(
+//            title: title,
+//            explanation: explanation,
+//            zoneCategoryName: zoneCategoryName,
+//            defaultImage: nil, // base64 이미지는 사용하지 않음
+//            file: compressedImageData // 압축된 파일 데이터 전달
+//        ) { [weak self] result in
+//            switch result {
+//            case .success(let response):
+//                print("채팅방 생성 성공: \(response)")
+//                self?.showAlert(message: "채팅방이 생성되었습니다.")
+//            case .failure(let error):
+//                print("채팅방 생성 실패: \(error.localizedDescription)")
+//                self?.showAlert(message: "채팅방 생성에 실패했습니다.")
+//            }
+//        }
     }
     
     private func showAlert(message: String) {
