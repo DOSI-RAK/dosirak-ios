@@ -51,7 +51,7 @@ class SuccessViewController: BaseViewController {
         
         // 지구를 위해 절약된 텍스트
         earthLabel.snp.makeConstraints {
-            $0.top.equalTo(homeButton.snp.bottom).offset(20)
+            $0.top.equalTo(homeButton.snp.bottom).offset(30)
             $0.centerX.equalToSuperview()
         }
 
@@ -99,7 +99,7 @@ class SuccessViewController: BaseViewController {
         let label = UILabel()
         label.text = "지구를 위해 절약된"
         label.textColor = UIColor(hexCode: "464b4a")
-        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         label.textAlignment = .center
         return label
     }()
@@ -108,7 +108,7 @@ class SuccessViewController: BaseViewController {
         let label = UILabel()
         label.text = "탄소배출량"
         label.textColor = .white
-        label.font = UIFont.boldSystemFont(ofSize: 24)
+        label.font = UIFont.boldSystemFont(ofSize: 35)
         label.textAlignment = .center
         return label
     }()
@@ -144,7 +144,7 @@ class SuccessViewController: BaseViewController {
         // 소수점
         let decimalLabel = UILabel()
         decimalLabel.text = "."
-        decimalLabel.font = UIFont.boldSystemFont(ofSize: 40)
+        decimalLabel.font = UIFont.boldSystemFont(ofSize: 20)
         decimalLabel.textColor = .black
         decimalLabel.textAlignment = .center
         container.addSubview(decimalLabel)
@@ -215,7 +215,7 @@ class SuccessViewController: BaseViewController {
 
         stepLabel.snp.makeConstraints { make in
             make.leading.equalTo(footprintView.snp.trailing).offset(12)
-            make.centerY.equalToSuperview()
+            make.bottom.equalTo(footprintView.snp.bottom)
         }
 
         checkmarkImageView.snp.makeConstraints { make in

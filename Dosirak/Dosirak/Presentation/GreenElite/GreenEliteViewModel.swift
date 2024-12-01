@@ -80,10 +80,10 @@ class GreenEliteViewModel {
     }
     
     // Fetch problem detail
-    func fetchProblemDetail(problemId: Int) -> Single<Problem> {
+    func fetchProblemDetail(problemId: Int) -> Single<TodayProblem> {
         return provider.rx.request(.fetchProblemDetail(problemId: problemId))
             .filterSuccessfulStatusCodes()
-            .map(APIResponse<Problem>.self)
+            .map(APIResponse<TodayProblem>.self)
             .flatMap { response in
                 if response.status == "SUCCESS" {
                     return Single.just(response.data) // 직접 반환

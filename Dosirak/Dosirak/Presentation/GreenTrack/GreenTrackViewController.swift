@@ -272,11 +272,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             let distanceText = formatDistanceInKM(actualTravelDistance)
             print("최종 이동 거리: \(distanceText)")
 
-            //recordTrackData()
-            let vc = SuccessViewController()
-            //vc.navigationController?.navigationBar.isHidden = true
-            vc.modalPresentationStyle = .fullScreen
-            navigationController?.pushViewController(vc, animated: true)
+            recordTrackData()
         }
     }
     
@@ -389,18 +385,35 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             moveDistance: actualTravelDistance,
             storeName: destinationField.text ?? ""
         ) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let success):
                 if success {
-                    self?.showAlert(message: "이동 거리 기록 완료")
+                    // 성공: SuccessViewController로 이동
+                    DispatchQueue.main.async {
+                        let vc = SuccessViewController()
+                        vc.modalPresentationStyle = .fullScreen
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
                 } else {
-                    self?.showAlert(message: "이동 거리 기록 실패")
+                    // 실패 상태이지만 서버에서 에러 응답을 받지 않음
+                    DispatchQueue.main.async {
+                        let vc = ErrorViewController()
+                        vc.modalPresentationStyle = .fullScreen
+                        self.navigationController?.pushViewController(vc, animated: true)
+                    }
                 }
             case .failure(let error):
-                self?.showAlert(message: "오류 발생: \(error.localizedDescription)")
+                // 서버에서 오류 응답
+                DispatchQueue.main.async {
+                    let vc = ErrorViewController()
+                    vc.modalPresentationStyle = .fullScreen
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
             }
         }
     }
+
     
     
     
@@ -581,7 +594,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
 
     private let destinationField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "도착지"
+        textField.placeholder = "도착지를 입력하세요"
         textField.backgroundColor = UIColor.systemGray5
         textField.layer.cornerRadius = 8
         textField.font = UIFont.systemFont(ofSize: 14)

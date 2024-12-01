@@ -112,15 +112,20 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
             description1: NSMutableAttributedString()
                 .apply(text: "지구 온난화로 인한 서식지 감소로\n하프물범의 개체수가 지난 30년간\n", attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
-                    .foregroundColor: UIColor.darkGray
+                    .foregroundColor: UIColor.darkGray,
                 ])
+                .apply(text: "\n", attributes: [
+                    .font: UIFont.systemFont(ofSize: 16),
+                    .foregroundColor: UIColor.darkGray,
+                ])
+            
                 .apply(text: "약 50% ", attributes: [
-                    .font: UIFont.boldSystemFont(ofSize: 16),
+                    .font: UIFont.boldSystemFont(ofSize: 20),
                     .foregroundColor: UIColor.mainColor
                 ])
                 .apply(text: "감소했어요", attributes: [
                 .font: UIFont.systemFont(ofSize: 16),
-                .foregroundColor: UIColor.darkGray
+                .foregroundColor: UIColor.black
                 ]),
             description2: NSMutableAttributedString()
         )
@@ -129,17 +134,21 @@ class OnboardingViewController: UIPageViewController, UIPageViewControllerDataSo
             imageName: "onboarding2",
             title: "하프물범\n새봄이가",
             description1: NSMutableAttributedString()
-                .apply(text: "온전한 집을 찾을 수 있도록, ", attributes: [
+                .apply(text: "온전한 집을 찾을 수 있도록, \n", attributes: [
                     .font: UIFont.systemFont(ofSize: 16),
-                    .foregroundColor: UIColor.darkGray
+                    .foregroundColor: UIColor.darkGray,
+                ])
+                .apply(text: "\n", attributes: [
+                    .font: UIFont.systemFont(ofSize: 16),
+                    .foregroundColor: UIColor.darkGray,
                 ])
                 .apply(text: "다회용기 사용 실천 ", attributes: [
-                    .font: UIFont.boldSystemFont(ofSize: 16),
+                    .font: UIFont.boldSystemFont(ofSize: 20),
                     .foregroundColor: UIColor.mainColor
                 ])
                 .apply(text: "해보는건 어떨까요?", attributes: [
-                    .font: UIFont.systemFont(ofSize: 16),
-                    .foregroundColor: UIColor.darkGray
+                    .font: UIFont.boldSystemFont(ofSize: 16),
+                    .foregroundColor: UIColor.black
                 ]),
             description2: NSMutableAttributedString()
         )

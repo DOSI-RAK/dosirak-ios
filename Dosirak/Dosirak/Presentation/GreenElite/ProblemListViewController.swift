@@ -9,10 +9,17 @@ import RxSwift
 import RxCocoa
 import SnapKit
 
+enum correctType {
+    case correct
+    case incorrect
+}
+
 class ProblemListViewController: UIViewController, UITableViewDelegate {
     
     private let disposeBag = DisposeBag()
     private let viewModel = GreenEliteViewModel()
+    
+    var type: correctType = .correct
     
     // UI Components
     private let tableView = UITableView(frame: .zero, style: .plain)
@@ -109,6 +116,7 @@ class ProblemListViewController: UIViewController, UITableViewDelegate {
             .subscribe(onNext: { [weak self] in
                 self?.updateButtonUI(selectedButton: self?.correctButton, deselectedButton: self?.incorrectButton)
                 self?.currentProblems.accept(self?.correctProblems.value ?? [])
+                self?.type = .correct
             })
             .disposed(by: disposeBag)
         
@@ -116,6 +124,7 @@ class ProblemListViewController: UIViewController, UITableViewDelegate {
             .subscribe(onNext: { [weak self] in
                 self?.updateButtonUI(selectedButton: self?.incorrectButton, deselectedButton: self?.correctButton)
                 self?.currentProblems.accept(self?.incorrectProblems.value ?? [])
+                self?.type = .incorrect
             })
             .disposed(by: disposeBag)
     }
@@ -129,12 +138,20 @@ class ProblemListViewController: UIViewController, UITableViewDelegate {
     }
     
     private func setupTableViewDelegate() {
-        tableView.delegate = self // Assigning the delegate
+        tableView.delegate = self
         
         tableView.rx.modelSelected(Problem.self)
             .subscribe(onNext: { [weak self] selectedProblem in
-                print("tapped")
-                self?.navigationController?.pushViewController(ProblemDetailViewController(), animated: true)
+                guard let self = self else { return }
+                // ProblemDetailViewController 생성 및 문제 ID 전달
+                let detailVC = ProblemDetailViewController()
+                detailVC.configure(with: selectedProblem.problemId)
+                if type == .correct {
+                    detailVC.correctAnswer = true
+                } else {
+                    detailVC.correctAnswer = false
+                }
+                self.navigationController?.pushViewController(detailVC, animated: true)
             })
             .disposed(by: disposeBag)
     }

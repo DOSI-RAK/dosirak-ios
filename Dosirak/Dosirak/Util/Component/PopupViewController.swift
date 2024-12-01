@@ -8,135 +8,116 @@
 import UIKit
 import SnapKit
 
-class PopupViewController: UIViewController {
+class CustomPopupViewController: UIViewController {
+
+    // MARK: - Properties
+    private let titleLabel = UILabel()
+    private let messageLabel = UILabel()
+    private let cancelButton = UIButton()
+    private let confirmButton = UIButton()
+
+    private var confirmAction: (() -> Void)?
+    private var cancelAction: (() -> Void)?
     
-    private let containerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 12
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.layer.shadowRadius = 4
-        return view
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 17)
-        label.textAlignment = .center
-        label.textColor = .red
-        return label
-    }()
-    
-    private let subtitleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 15)
-        label.textAlignment = .center
-        label.textColor = .gray
-        label.numberOfLines = 0
-        return label
-    }()
-    
-    private let firstButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("취소", for: .normal)
-        button.backgroundColor = .mainColor
-        button.setTitleColor(.white, for: .normal)
-        button.layer.cornerRadius = 10
-        return button
-    }()
-    
-    private let secondButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("채팅방 나가기", for: .normal)
-        button.backgroundColor = .bgColor
-        button.setTitleColor(.black, for: .normal)
-        button.layer.cornerRadius = 10
-        return button
-    }()
-    
-    // 초기화 메서드
-    init(title: String, subtitle: String) {
+    // MARK: - Initializer
+    init(title: String, message: String, confirmButtonText: String, cancelButtonText: String, confirmAction: (() -> Void)?, cancelAction: (() -> Void)? = nil) {
         super.init(nibName: nil, bundle: nil)
-        titleLabel.text = title
-        subtitleLabel.text = subtitle
+        self.titleLabel.text = title
+        self.messageLabel.text = message
+        self.confirmButton.setTitle(confirmButtonText, for: .normal)
+        self.cancelButton.setTitle(cancelButtonText, for: .normal)
+        self.confirmAction = confirmAction
+        self.cancelAction = cancelAction
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.5) // 배경을 어둡게 설정
-        setupUI()
+        setupView()
     }
-    
-    private func setupUI() {
-        view.addSubview(containerView)
-        containerView.addSubview(titleLabel)
-        containerView.addSubview(subtitleLabel)
-        containerView.addSubview(firstButton)
-        containerView.addSubview(secondButton)
-        
-        // 컨테이너 뷰 레이아웃 설정
-        containerView.snp.makeConstraints { make in
-            make.center.equalToSuperview() // 중앙에 위치
-            make.width.equalTo(300) // 가로 폭
-            make.height.greaterThanOrEqualTo(200) // 높이
+
+    // MARK: - Setup UI
+    private func setupView() {
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+
+        // Popup container
+        let popupContainer = UIView()
+        popupContainer.backgroundColor = .white
+        popupContainer.layer.cornerRadius = 16
+        popupContainer.clipsToBounds = true
+        view.addSubview(popupContainer)
+
+        // Title label
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        titleLabel.textColor = .red
+        titleLabel.textAlignment = .center
+        popupContainer.addSubview(titleLabel)
+
+        // Message label
+        messageLabel.font = UIFont.systemFont(ofSize: 14)
+        messageLabel.textColor = .darkGray
+        messageLabel.textAlignment = .center
+        messageLabel.numberOfLines = 0
+        popupContainer.addSubview(messageLabel)
+
+        // Buttons
+        popupContainer.addSubview(cancelButton)
+        popupContainer.addSubview(confirmButton)
+
+        // Cancel button style
+        cancelButton.backgroundColor = UIColor.mainColor
+        cancelButton.setTitleColor(.white, for: .normal)
+        cancelButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        cancelButton.layer.cornerRadius = 10
+        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
+
+        // Confirm button style
+        confirmButton.backgroundColor = UIColor.systemGray5
+        confirmButton.setTitleColor(.darkGray, for: .normal)
+        confirmButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        confirmButton.layer.cornerRadius = 10
+        confirmButton.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+
+        // Layout
+        popupContainer.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.8)
         }
-        
-        // titleLabel 레이아웃 설정
+
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(containerView).offset(20)
+            make.top.equalToSuperview().offset(20)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-        
-        // subtitleLabel 레이아웃 설정
-        subtitleLabel.snp.makeConstraints { make in
+
+        messageLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(16)
         }
-        
-        // 첫 번째 버튼 레이아웃 설정
-        firstButton.snp.makeConstraints { make in
-            make.top.equalTo(subtitleLabel.snp.bottom).offset(20)
+
+        cancelButton.snp.makeConstraints { make in
+            make.top.equalTo(messageLabel.snp.bottom).offset(20)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(50) // 버튼 높이
+            make.height.equalTo(44)
         }
-        
-        // 두 번째 버튼 레이아웃 설정
-        secondButton.snp.makeConstraints { make in
-            make.top.equalTo(firstButton.snp.bottom).offset(10)
+
+        confirmButton.snp.makeConstraints { make in
+            make.top.equalTo(cancelButton.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview().inset(16)
-            make.height.equalTo(50) // 버튼 높이
-            make.bottom.equalTo(containerView).offset(-20) // 컨테이너 뷰 아래쪽 여백
+            make.height.equalTo(44)
+            make.bottom.equalToSuperview().offset(-20)
         }
-        
-        // 버튼 동작 설정
-        firstButton.addTarget(self, action: #selector(firstButtonTapped), for: .touchUpInside)
-        secondButton.addTarget(self, action: #selector(secondButtonTapped), for: .touchUpInside)
     }
-    
-    @objc private func firstButtonTapped() {
-        // 버튼 1 클릭 시 동작
-        print("버튼 1 클릭됨")
-        dismiss(animated: true, completion: nil)
+
+    // MARK: - Actions
+    @objc private func cancelButtonTapped() {
+        dismiss(animated: true, completion: cancelAction)
     }
-    
-    @objc private func secondButtonTapped() {
-        // 버튼 2 클릭 시 동작
-        print("버튼 2 클릭됨")
-        dismiss(animated: true, completion: nil)
-    }
-    
-    // 모달 표시 메서드
-    func presentPopup(from viewController: UIViewController) {
-        viewController.present(self, animated: true, completion: nil)
+
+    @objc private func confirmButtonTapped() {
+        dismiss(animated: true, completion: confirmAction)
     }
 }
-
-// 사용 예
-// let popupVC = PopupViewController(title: "제목", subtitle: "부제목")
-// popupVC.presentPopup(from: self) // 현재 뷰 컨트롤러에서 팝업 표시
