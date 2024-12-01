@@ -60,8 +60,6 @@ class CustomPopupViewController: UIViewController {
         // Message label
         messageLabel.font = UIFont.systemFont(ofSize: 14)
         messageLabel.textColor = .darkGray
-        messageLabel.textAlignment = .center
-        messageLabel.numberOfLines = 0
         popupContainer.addSubview(messageLabel)
 
         // Buttons
@@ -81,11 +79,13 @@ class CustomPopupViewController: UIViewController {
         confirmButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         confirmButton.layer.cornerRadius = 10
         confirmButton.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+        messageLabel.numberOfLines = 3
 
         // Layout
         popupContainer.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.width.equalTo(320)
+            make.height.equalTo(220)
         }
 
         titleLabel.snp.makeConstraints { make in

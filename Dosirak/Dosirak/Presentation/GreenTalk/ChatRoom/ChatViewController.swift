@@ -90,11 +90,12 @@ class ChatViewController: UIViewController {
         let rightBarButton = UIBarButtonItem(
             image: UIImage(named: "exit"),
             style: .plain,
-            target: nil,
-            action: nil
+            target: self,
+            action: #selector(didTapExitButton)
         )
         
         navigationItem.rightBarButtonItem = rightBarButton
+        navigationItem.rightBarButtonItem?.tintColor = .lightGray
         //navigationController?.navigationBar.tintColor = .bgColor
         // Reactor를 이용한 버튼 클릭 액션 바인딩
 //        rightBarButton.rx.tap
@@ -233,5 +234,23 @@ class ChatViewController: UIViewController {
         
         let indexPath = IndexPath(row: lastRowIndex, section: lastSectionIndex)
         tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+    }
+    
+    @objc private func didTapExitButton() {
+        let popupVC = CustomPopupViewController(
+            title: "잠시만요!",
+            message: "채팅방을 나간 이후에는 기록이 모두 삭제되며, 복구가 불가능합니다.",
+            confirmButtonText: "채팅방 나가기",
+            cancelButtonText: "취소",
+            confirmAction: { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            },
+            cancelAction: {
+                print("취소 버튼 클릭")
+            }
+        )
+        popupVC.modalPresentationStyle = .overFullScreen
+        popupVC.modalTransitionStyle = .crossDissolve
+        present(popupVC, animated: true)
     }
 }

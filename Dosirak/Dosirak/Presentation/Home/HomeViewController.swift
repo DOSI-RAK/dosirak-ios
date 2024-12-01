@@ -151,16 +151,21 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
     }
     
     private func showLoginAlert() {
-        let alert = UIAlertController(
-            title: "로그인이 필요합니다",
+        let popupVC = CustomPopupViewController(
+            title: "로그인",
             message: "이 기능을 사용하려면 로그인이 필요합니다.",
-            preferredStyle: .alert
+            confirmButtonText: "로그인",
+            cancelButtonText: "취소",
+            confirmAction: { [weak self] in
+                self?.navigateToLogin()
+            },
+            cancelAction: {
+                print("취소 버튼이 눌렸습니다!")
+            }
         )
-        alert.addAction(UIAlertAction(title: "취소", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(title: "로그인", style: .default) { [weak self] _ in
-            self?.navigateToLogin()
-        })
-        present(alert, animated: true)
+        popupVC.modalPresentationStyle = .overFullScreen
+        popupVC.modalTransitionStyle = .crossDissolve
+        present(popupVC, animated: true)
     }
     
     private func navigateToLogin() {

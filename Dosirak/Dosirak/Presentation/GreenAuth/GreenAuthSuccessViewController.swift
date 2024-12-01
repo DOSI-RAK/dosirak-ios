@@ -64,17 +64,6 @@ class GreenAuthSuccessViewController: UIViewController {
         return label
     }()
     
-    private let rewardLabel: UILabel = {
-        let label = UILabel()
-        label.text = "현재 리워드: 000exp."
-        label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .black
-        label.textAlignment = .center
-        label.backgroundColor = UIColor(hexCode: "ededed")
-        label.clipsToBounds = true
-        label.layer.cornerRadius = 15
-        return label
-    }()
     
     private let confirmButton: UIButton = {
         let button = UIButton()
@@ -91,7 +80,7 @@ class GreenAuthSuccessViewController: UIViewController {
         view.backgroundColor = .white
         setupViews()
         setupConstraints()
-        expLabel.text = "\(expPoints) exp. 획득!"
+        expLabel.text = "10 exp. 획득!"
         if let gifUrl = Bundle.main.url(forResource: "coin_animation", withExtension: "gif"),
            let gifData = try? Data(contentsOf: gifUrl) {
             imageView.image = UIImage.gif(data: gifData)
@@ -105,7 +94,7 @@ class GreenAuthSuccessViewController: UIViewController {
         view.addSubview(imageView)
         view.addSubview(messageLabel)
         view.addSubview(expLabel)
-        view.addSubview(rewardLabel)
+       
         view.addSubview(confirmButton)
         
         
@@ -128,12 +117,7 @@ class GreenAuthSuccessViewController: UIViewController {
             make.centerX.equalToSuperview()
         }
         
-        rewardLabel.snp.makeConstraints { make in
-            make.top.equalTo(expLabel.snp.bottom).offset(10)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(30)
-            make.width.equalTo(130)
-        }
+        
         
         confirmButton.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide).offset(-20)

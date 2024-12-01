@@ -33,6 +33,19 @@ class StoreDetailViewController: UIViewController {
         setupLayout()
         setupFloatingPackageButton()
         bind(reactor: reactor!)
+        
+        packageButton.addTarget(self, action: #selector(handlePackageButtonTap), for: .touchUpInside)
+        arriveButton.addTarget(self, action: #selector(handleArriveButtonTap), for: .touchUpInside)
+    }
+    
+    @objc private func handlePackageButtonTap() {
+        let greenAuthVC = GreenAuthViewController()
+        navigationController?.pushViewController(greenAuthVC, animated: true)
+    }
+
+    @objc private func handleArriveButtonTap() {
+        let greenTrackVC = GreenTrackViewController()
+        navigationController?.pushViewController(greenTrackVC, animated: true)
     }
     
     init(storeId: Int, reactor: GreenGuideReactor) {
