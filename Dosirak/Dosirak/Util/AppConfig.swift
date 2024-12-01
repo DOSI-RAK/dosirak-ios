@@ -21,4 +21,7 @@ struct AppConfig {
     @InfoPlist("NAVER_MAP_SECRET")
     static var naverMapSecret: String?
     
+    @InfoPlist("STORY_APP_ID")
+    static var instaAppId: String?
+    
 }

@@ -35,12 +35,29 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         setupViews()
         setupConstraints()
         
+        let shareButton = UIBarButtonItem(
+            image: UIImage(systemName: "square.and.arrow.up"),
+            style: .plain,
+            target: self,
+            action: #selector(didTapShareButton)
+        )
+        navigationItem.rightBarButtonItem = shareButton
+        navigationItem.rightBarButtonItem?.tintColor = .black
+        
         DispatchQueue.main.async {
         
             self.loadTodayCommits()
             self.loadMonthlyCommits(for: Date())
         }
         
+    }
+    
+    @objc private func didTapShareButton() {
+        guard let capturedImage = captureView(view: collectionView) else {
+            print("화면 캡처에 실패했습니다.")
+            return
+        }
+        shareToInstagramStory(image: capturedImage)
     }
     private func setupViews() {
         view.backgroundColor = .bgColor
@@ -129,7 +146,7 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         let pasteboardItems: [[String: Any]] = [
             [
                 "com.instagram.sharedSticker.backgroundImage": image.pngData()!,
-                "com.instagram.sharedSticker.appID": "YOUR_APP_ID" // 앱 ID (Facebook 개발자 콘솔에서 생성)
+                "com.instagram.sharedSticker.appID": AppConfig.instaAppId! // 앱 ID (Facebook 개발자 콘솔에서 생성)
             ]
         ]
         
@@ -141,7 +158,8 @@ class GreenCommitViewController: UIViewController, UICollectionViewDelegate, UIC
         UIPasteboard.general.setItems(pasteboardItems, options: pasteboardOptions)
         
         // Instagram 스토리 열기
-        let instagramURL = URL(string: "instagram-stories://share")!
+        let instagramURL = URL(string:  "instagram-stories://share?source_application=" +
+                               AppConfig.instaAppId!)!
         if UIApplication.shared.canOpenURL(instagramURL) {
             UIApplication.shared.open(instagramURL, options: [:], completionHandler: nil)
         } else {
