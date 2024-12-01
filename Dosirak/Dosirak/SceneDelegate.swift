@@ -11,6 +11,7 @@ import KakaoSDKAuth
 import NaverThirdPartyLogin
 
 
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -27,24 +28,35 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         self.window = window
         appCoordinator.start(window: window)
 
+        // UINavigationBar Appearance 설정
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .bgColor
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        appearance.backgroundColor = .bgColor // 네비게이션 바 배경색
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.black] // 기본 제목 색상
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black] // 큰 제목 색상
 
+        // 뒤로가기 버튼 아이콘 설정
+        let backImage = UIImage(systemName: "chevron.left") // 원하는 아이콘
+        backImage?.withTintColor(.black)
+        appearance.setBackIndicatorImage(backImage, transitionMaskImage: backImage)
+
+        // Appearance 적용
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().compactAppearance = appearance
+
+        // 네비게이션 바 투명도 설정
         UINavigationBar.appearance().isTranslucent = false
 
-        let backImage = UIImage(systemName: "chevron.left")
-        UINavigationBar.appearance().backIndicatorImage = backImage
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = backImage
-        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(UIOffset(horizontal: -1000, vertical: 0), for: .default)
+        // 뒤로가기 버튼 텍스트 숨기기
+        UIBarButtonItem.appearance().setBackButtonTitlePositionAdjustment(
+            UIOffset(horizontal: -1000, vertical: 0),
+            for: .default
+        )
 
         window.makeKeyAndVisible()
     }
+
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if (AuthApi.isKakaoTalkLoginUrl(url)) {

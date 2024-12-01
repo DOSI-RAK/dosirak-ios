@@ -104,7 +104,10 @@ class GreenGuideViewController: UIViewController {
     
     private func setupLayout() {
         mapView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            //$0.edges.equalToSuperview()
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(self.view.frame.height / 2 - 25 )
         }
         
         overlayView.snp.makeConstraints {
@@ -134,10 +137,18 @@ class GreenGuideViewController: UIViewController {
         }
         
         myLocationButton.snp.makeConstraints {
-            $0.leading.equalTo(view).inset(20)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(20) // 지도 위 아래쪽에 고정
+            $0.leading.equalTo(view).inset(15)
+            $0.bottom.equalTo(mapView.snp.bottom).inset(10) // 지도 위 아래쪽에 고정
             $0.width.height.equalTo(52)
         }
+        searchTextField.rx.text.orEmpty
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance) // 입력 후 300ms 대기
+            .distinctUntilChanged()
+            .map { query in
+                query.isEmpty ? GreenGuideReactor.Action.loadAllStores : GreenGuideReactor.Action.searchStores(query)
+            }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     

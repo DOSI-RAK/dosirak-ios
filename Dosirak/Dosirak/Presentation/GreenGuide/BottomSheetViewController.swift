@@ -42,30 +42,41 @@ class BottomSheetViewController: UIViewController, View {
     }
     
     func bind(reactor: GreenGuideReactor) {
-        reactor.state
-            .map { state -> [Store] in
-                state.selectedCategory == "전체" ? state.stores : state.categoryStores
-            }
-            .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
-                // 강남역 기준 거리 계산
-                let coordinate = AppSettings.userLocation
-                let distance = self.haversineDistance(
-                    lat1: coordinate.latitude,
-                    lon1: coordinate.longitude,
-                    lat2: store.mapY,
-                    lon2: store.mapX
-                ) / 1000.0
-                
-                cell.configure(store: store, distance: distance)
-            }
-            .disposed(by: disposeBag)
-        
-        tableView.rx
-            .modelSelected(Store.self)
-            .bind(to: storeSelected)
-            .disposed(by: disposeBag)
-        
-    }
+           // Reactor 상태의 검색 결과와 일반 리스트를 합쳐서 테이블 뷰에 바인딩
+           Observable.combineLatest(
+               reactor.state.map { $0.searchResults },   // 검색 결과
+               reactor.state.map { $0.stores },         // 전체 상점 리스트
+               reactor.state.map { $0.categoryStores }, // 카테고리별 상점 리스트
+               reactor.state.map { $0.selectedCategory } // 선택된 카테고리
+           )
+           .map { searchResults, stores, categoryStores, selectedCategory -> [Store] in
+               if !searchResults.isEmpty {
+                   // 검색어가 있을 때는 검색 결과만 반환
+                   return searchResults
+               } else {
+                   // 검색어가 없을 때는 카테고리에 따라 리스트 반환
+                   return selectedCategory == "전체" ? stores : categoryStores
+               }
+           }
+           .bind(to: tableView.rx.items(cellIdentifier: StoreTableViewCell.identifier, cellType: StoreTableViewCell.self)) { index, store, cell in
+               // 강남역 기준 거리 계산
+               let coordinate = AppSettings.userLocation
+               let distance = self.haversineDistance(
+                   lat1: coordinate.latitude,
+                   lon1: coordinate.longitude,
+                   lat2: store.mapY,
+                   lon2: store.mapX
+               ) / 1000.0
+               
+               cell.configure(store: store, distance: distance)
+           }
+           .disposed(by: disposeBag)
+           
+           tableView.rx
+               .modelSelected(Store.self)
+               .bind(to: storeSelected)
+               .disposed(by: disposeBag)
+       }
     func haversineDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double) -> Double {
         let radius: Double = 6371000
         

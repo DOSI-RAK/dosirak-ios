@@ -113,6 +113,10 @@ class GreenGuideReactor: Reactor {
             ])
             
         case .searchStores(let query):
+            if query.isEmpty {
+                // 검색어가 비었을 때 검색 결과 초기화
+                return Observable.just(Mutation.setSearchResults([]))
+            }
             return Observable.concat([
                 Observable.just(Mutation.setLoading(true)),
                 useCase.searchStores(query: query)
