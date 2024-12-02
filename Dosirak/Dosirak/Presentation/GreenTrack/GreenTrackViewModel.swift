@@ -48,7 +48,7 @@ class GreenTrackViewModel {
     }
     
     /// 이동 데이터를 서버에 기록합니다.
-    func recordTrackData(accessToken: String, shortestDistance: Double, moveDistance: Double, storeName: String, completion: @escaping (Result<Bool, Error>) -> Void) {
+    func recordTrackData(accessToken: String, shortestDistance: Decimal, moveDistance: Decimal, storeName: String, completion: @escaping (Result<Bool, Error>) -> Void) {
         print("🚀 [TrackAPI.recordTrackData] Recording track data...")
         print("🔑 Access Token: \(accessToken)")
         print("📏 Shortest Distance: \(shortestDistance), Move Distance: \(moveDistance)")
@@ -64,7 +64,8 @@ class GreenTrackViewModel {
                 } catch {
                     print("⚠️ [TrackAPI.recordTrackData] Response JSON parsing skipped.")
                 }
-                if response.statusCode == 200 {
+                // 200번대 상태 코드 확인
+                if (200...299).contains(response.statusCode) {
                     print("✅ [TrackAPI.recordTrackData] Track data recorded successfully.")
                     completion(.success(true))
                 } else {

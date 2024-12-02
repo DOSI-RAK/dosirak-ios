@@ -10,7 +10,7 @@ import UIKit
 
 enum TrackAPI {
     case fetchBicycle(accessToken: String, latitude: Double,longitude: Double)
-    case recordTrackData(accessToken: String, shortestDistance: Double, moveDistance: Double, storeName: String)
+    case recordTrackData(accessToken: String, shortestDistance: Decimal, moveDistance: Decimal, storeName: String)
 }
 
 

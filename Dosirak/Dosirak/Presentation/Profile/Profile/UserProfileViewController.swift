@@ -39,7 +39,7 @@ class UserProfileViewController: BaseViewController {
         viewModel.fetchUserProfile(accessToken: token)
             .subscribe(onSuccess: { userProfile in
                 print(userProfile)
-                self.userNameLabel.text = userProfile.nickName
+                self.userNameLabel.text = UserInfo.nickName
                 UserInfo.nickName = userProfile.nickName ?? ""
                 self.updateScore(userProfile.reward)
             }, onFailure: { error in
