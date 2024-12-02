@@ -14,15 +14,16 @@ class ListCell: UICollectionViewCell {
     private let iconImageView = UIImageView()
     private let titleLabel = UILabel()
     private let subTitleLabel = UILabel()
+    private let arrowView = UIImageView(image: UIImage(systemName: "chevron.right"))
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         layer.cornerRadius = 12
-                layer.shadowColor = UIColor.black.cgColor
-                layer.shadowOpacity = 0.1
-                layer.shadowOffset = CGSize(width: 0, height: 4)
-                layer.shadowRadius = 8
-                layer.masksToBounds = false
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.1
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 8
+        layer.masksToBounds = false
         setupUI()
     }
 
@@ -34,6 +35,11 @@ class ListCell: UICollectionViewCell {
         contentView.addSubview(iconImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(subTitleLabel)
+        contentView.addSubview(arrowView)
+        arrowView.tintColor = .black
+        
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        subTitleLabel.font = UIFont.systemFont(ofSize: 16)
         
         iconImageView.snp.makeConstraints {
             $0.centerY.equalTo(self)
@@ -45,13 +51,18 @@ class ListCell: UICollectionViewCell {
         titleLabel.textColor = .black
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(self).inset(10)
-            $0.leading.equalTo(iconImageView.snp.trailing).offset(10)
+            $0.leading.equalTo(iconImageView.snp.trailing).offset(30)
             
         }
         subTitleLabel.snp.makeConstraints {
             $0.leading.equalTo(titleLabel)
             $0.trailing.equalTo(self)
             $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+        }
+        
+        arrowView.snp.makeConstraints {
+            $0.centerY.equalTo(self)
+            $0.trailing.equalTo(self).inset(20)
         }
     }
     
