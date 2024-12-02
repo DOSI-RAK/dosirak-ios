@@ -26,6 +26,8 @@ extension CLPlacemark {
 
 
 class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+    
+    var destination: String?
 
     private let locationManager = CLLocationManager()
     private var userCoordinate: CLLocationCoordinate2D?
@@ -58,6 +60,10 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         setupLayout()
         setupLocationManager()
         mapView.delegate = self
+        
+        if let destination = destination {
+            destinationField.text = destination
+        }
     }
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)

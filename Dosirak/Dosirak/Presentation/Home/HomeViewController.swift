@@ -319,7 +319,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
             let gridWidth = (width - 48) / 2 - 10
             return CGSize(width: gridWidth, height: 130)
         case 2: // 세 번째 섹션 (List Section)
-            return CGSize(width: width - 32, height: 60)
+            return CGSize(width: width - 32, height: 70)
         default:
             return CGSize(width: width - 32, height: 60) // 기본값
         }
@@ -331,7 +331,7 @@ class HomeViewController: BaseViewController, UICollectionViewDelegateFlowLayout
         case 1: // 두 번째 섹션
             return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         case 2: // 세 번째 섹션 (List Section)
-            return UIEdgeInsets(top: 20, left: 16, bottom: 10, right: 16)
+            return UIEdgeInsets(top: 5, left: 16, bottom: 10, right: 16)
         default:
             return UIEdgeInsets(top: 20, left: 20, bottom: 10, right: 20)
         }

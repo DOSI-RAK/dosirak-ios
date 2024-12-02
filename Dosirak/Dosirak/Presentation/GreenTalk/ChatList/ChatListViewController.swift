@@ -41,7 +41,7 @@ class ChatListViewController: BaseViewController {
         super.viewWillAppear(animated)
         //navigationController?.setNavigationBarHidden(true, animated: false)
         reactor?.action.onNext(.loadChatRoomSummary)
-        reactor?.action.onNext(.loadNearbyChatRooms("청담동"))
+        reactor?.action.onNext(.loadNearbyChatRooms("역삼동"))
         
     }
     override func setupView() {
@@ -128,7 +128,7 @@ class ChatListViewController: BaseViewController {
     func bind(reactor: ChatListReactor) {
        
         reactor.action.onNext(.loadChatRoomSummary)
-        reactor.action.onNext(.loadNearbyChatRooms("청담동"))
+        reactor.action.onNext(.loadNearbyChatRooms("역삼1동"))
         
 
         reactor.state.map { $0.chatRoomSummary }
