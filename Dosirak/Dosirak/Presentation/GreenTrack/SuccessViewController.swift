@@ -10,6 +10,9 @@ import ImageIO
 
 class SuccessViewController: BaseViewController {
     
+    var measuredDistance: Double = 0.0
+    let carEmissionPerKm: Double = 0.12 // 자동차 CO2 배출량 (kg/km)
+
     let coordinator = AppCoordinator()
 
     override func viewDidLoad() {
@@ -19,7 +22,7 @@ class SuccessViewController: BaseViewController {
         // GIF 파일 로드 및 설정
         if let gifUrl = Bundle.main.url(forResource: "success", withExtension: "gif"),
            let gifData = try? Data(contentsOf: gifUrl) {
-            backgroundGIF.image = UIImage.gif(data: gifData) // GIF를 UIImageView에 설정
+            backgroundGIF.image = UIImage.gif(data: gifData)
         } else {
             print("GIF 파일을 찾을 수 없거나 로드할 수 없습니다.")
         }
@@ -34,46 +37,55 @@ class SuccessViewController: BaseViewController {
         view.addSubview(stepInfoContainerView)
         
         homeButton.addTarget(self, action: #selector(goHome), for: .touchUpInside)
+        
+        if let stepLabel = stepInfoContainerView.subviews.compactMap({ $0 as? UILabel }).first {
+            stepLabel.text = String(format: "총 %.2f Km 측정되었습니다.", measuredDistance)
+        }
+
+        let carbonLabels = carbonContainerView.subviews.compactMap { $0 as? UILabel }
+        if carbonLabels.count >= 2 {
+            let carbonSaved = calculateCarbonSaved() // 탄소 배출량 절약 계산
+            carbonLabels[0].text = String(format: "%.0f", floor(carbonSaved)) // 첫째 자리
+            carbonLabels[1].text = String(format: "%.0f", floor(carbonSaved * 10).truncatingRemainder(dividingBy: 10)) // 둘째 자리
+        }
     }
 
     override func setupLayout() {
-        // GIF 백그라운드 설정
         backgroundGIF.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
         
-        // 홈 버튼 설정
         homeButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
             $0.trailing.equalToSuperview().inset(20)
             $0.width.height.equalTo(40)
         }
         
-        // 지구를 위해 절약된 텍스트
         earthLabel.snp.makeConstraints {
             $0.top.equalTo(homeButton.snp.bottom).offset(30)
             $0.centerX.equalToSuperview()
         }
 
-        // 탄소배출량 텍스트
         emitLabel.snp.makeConstraints {
             $0.top.equalTo(earthLabel.snp.bottom).offset(10)
             $0.centerX.equalToSuperview()
         }
 
-        // 중앙 탄소 배출량 디지털 카운터
         carbonContainerView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(210)
             $0.height.equalTo(100)
         }
 
-        // 하단 스텝 정보 컨테이너
         stepInfoContainerView.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaLayoutGuide).offset(-40)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(40)
         }
+    }
+
+    private func calculateCarbonSaved() -> Double {
+        return measuredDistance * carEmissionPerKm
     }
 
     @objc func goHome() {
@@ -115,13 +127,10 @@ class SuccessViewController: BaseViewController {
 
     let carbonContainerView: UIView = {
         let container = UIView()
-        container.snp.makeConstraints { make in
-            make.height.equalTo(80)
-        }
 
         // 첫 번째 숫자
         let firstDigitLabel = UILabel()
-        firstDigitLabel.text = "9"
+        firstDigitLabel.text = "0"
         firstDigitLabel.font = UIFont.boldSystemFont(ofSize: 40)
         firstDigitLabel.textColor = .black
         firstDigitLabel.textAlignment = .center
@@ -132,7 +141,7 @@ class SuccessViewController: BaseViewController {
 
         // 두 번째 숫자
         let secondDigitLabel = UILabel()
-        secondDigitLabel.text = "9"
+        secondDigitLabel.text = "0"
         secondDigitLabel.font = UIFont.boldSystemFont(ofSize: 40)
         secondDigitLabel.textColor = .black
         secondDigitLabel.textAlignment = .center
@@ -192,7 +201,6 @@ class SuccessViewController: BaseViewController {
         let footprintView = UIImageView()
         footprintView.image = UIImage(named: "footprint")
         container.addSubview(footprintView)
-        
 
         let stepLabel = UILabel()
         stepLabel.text = "총 NKm 측정되었습니다."
@@ -204,14 +212,11 @@ class SuccessViewController: BaseViewController {
         checkmarkImageView.image = UIImage(named: "check")
         checkmarkImageView.tintColor = UIColor.green
         container.addSubview(checkmarkImageView)
-        
-        
+
         footprintView.snp.makeConstraints {
             $0.leading.equalTo(container.snp.leading).inset(20)
             $0.centerY.equalToSuperview()
         }
-        
-        
 
         stepLabel.snp.makeConstraints { make in
             make.leading.equalTo(footprintView.snp.trailing).offset(12)

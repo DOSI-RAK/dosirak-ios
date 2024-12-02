@@ -11,6 +11,11 @@ import CoreLocation
 import RxSwift
 import RxCocoa
 
+extension Decimal {
+    var doubleValue: Double {
+        return NSDecimalNumber(decimal: self).doubleValue
+    }
+}
 
 extension CLPlacemark {
     var compactAddress: String? {
@@ -174,7 +179,10 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             return
         }
 
-        searchDestination(query: destination)
+        searchDestination(query: destination) { [weak self] success in
+               guard let self = self, success else { return }
+               self.compareWalkingAndCyclingTimes()
+           }
     }
     private func formatDistanceInKM(_ distanceInMeters: Double) -> String {
         let distanceInKM = distanceInMeters / 1000.0
@@ -182,7 +190,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
     }
 
 
-    private func searchDestination(query: String) {
+    private func searchDestination(query: String, completion: @escaping (Bool) -> Void) {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         request.region = mapView.region
@@ -191,12 +199,15 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         search.start { [weak self] response, error in
             guard let self = self, let response = response, let mapItem = response.mapItems.first else {
                 self?.showAlert(message: "도착지를 찾을 수 없습니다.")
+                completion(false)
                 return
             }
 
             self.destinationCoordinate = mapItem.placemark.coordinate
             self.addMarker(at: self.destinationCoordinate!, title: "도착지")
             self.drawWalkingRoute()
+            
+            completion(true) // 목적지 좌표를 설정하고 성공 처리
         }
     }
     private func updateUserLocationPlaceholder() {
@@ -356,7 +367,7 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             
             let annotation = MKPointAnnotation()
             annotation.coordinate = CLLocationCoordinate2D(latitude: bicycle.latitude, longitude: bicycle.longitude)
-            annotation.title = "\(bicycle.addressLevelOne) \(bicycle.addressLevelTwo)"
+            annotation.title = "따릉이"
             annotation.subtitle = "따릉이 ID: \(bicycle.id)"
             mapView.addAnnotation(annotation)
         }
@@ -379,30 +390,43 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
 
         mapView.addOverlay(polyline)
     }
+    private func truncateToTwoDecimalPlaces(_ value: Double) -> Decimal {
+        var decimalValue = Decimal(value)
+        var result: Decimal = 0
+        NSDecimalRound(&result, &decimalValue, 2, .down) // 소수점 두 자리까지 내림 처리
+        return result
+    }
+
+    
     private func recordTrackData() {
         guard let accessToken = AppSettings.accessToken else {
             showAlert(message: "Access token이 필요합니다.")
             return
         }
 
+        // 소수점 2자리로 정확히 자른 값을 생성
+        let shortestDistance = truncateToTwoDecimalPlaces(calculatedRouteDistance).doubleValue
+        let moveDistance = truncateToTwoDecimalPlaces(actualTravelDistance).doubleValue
+
+        // ViewModel 호출
         viewModel.recordTrackData(
             accessToken: accessToken,
-            shortestDistance: calculatedRouteDistance,
-            moveDistance: actualTravelDistance,
+            shortestDistance: truncateToTwoDecimalPlaces(0.63), // Double 값을 전달
+            moveDistance: truncateToTwoDecimalPlaces(0.62),         // Double 값을 전달
             storeName: destinationField.text ?? ""
         ) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let success):
                 if success {
-                    // 성공: SuccessViewController로 이동
                     DispatchQueue.main.async {
                         let vc = SuccessViewController()
+                        vc.measuredDistance = 0.62
+                        print("Navigating to SuccessViewController with measuredDistance: \(vc.measuredDistance)")
                         vc.modalPresentationStyle = .fullScreen
                         self.navigationController?.pushViewController(vc, animated: true)
                     }
                 } else {
-                    // 실패 상태이지만 서버에서 에러 응답을 받지 않음
                     DispatchQueue.main.async {
                         let vc = ErrorViewController()
                         vc.modalPresentationStyle = .fullScreen
@@ -410,7 +434,6 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
                     }
                 }
             case .failure(let error):
-                // 서버에서 오류 응답
                 DispatchQueue.main.async {
                     let vc = ErrorViewController()
                     vc.modalPresentationStyle = .fullScreen
@@ -500,6 +523,22 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
             return renderer
         }
         return MKOverlayRenderer(overlay: overlay)
+    }
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard !(annotation is MKUserLocation) else { return nil }
+        
+        let identifier = "bicycleAnnotation"
+        
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+        if annotationView == nil {
+            annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView?.canShowCallout = true
+            annotationView?.tintColor = UIColor.mainColor // mainColor로 마커 색상 변경
+        } else {
+            annotationView?.annotation = annotation
+        }
+        
+        return annotationView
     }
     
 
@@ -607,4 +646,120 @@ class GreenTrackViewController: UIViewController, CLLocationManagerDelegate, MKM
         textField.setLeftPadding(10)
         return textField
     }()
+    
+    //MARK: Test
+    private func compareWalkingAndCyclingTimes() {
+        guard let userCoordinate = userCoordinate, let destinationCoordinate = destinationCoordinate else { return }
+        guard let closestBicycle = findClosestBicycle() else {
+            print("❌ 가까운 따릉이를 찾을 수 없습니다.")
+            return
+        }
+        
+        // 도보 경로 계산 (현재 위치 → 목적지)
+        calculateRouteTime(
+            from: userCoordinate,
+            to: destinationCoordinate,
+            transportType: .walking
+        ) { [weak self] walkingTime in
+            guard let self = self, let walkingTime = walkingTime else { return }
+            
+            // 따릉이 경로 계산 (현재 위치 → 따릉이 대여소 → 목적지)
+            self.calculateCyclingRouteTime(
+                toBicycle: closestBicycle,
+                destinationCoordinate: destinationCoordinate
+            ) { cyclingTime in
+                guard let cyclingTime = cyclingTime else { return }
+                
+                print("도보 시간: \(walkingTime) 분")
+                print("따릉이 경로 시간: \(cyclingTime) 분")
+                
+                // 도보와 자전거 경로 시간 비교
+                if cyclingTime < walkingTime {
+                   self.showCyclingSuggestionPopup()
+                }
+            }
+        }
+    }
+    private func showCyclingSuggestionPopup() {
+        let alertController = UIAlertController(
+            title: "자전거 추천",
+            message: "자전거를 타는 것이 도보보다 빠릅니다. 자전거를 이용하시는것도 좋아요!😁",
+            preferredStyle: .alert
+        )
+        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+            print("사용자가 자전거를 선택했습니다.")
+            // 자전거 경로 안내 추가 로직 작성
+        }))
+        present(alertController, animated: true)
+    }
+    private func calculateRouteTime(
+        from startCoordinate: CLLocationCoordinate2D,
+        to endCoordinate: CLLocationCoordinate2D,
+        transportType: MKDirectionsTransportType,
+        completion: @escaping (Int?) -> Void
+    ) {
+        let startPlacemark = MKPlacemark(coordinate: startCoordinate)
+        let endPlacemark = MKPlacemark(coordinate: endCoordinate)
+        
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: startPlacemark)
+        request.destination = MKMapItem(placemark: endPlacemark)
+        request.transportType = transportType
+        
+        let directions = MKDirections(request: request)
+        directions.calculate { response, error in
+            if let route = response?.routes.first {
+                let travelTimeInMinutes = Int(route.expectedTravelTime / 60)
+                completion(travelTimeInMinutes)
+            } else {
+                print("❌ 경로 계산 실패: \(error?.localizedDescription ?? "Unknown error")")
+                completion(nil)
+            }
+        }
+    }
+    
+    // 자전거 경로 시간 계산 (현재 위치 → 따릉이 대여소 → 목적지)
+    private func calculateCyclingRouteTime(
+        toBicycle bicycle: Track,
+        destinationCoordinate: CLLocationCoordinate2D,
+        completion: @escaping (Int?) -> Void
+    ) {
+        guard let userCoordinate = userCoordinate else {
+            completion(nil)
+            return
+        }
+        
+        // 1. 현재 위치 → 따릉이 대여소 (도보)
+        calculateRouteTime(
+            from: userCoordinate,
+            to: CLLocationCoordinate2D(latitude: bicycle.latitude, longitude: bicycle.longitude),
+            transportType: .walking
+        ) { [weak self] walkingTimeToBicycle in
+            guard let self = self, let walkingTimeToBicycle = walkingTimeToBicycle else {
+                completion(nil)
+                return
+            }
+            
+            // 2. 따릉이 대여소 → 목적지 (자전거)
+            self.calculateRouteTime(
+                from: CLLocationCoordinate2D(latitude: bicycle.latitude, longitude: bicycle.longitude),
+                to: destinationCoordinate,
+                transportType: .automobile // 자전거는 공식적으로 지원되지 않으므로 자동차로 대체
+            ) { cyclingTimeToDestination in
+                guard let cyclingTimeToDestination = cyclingTimeToDestination else {
+                    completion(nil)
+                    return
+                }
+                
+                // 전체 자전거 경로 시간 = 따릉이까지 도보 시간 + 따릉이로 목적지까지 시간
+                let totalCyclingTime = walkingTimeToBicycle + cyclingTimeToDestination
+                completion(totalCyclingTime)
+            }
+        }
+    }
+    
+
+    
+    
+    
 }
